@@ -1,0 +1,48 @@
+@startuml
+
+entity Users {
+    * id : BIGINT <<PK>>
+    --
+    name : VARCHAR(50) <<NOT NULL>>
+    login_id : VARCHAR(50) <<NOT NULL>>
+    password_hash : VARCHAR(255) <<NOT NULL>>
+    created_at : TIMESTAMP <<NOT NULL>>
+    phone_number : VARCHAR(20)
+    email : VARCHAR(255)
+}
+
+entity Space {
+    * id : BIGINT <<PK>>
+    --
+    title : VARCHAR(100) <<NOT NULL>>
+    created_at : TIMESTAMP <<NOT NULL>>
+}
+
+entity SpaceMember {
+    * id : BIGINT <<PK>>
+    --
+    user_id : BIGINT <<FK>>
+    space_id : BIGINT <<FK>>
+    joined_at : TIMESTAMP <<NOT NULL>>
+}
+
+entity SpaceInvitation {
+    * id : BIGINT <<PK>>
+    --
+    space_id : BIGINT <<FK>>
+    inviter_id : BIGINT <<FK>>
+    invitee_id : BIGINT <<FK>>
+    status : VARCHAR(20) <<NOT NULL>>
+    created_at : TIMESTAMP <<NOT NULL>>
+}
+
+
+Users ||--o{ SpaceMember : joins
+Space ||--o{ SpaceMember : contains
+
+Users ||--o{ SpaceInvitation : inviter
+Users ||--o{ SpaceInvitation : invitee
+Space ||--o{ SpaceInvitation : target
+
+
+@enduml
