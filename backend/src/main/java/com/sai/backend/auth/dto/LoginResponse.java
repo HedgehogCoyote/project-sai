@@ -1,5 +1,6 @@
 package com.sai.backend.auth.dto;
 
-public class LoginResponse {
-
+public record LoginResponse
+	(Long userId) 
+{
 }

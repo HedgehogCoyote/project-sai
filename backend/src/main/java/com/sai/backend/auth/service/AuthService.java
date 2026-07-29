@@ -2,12 +2,15 @@ package com.sai.backend.auth.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.sai.backend.auth.dto.LoginRequest;
 import com.sai.backend.auth.dto.SignupRequest;
+import com.sai.backend.auth.exception.DuplicateLoginIdException;
+import com.sai.backend.auth.exception.InvalidLoginException;
 import com.sai.backend.user.domain.User;
 import com.sai.backend.user.repository.UserRepository;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,7 +25,7 @@ public class AuthService {
 	{
 		if(userRepository.existsByLoginId(request.loginId()))
 		{
-			throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+			throw new DuplicateLoginIdException();
 		}
 		
 		String encodedPass = passwordEncoder.encode(request.password());
@@ -40,5 +43,27 @@ public class AuthService {
 		return  savedUser.getId();
 		
 	}
+	
+	@Transactional
+	public Long login(LoginRequest loginRequest)
+	{
+		
+		User foundUser = userRepository.findByLoginId(loginRequest.loginId())
+				.orElseThrow(() ->  new InvalidLoginException());
+		
+		boolean isPasswordMatched =
+				passwordEncoder.matches(
+						loginRequest.password(), 
+						foundUser.getPasswordHash());
+		
+		if(!isPasswordMatched)
+		{
+			throw new InvalidLoginException();
+		}
+		
+		return foundUser.getId();
+		
+	}
+	
 	
 }
