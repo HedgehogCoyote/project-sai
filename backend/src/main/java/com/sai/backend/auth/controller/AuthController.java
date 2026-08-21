@@ -2,6 +2,7 @@ package com.sai.backend.auth.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sai.backend.auth.dto.LoginRequest;
 import com.sai.backend.auth.dto.LoginResponse;
+import com.sai.backend.auth.dto.MeResponse;
 import com.sai.backend.auth.dto.SignupRequest;
 import com.sai.backend.auth.service.AuthService;
 
@@ -66,5 +68,32 @@ public class AuthController {
 	
 	}
 	
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(
+			HttpSession session
+			)
+	{
+		session.invalidate();
+		
+		return ResponseEntity // Response Entity는 머지, no Content, build는 또 뭐지?
+				.noContent()
+				.build();
+		
+		
+	}
+	
+	@GetMapping("/me")
+	public ResponseEntity<?> me(
+			HttpSession session
+			)
+	{
+		MeResponse me = authService.getMe(
+				(Long) session.getAttribute("LOGIN_USER_ID"));
+		
+		
+		
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(me);
+	}
 	
 }

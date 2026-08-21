@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sai.backend.auth.dto.LoginRequest;
+import com.sai.backend.auth.dto.MeResponse;
 import com.sai.backend.auth.dto.SignupRequest;
 import com.sai.backend.auth.exception.DuplicateLoginIdException;
 import com.sai.backend.auth.exception.InvalidLoginException;
+import com.sai.backend.auth.exception.UserNotFoundException;
 import com.sai.backend.user.domain.User;
 import com.sai.backend.user.repository.UserRepository;
 
@@ -62,6 +64,21 @@ public class AuthService {
 		}
 		
 		return foundUser.getId();
+		
+	}
+	
+	@Transactional
+	public MeResponse getMe(Long userId)
+	{
+		User foundUser = userRepository.findById(userId)
+				.orElseThrow(() -> new UserNotFoundException());
+		
+		return new MeResponse(
+				foundUser.getEmail(),
+				foundUser.getName(),
+				foundUser.getPhoneNumber(),
+				foundUser.getLoginId()
+				);
 		
 	}
 	
