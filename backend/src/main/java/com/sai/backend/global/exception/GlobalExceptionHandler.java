@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.sai.backend.auth.exception.DuplicateLoginIdException;
 import com.sai.backend.auth.exception.InvalidLoginException;
+import com.sai.backend.auth.exception.UnauthorizedException;
+import com.sai.backend.auth.exception.UserNotFoundException;
 
 //여러 Controller에서 발생한 예외를 공통으로 처리
 @RestControllerAdvice
@@ -49,5 +51,42 @@ public class GlobalExceptionHandler {
 				.body(loginErrorResponse);
 		
 	}
+	
+	// USER 찾을 수 없음
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ApiErrorResponse> handleUserNotFound(
+			UserNotFoundException e
+			)
+	{
+		
+		ApiErrorResponse userNotFoundErrorResponse =
+				new ApiErrorResponse(
+						"USER_NOT_FOUND_EXCEPTION",
+						e.getMessage()
+						);
+		
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(userNotFoundErrorResponse);
+		
+	}
+	
+	// 비인가접근
+	@ExceptionHandler(UnauthorizedException.class)
+	public ResponseEntity<ApiErrorResponse> handleUnauthorized(UnauthorizedException e)
+	{
+		ApiErrorResponse unauthorizedErrorResponse =
+				new ApiErrorResponse(
+						"AUTHORIZATION_NEEDED",
+						e.getMessage()
+						);
+		
+		return ResponseEntity
+				.status(HttpStatus.UNAUTHORIZED)
+				.body(unauthorizedErrorResponse);
+		
+		
+	}
+	
 	
 }

@@ -12,7 +12,9 @@ import com.sai.backend.auth.dto.LoginRequest;
 import com.sai.backend.auth.dto.LoginResponse;
 import com.sai.backend.auth.dto.MeResponse;
 import com.sai.backend.auth.dto.SignupRequest;
+import com.sai.backend.auth.exception.UnauthorizedException;
 import com.sai.backend.auth.service.AuthService;
+import com.sai.backend.common.session.SessionConst;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -58,7 +60,7 @@ public class AuthController {
 		
 		Long userId = authService.login(loginRequest);
 		
-		session.setAttribute("LOGIN_USER_ID", userId);
+		session.setAttribute(SessionConst.LOGIN_USER_ID, userId);
 		
 		LoginResponse response = new LoginResponse(userId);
 		
@@ -87,8 +89,16 @@ public class AuthController {
 			HttpSession session
 			)
 	{
+		Long sessionUserId = (Long) session.getAttribute(SessionConst.LOGIN_USER_ID);
+		
+		// 없으면 
+		if(sessionUserId == null)
+		{
+			throw new UnauthorizedException();
+		}
+		
 		MeResponse me = authService.getMe(
-				(Long) session.getAttribute("LOGIN_USER_ID"));
+				(Long) session.getAttribute(SessionConst.LOGIN_USER_ID));
 		
 		
 		
