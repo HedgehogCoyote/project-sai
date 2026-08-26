@@ -21,7 +21,7 @@ CREATE TABLE space_member (
     user_id BIGINT NOT NULL,
     space_id BIGINT NOT NULL,
     joined_at TIMESTAMP NOT NULL,
-
+	
     CONSTRAINT fk_space_member_user
         FOREIGN KEY (user_id)
         REFERENCES users(id),

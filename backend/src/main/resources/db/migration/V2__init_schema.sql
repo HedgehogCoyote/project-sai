@@ -1,0 +1,2 @@
+ALTER TABLE space_member
+ADD COLUMN role VARCHAR(20) NOT NULL;
