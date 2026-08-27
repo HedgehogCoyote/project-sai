@@ -11,4 +11,6 @@ public interface SpaceMemberRepository extends JpaRepository<SpaceMember, Long> 
 	
 	public List<SpaceMember> findByUserId(Long userId);
 	public Optional<SpaceMember> findByUserIdAndSpaceId(Long userId, Long spaceId);
+	public Integer countBySpaceId(Long spaceId);
+	public boolean existsByUserIdAndSpaceId(Long userId, Long spaceId);
 }
