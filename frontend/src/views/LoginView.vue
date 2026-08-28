@@ -6,7 +6,8 @@ import { ApiError } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore(); const route = useRoute(); const router = useRouter()
-const loginId = ref(''); const password = ref(''); const showPassword = ref(false); const errorMessage = ref('')
+const loginId = ref(''); const password = ref(''); const showPassword = ref(false)
+const errorMessage = ref(route.query.status === 'server-unavailable' ? '서버에 연결할 수 없습니다. 실행 상태를 확인해 주세요.' : '')
 
 async function submit() {
   errorMessage.value = ''

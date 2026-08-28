@@ -13,7 +13,15 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
-  if (!auth.initialized) await auth.fetchMe()
+  if (!auth.initialized) {
+    try {
+      await auth.fetchMe()
+    } catch {
+      if (to.name !== 'login') {
+        return { name: 'login', query: { redirect: to.fullPath, status: 'server-unavailable' } }
+      }
+    }
+  }
   if (to.meta.auth && !auth.user) return { name: 'login', query: { redirect: to.fullPath } }
   if (to.meta.guest && auth.user) return { name: 'home' }
 })

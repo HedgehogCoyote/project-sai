@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiRequest } from '@/services/api'
+import { ApiError, apiRequest } from '@/services/api'
 
 export type User = { email: string; name: string; phoneNumber: string; loginId: string }
 export type SignupPayload = User & { password: string }
@@ -12,9 +12,18 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => user.value !== null)
 
   async function fetchMe() {
-    try { user.value = await apiRequest<User>('/api/auth/me') }
-    catch { user.value = null }
+    try {
+      user.value = await apiRequest<User>('/api/auth/me')
+    } catch (error) {
+      user.value = null
+      if (!(error instanceof ApiError) || error.status !== 401) throw error
+    }
     finally { initialized.value = true }
+  }
+
+  function clearSession() {
+    user.value = null
+    initialized.value = true
   }
 
   async function login(loginId: string, password: string) {
@@ -40,5 +49,5 @@ export const useAuthStore = defineStore('auth', () => {
     finally { pending.value = false }
   }
 
-  return { user, initialized, pending, isLoggedIn, fetchMe, login, signup, logout }
+  return { user, initialized, pending, isLoggedIn, fetchMe, login, signup, logout, clearSession }
 })
