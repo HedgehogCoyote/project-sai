@@ -1,5 +1,8 @@
 package com.sai.backend.global.exception;
 
+import com.sai.backend.space.exception.SpaceMemberAlreadyExist;
+import com.sai.backend.space.exception.SpaceNotFoundException;
+import com.sai.backend.space.exception.SpacePermissionDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -87,6 +90,45 @@ public class GlobalExceptionHandler {
 		
 		
 	}
-	
+
+	@ExceptionHandler(SpaceNotFoundException.class)
+	public ResponseEntity<ApiErrorResponse> handleSpaceNotFound(SpaceNotFoundException e)
+	{
+		ApiErrorResponse spaceNotFoundResponse
+				= new ApiErrorResponse(
+				"SPACE_NOT_FOUND",
+				e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(spaceNotFoundResponse);
+	}
+
+	@ExceptionHandler(SpacePermissionDeniedException.class)
+	public ResponseEntity<ApiErrorResponse> handleSpacePermissionDenied(SpacePermissionDeniedException e)
+	{
+		ApiErrorResponse spacePermissionDeniedResponse
+				= new ApiErrorResponse(
+				"SPACE_PERMISSION_DENIED",
+				e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.FORBIDDEN)
+				.body(spacePermissionDeniedResponse);
+	}
+
+	@ExceptionHandler(SpaceMemberAlreadyExist.class)
+	public ResponseEntity<ApiErrorResponse> handleSpaceMemberAlreadyExist(SpaceMemberAlreadyExist e)
+	{
+		ApiErrorResponse spaceMemberAlreadyExistResponse
+				= new ApiErrorResponse(
+						"SPACE_MEMBER_ALREADY_EXISTS",
+				e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(spaceMemberAlreadyExistResponse);
+	}
+
 	
 }
