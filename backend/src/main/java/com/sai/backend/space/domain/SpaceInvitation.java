@@ -38,14 +38,14 @@ public class SpaceInvitation {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "invitee_user_id", nullable = false)
 	private User invitee;
-	
-	@Column(name = "invited_at", nullable = false)
-	private LocalDateTime invitedAt;
-	
+
 	@Column(name = "status", nullable = false, length = 20)
 	@Enumerated(EnumType.STRING)
 	private SpaceInvitationStatus status;
-	
+
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
+
 	protected SpaceInvitation() {
 		
 	}
@@ -59,7 +59,7 @@ public class SpaceInvitation {
 	
 	@PrePersist
 	private void prePersist() {
-		invitedAt = LocalDateTime.now();
+		createdAt = LocalDateTime.now();
 		status = SpaceInvitationStatus.PENDING;
 	}
 	
