@@ -32,11 +32,11 @@ public class SpaceInvitation {
 	private Space space;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "inviter_user_id", nullable = false)
+	@JoinColumn(name = "inviter_id", nullable = false)
 	private User inviter;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invitee_user_id", nullable = false)
+	@JoinColumn(name = "invitee_id", nullable = false)
 	private User invitee;
 
 	@Column(name = "status", nullable = false, length = 20)
@@ -61,6 +61,14 @@ public class SpaceInvitation {
 	private void prePersist() {
 		createdAt = LocalDateTime.now();
 		status = SpaceInvitationStatus.PENDING;
+	}
+	
+	public void accept() {
+		status = SpaceInvitationStatus.ACCEPTED;
+	}
+	
+	public void denied() {
+		status = SpaceInvitationStatus.DENIED;
 	}
 	
 	

@@ -1,15 +1,19 @@
 package com.sai.backend.space.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
 import com.sai.backend.auth.exception.UserNotFoundException;
 import com.sai.backend.space.domain.Space;
+import com.sai.backend.space.domain.SpaceInvitation;
+import com.sai.backend.space.domain.SpaceInvitationStatus;
 import com.sai.backend.space.domain.SpaceMember;
 import com.sai.backend.space.domain.SpaceMemberRole;
 import com.sai.backend.space.dto.CreateSpaceRequest;
 import com.sai.backend.space.dto.ParticipatingSpacesResponse;
+import com.sai.backend.space.repository.SpaceInvitationRepository;
 import com.sai.backend.space.repository.SpaceMemberRepository;
 import com.sai.backend.space.repository.SpaceRepository;
 import com.sai.backend.user.domain.User;
@@ -25,6 +29,7 @@ public class SpaceService {
 	private final SpaceRepository spaceRepository;
 	private final UserRepository userRepository;
 	private final SpaceMemberRepository spaceMemberRepository;
+	private final SpaceInvitationRepository spaceInvitationRepository;
 	
 	@Transactional
 	public Long createSpace(CreateSpaceRequest createSpaceRequest, Long userId) {
@@ -49,6 +54,8 @@ public class SpaceService {
 		
 		return space.getId();
 	}
+	
+	
 	
 	public List<ParticipatingSpacesResponse> getMySpaceList(Long userId){
 		

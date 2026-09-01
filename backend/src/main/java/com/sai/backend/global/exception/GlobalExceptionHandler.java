@@ -1,8 +1,5 @@
 package com.sai.backend.global.exception;
 
-import com.sai.backend.space.exception.SpaceMemberAlreadyExist;
-import com.sai.backend.space.exception.SpaceNotFoundException;
-import com.sai.backend.space.exception.SpacePermissionDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +9,13 @@ import com.sai.backend.auth.exception.DuplicateLoginIdException;
 import com.sai.backend.auth.exception.InvalidLoginException;
 import com.sai.backend.auth.exception.UnauthorizedException;
 import com.sai.backend.auth.exception.UserNotFoundException;
+import com.sai.backend.space.exception.InvalidInvitationStatusException;
+import com.sai.backend.space.exception.InvitationPermissionDenied;
+import com.sai.backend.space.exception.SpaceInvitationAlreadyExistException;
+import com.sai.backend.space.exception.SpaceInvitationNotFoundException;
+import com.sai.backend.space.exception.SpaceMemberAlreadyExist;
+import com.sai.backend.space.exception.SpaceNotFoundException;
+import com.sai.backend.space.exception.SpacePermissionDeniedException;
 
 //여러 Controller에서 발생한 예외를 공통으로 처리
 @RestControllerAdvice
@@ -130,5 +134,58 @@ public class GlobalExceptionHandler {
 				.body(spaceMemberAlreadyExistResponse);
 	}
 
+	@ExceptionHandler(SpaceInvitationAlreadyExistException.class)
+	public ResponseEntity<ApiErrorResponse> handleSpaceInvitationAlreadyExistException(SpaceInvitationAlreadyExistException e)
+	{
+		ApiErrorResponse spaceInvitationAlreadyExistException
+				= new ApiErrorResponse(
+						"SPACE_INVITATION_ALREADY_EXIST",
+				e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(spaceInvitationAlreadyExistException);
+	}
+
+	
+	@ExceptionHandler(SpaceInvitationNotFoundException.class)
+	public ResponseEntity<ApiErrorResponse> handleSpaceInvitationNotFound(SpaceInvitationNotFoundException e)
+	{
+		ApiErrorResponse spaceInvitationNotFound
+				= new ApiErrorResponse(
+						"SUCH_SPACE_INVITATION_NOT_FOUND",
+				e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(spaceInvitationNotFound);
+	}
+
+	
+	@ExceptionHandler(InvalidInvitationStatusException.class)
+	public ResponseEntity<ApiErrorResponse> handleInvalidInvitationStatusException(InvalidInvitationStatusException e)
+	{
+		ApiErrorResponse invalidInvitationStatus
+		= new ApiErrorResponse(
+				"INVALID_INVITATION",
+		e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(invalidInvitationStatus);
+	}
+	
+	@ExceptionHandler(InvitationPermissionDenied.class)
+	public ResponseEntity<ApiErrorResponse> handleInvitationPermissionDenied(InvitationPermissionDenied e)
+	{
+		ApiErrorResponse invitationPermissionDenied
+		= new ApiErrorResponse(
+				"INVITATION_PERMISSION_DENIED",
+		e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.FORBIDDEN)
+				.body(invitationPermissionDenied);
+	}
 	
 }
