@@ -11,6 +11,7 @@ import com.sai.backend.auth.exception.UnauthorizedException;
 import com.sai.backend.auth.exception.UserNotFoundException;
 import com.sai.backend.space.exception.InvalidInvitationStatusException;
 import com.sai.backend.space.exception.InvitationPermissionDenied;
+import com.sai.backend.space.exception.SelfInvitationException;
 import com.sai.backend.space.exception.SpaceInvitationAlreadyExistException;
 import com.sai.backend.space.exception.SpaceInvitationNotFoundException;
 import com.sai.backend.space.exception.SpaceMemberAlreadyExist;
@@ -186,6 +187,19 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 				.status(HttpStatus.FORBIDDEN)
 				.body(invitationPermissionDenied);
+	}
+	
+	@ExceptionHandler(SelfInvitationException.class)
+	public ResponseEntity<ApiErrorResponse> handleSelfInvitationException(SelfInvitationException e)
+	{
+		ApiErrorResponse selfInvitationDenied
+		= new ApiErrorResponse(
+				"SELF_INVITATION_DENIED",
+		e.getMessage());
+
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(selfInvitationDenied);
 	}
 	
 }

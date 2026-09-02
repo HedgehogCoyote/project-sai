@@ -4,7 +4,7 @@ import com.sai.backend.space.domain.SpaceInvitation;
 import com.sai.backend.space.domain.SpaceInvitationStatus;
 
 public record InvitationResponse(
-		Long invititationId,
+		Long invitationId,
 		Long spaceId,
 		String spaceName, 
 		Long inviterId,
