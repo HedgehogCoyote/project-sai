@@ -1,21 +1,5 @@
 package com.sai.backend.space.controller;
 
-import com.sai.backend.common.session.SessionConst;
-import com.sai.backend.space.domain.Space;
-import com.sai.backend.space.dto.CreateSpaceRequest;
-import com.sai.backend.space.dto.ParticipatingSpacesResponse;
-import com.sai.backend.space.service.SpaceService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -24,6 +8,23 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.sai.backend.common.session.SessionConst;
+import com.sai.backend.space.dto.CreateSpaceRequest;
+import com.sai.backend.space.dto.ParticipatingSpacesResponse;
+import com.sai.backend.space.dto.SpaceInvitationRequest;
+import com.sai.backend.space.service.SpaceService;
 
 @WebMvcTest(SpaceController.class)
 public class SpaceControllerTest {
@@ -153,5 +154,7 @@ public class SpaceControllerTest {
                 .andExpect(jsonPath("$[2].role").value("OWNER"))
                 .andExpect(jsonPath("$[2].count").value(1));
     }
+    
+  
 
 }

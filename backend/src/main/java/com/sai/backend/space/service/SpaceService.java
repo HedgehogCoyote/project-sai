@@ -13,7 +13,6 @@ import com.sai.backend.space.domain.SpaceMember;
 import com.sai.backend.space.domain.SpaceMemberRole;
 import com.sai.backend.space.dto.CreateSpaceRequest;
 import com.sai.backend.space.dto.ParticipatingSpacesResponse;
-import com.sai.backend.space.repository.SpaceInvitationRepository;
 import com.sai.backend.space.repository.SpaceMemberRepository;
 import com.sai.backend.space.repository.SpaceRepository;
 import com.sai.backend.user.domain.User;
@@ -29,7 +28,6 @@ public class SpaceService {
 	private final SpaceRepository spaceRepository;
 	private final UserRepository userRepository;
 	private final SpaceMemberRepository spaceMemberRepository;
-	private final SpaceInvitationRepository spaceInvitationRepository;
 	
 	@Transactional
 	public Long createSpace(CreateSpaceRequest createSpaceRequest, Long userId) {

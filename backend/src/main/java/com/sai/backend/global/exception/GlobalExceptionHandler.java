@@ -2,6 +2,7 @@ package com.sai.backend.global.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -200,6 +201,19 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 				.status(HttpStatus.CONFLICT)
 				.body(selfInvitationDenied);
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiErrorResponse> handleValidation(
+	        MethodArgumentNotValidException e
+	) {
+	    String message = e.getBindingResult()
+	            .getFieldError()
+	            .getDefaultMessage();
+
+	    return ResponseEntity
+	            .badRequest()
+	            .body(new ApiErrorResponse("VALIDATION_ERROR", message));
 	}
 	
 }

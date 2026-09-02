@@ -1,26 +1,5 @@
 package com.sai.backend.space.service;
 
-import com.sai.backend.auth.exception.UserNotFoundException;
-import com.sai.backend.space.domain.Space;
-import com.sai.backend.space.domain.SpaceMember;
-import com.sai.backend.space.domain.SpaceMemberRole;
-import com.sai.backend.space.dto.CreateSpaceRequest;
-import com.sai.backend.space.dto.ParticipatingSpacesResponse;
-import com.sai.backend.space.repository.SpaceMemberRepository;
-import com.sai.backend.space.repository.SpaceRepository;
-import com.sai.backend.user.domain.*;
-import com.sai.backend.user.repository.UserRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,16 +8,36 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.sai.backend.auth.exception.UserNotFoundException;
+import com.sai.backend.space.domain.Space;
+import com.sai.backend.space.domain.SpaceMember;
+import com.sai.backend.space.domain.SpaceMemberRole;
+import com.sai.backend.space.dto.CreateSpaceRequest;
+import com.sai.backend.space.dto.ParticipatingSpacesResponse;
+import com.sai.backend.space.repository.SpaceMemberRepository;
+import com.sai.backend.space.repository.SpaceRepository;
+import com.sai.backend.user.domain.User;
+import com.sai.backend.user.repository.UserRepository;
+
 @ExtendWith(MockitoExtension.class)
 public class SpaceServiceTest {
 
-    @MockitoBean
+    @Mock
     public SpaceRepository spaceRepository;
 
-    @MockitoBean
+    @Mock
     public SpaceMemberRepository spaceMemberRepository;
 
-    @MockitoBean
+    @Mock
     public UserRepository userRepository;
 
 
@@ -160,6 +159,7 @@ public class SpaceServiceTest {
         assertEquals("OWNER", result.get(0).role());
         assertEquals(3, result.get(0).spaceMemberCount());
     }
+
 
 
 }

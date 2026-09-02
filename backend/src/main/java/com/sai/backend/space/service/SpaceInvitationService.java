@@ -16,6 +16,7 @@ import com.sai.backend.space.dto.JoinSpaceRequest;
 import com.sai.backend.space.dto.SpaceInvitationRequest;
 import com.sai.backend.space.exception.InvalidInvitationStatusException;
 import com.sai.backend.space.exception.InvitationPermissionDenied;
+import com.sai.backend.space.exception.SelfInvitationException;
 import com.sai.backend.space.exception.SpaceInvitationAlreadyExistException;
 import com.sai.backend.space.exception.SpaceInvitationNotFoundException;
 import com.sai.backend.space.exception.SpaceMemberAlreadyExist;
@@ -64,6 +65,13 @@ public class SpaceInvitationService {
 		) {
 			throw new SpaceInvitationAlreadyExistException();
 		}
+		
+		
+		if (inviterUser.getId().equals(inviteeUser.getId()))
+		{
+			throw new SelfInvitationException();
+		}
+		
 
 		// TODO : 나중에 정책적으로 OWNER 만 할지, MANAGER만 관리하게 할지 등 고려하기
 
