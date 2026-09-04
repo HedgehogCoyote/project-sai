@@ -12,8 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sai.backend.space.domain.Space;
+import com.sai.backend.space.domain.SpaceMember;
+import com.sai.backend.space.domain.SpaceMemberRole;
 import com.sai.backend.space.dto.SpaceInvitationRequest;
 import com.sai.backend.space.exception.SelfInvitationException;
+import com.sai.backend.space.repository.SpaceInvitationRepository;
+import com.sai.backend.space.repository.SpaceMemberRepository;
 import com.sai.backend.space.repository.SpaceRepository;
 import com.sai.backend.user.domain.User;
 import com.sai.backend.user.repository.UserRepository;
@@ -28,6 +32,12 @@ public class SpaceInvitationServiceTest {
 	@Mock
 	private SpaceRepository spaceRepository;
 	
+	@Mock
+	private SpaceMemberRepository spaceMemberRepository;
+
+	@Mock
+	private SpaceInvitationRepository spaceInvitationRepository;
+	
 	@InjectMocks
 	private SpaceInvitationService spaceInvitationService;
 	
@@ -37,20 +47,6 @@ public class SpaceInvitationServiceTest {
 		Long myId = 1L;
 		Long spaceId = 1L;
 		
-        User mockUser = new User(
-                "kang",
-                "testuser",
-                "encoded",
-                "010-1234-5678",
-                "test@example.com");
-		
-        Space space = new Space("My Little Home");
-        
-        given(userRepository.findById(myId))
-        	.willReturn(Optional.of(mockUser));
-        
-        given(spaceRepository.findById(spaceId))
-        	.willReturn(Optional.of(space));
         
         SpaceInvitationRequest invitationRequest =
         		new SpaceInvitationRequest(spaceId, myId);

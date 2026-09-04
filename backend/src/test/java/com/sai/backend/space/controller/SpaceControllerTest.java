@@ -42,7 +42,7 @@ public class SpaceControllerTest {
 
         // given(spaceService.createSpace(createSpaceRequest, unloginId))
 
-        mockMvc.perform(post("/api/spaces/")
+        mockMvc.perform(post("/api/spaces")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validCreateSpaceJson()))
                 .andExpect(status().isUnauthorized());
@@ -142,17 +142,17 @@ public class SpaceControllerTest {
                 .andExpect(jsonPath("$[0].spaceId").value(1L))
                 .andExpect(jsonPath("$[0].title").value("안녕 에리"))
                 .andExpect(jsonPath("$[0].role").value("OWNER"))
-                .andExpect(jsonPath("$[0].count").value(1))
+                .andExpect(jsonPath("$[0].spaceMemberCount").value(1))
 
                 .andExpect(jsonPath("$[1].spaceId").value(2L))
                 .andExpect(jsonPath("$[1].title").value("안녕 태호"))
                 .andExpect(jsonPath("$[1].role").value("OWNER"))
-                .andExpect(jsonPath("$[1].count").value(1))
+                .andExpect(jsonPath("$[1].spaceMemberCount").value(1))
 
                 .andExpect(jsonPath("$[2].spaceId").value(3L))
                 .andExpect(jsonPath("$[2].title").value("안녕 민서"))
                 .andExpect(jsonPath("$[2].role").value("OWNER"))
-                .andExpect(jsonPath("$[2].count").value(1));
+                .andExpect(jsonPath("$[2].spaceMemberCount").value(1));
     }
     
   

@@ -42,6 +42,13 @@ public class SpaceInvitationService {
 
 	@Transactional
 	public Long invite(Long inviterUserId, SpaceInvitationRequest spaceInvitationRequest) {
+
+
+		if (Objects.equals(inviterUserId, spaceInvitationRequest.inviteeUserId()))
+		{
+			throw new SelfInvitationException();
+		}
+		
 		User inviterUser = userRepository.findById(inviterUserId).orElseThrow(() -> new UserNotFoundException());
 
 		User inviteeUser = userRepository.findById(spaceInvitationRequest.inviteeUserId())
@@ -50,6 +57,9 @@ public class SpaceInvitationService {
 		Space space = spaceRepository.findById(spaceInvitationRequest.spaceId())
 				.orElseThrow(() -> new SpaceNotFoundException());
 
+		
+		
+		
 		// 이미 Invitation 에 있냐 없냐는 테스트 하지 않음.
 
 		// 검증 - 일단, SpaceMember 중 하나면 초대 가능하게 끔
@@ -67,11 +77,7 @@ public class SpaceInvitationService {
 		}
 		
 		
-		if (inviterUser.getId().equals(inviteeUser.getId()))
-		{
-			throw new SelfInvitationException();
-		}
-		
+
 
 		// TODO : 나중에 정책적으로 OWNER 만 할지, MANAGER만 관리하게 할지 등 고려하기
 
