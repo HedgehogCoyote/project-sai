@@ -60,6 +60,29 @@ test('creates a space and refreshes the list', async ({ page }) => {
   await expect(page.getByRole('heading', { name: '새로운 공간' })).toBeVisible()
 })
 
+test('accepts the backend maximum space title length', async ({ page }) => {
+  const maximumLengthTitle = '가'.repeat(50)
+
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      json: { email: 'sai@example.com', name: '테스터', phoneNumber: '010-1234-5678', loginId: 'saiuser' },
+    })
+  })
+  await page.route('**/api/spaces/my', async (route) => route.fulfill({ json: [] }))
+  await page.route('**/api/spaces', async (route) => {
+    expect((route.request().postDataJSON() as { title: string }).title).toBe(maximumLengthTitle)
+    await route.fulfill({ status: 201, json: { spaceId: 2 } })
+  })
+
+  await page.goto('/')
+  await page.getByRole('button', { name: '새 공간 만들기', exact: true }).click()
+  await page.getByLabel('공간 이름').fill(maximumLengthTitle)
+  await expect(page.getByText('50/50')).toBeVisible()
+  await page.getByRole('button', { name: '공간 만들기', exact: true }).click()
+
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+})
+
 test('invites a user with the backend invitation payload', async ({ page }) => {
   await page.route('**/api/auth/me', async (route) => {
     await route.fulfill({

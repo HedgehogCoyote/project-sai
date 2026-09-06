@@ -63,8 +63,8 @@ function closeCreateDialog() {
 async function submitCreate() {
   const title = newSpaceTitle.value.trim()
   createError.value = ''
-  if (!title || title.length > 30) {
-    createError.value = '공간 이름은 1자 이상 30자 이하로 입력해 주세요.'
+  if (!title || title.length > 50) {
+    createError.value = '공간 이름은 1자 이상 50자 이하로 입력해 주세요.'
     return
   }
 
@@ -142,7 +142,7 @@ onMounted(loadSpaces)
       </section>
 
       <section id="invitations" class="invitation-panel">
-        <div class="invitation-panel__copy"><div class="invitation-banner__icon">♡</div><div><p class="eyebrow">INVITE A MEMBER</p><h2>공간에 사용자 초대</h2><p>현재 백엔드 API에 맞춰 사용자 ID로 초대장을 보냅니다.</p></div></div>
+        <div class="invitation-panel__copy"><div class="invitation-banner__icon">♡</div><div><p class="eyebrow">INVITE A MEMBER</p><h2>공간에 사용자 초대</h2><p>초대할 사용자의 ID를 입력해 초대장을 보내세요.</p></div></div>
         <form class="invitation-form" @submit.prevent="submitInvitation">
           <label>초대할 공간<select v-model="selectedSpaceId" required :disabled="!spacesStore.hasSpaces"><option :value="null" disabled>공간 선택</option><option v-for="space in spacesStore.spaces" :key="space.spaceId" :value="space.spaceId">{{ space.title }}</option></select></label>
           <label>사용자 ID<input v-model.number="inviteeUserId" type="number" min="1" step="1" placeholder="예: 12" required></label>
@@ -158,7 +158,7 @@ onMounted(loadSpaces)
         <button class="modal__close" type="button" aria-label="닫기" :disabled="spacesStore.creating" @click="closeCreateDialog">×</button>
         <p class="eyebrow">NEW SHARED SPACE</p><h2 id="create-space-title">새 공간 만들기</h2><p>함께할 공간의 이름을 정해 주세요.</p>
         <form @submit.prevent="submitCreate">
-          <div class="field"><label for="spaceTitle">공간 이름</label><input id="spaceTitle" v-model="newSpaceTitle" maxlength="30" autofocus placeholder="예: 우리 가족 이야기" required><small>{{ newSpaceTitle.trim().length }}/30</small></div>
+          <div class="field"><label for="spaceTitle">공간 이름</label><input id="spaceTitle" v-model="newSpaceTitle" maxlength="50" autofocus placeholder="예: 우리 가족 이야기" required><small>{{ newSpaceTitle.trim().length }}/50</small></div>
           <p v-if="createError" class="form-error" role="alert">{{ createError }}</p>
           <div class="modal__actions"><button type="button" :disabled="spacesStore.creating" @click="closeCreateDialog">취소</button><button class="primary-button" type="submit" :disabled="spacesStore.creating">{{ spacesStore.creating ? '만드는 중...' : '공간 만들기' }}</button></div>
         </form>
