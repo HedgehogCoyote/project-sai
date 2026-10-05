@@ -1,0 +1,11 @@
+{
+  "screens": 32,
+  "dimensions": [
+    1440,
+    1000
+  ],
+  "format": "PNG",
+  "action_specs": 153,
+  "scope": "static design review",
+  "product_tests_run": false
+}

@@ -1,0 +1,110 @@
+{
+  "captured": "2026-10-05",
+  "source": "http://127.0.0.1:5174",
+  "api": "local fixture for authentication and spaces",
+  "content": "browser local data, seeded examples",
+  "screens": [
+    {
+      "file": "01-space-home.png",
+      "width": 1265,
+      "height": 1316,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "02-records.png",
+      "width": 1280,
+      "height": 720,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "03-record-editor.png",
+      "width": 1265,
+      "height": 1096,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "04-tasks.png",
+      "width": 1265,
+      "height": 768,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "05-calendar.png",
+      "width": 1265,
+      "height": 1220,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "06-activities.png",
+      "width": 1265,
+      "height": 735,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "07-activity-form.png",
+      "width": 1265,
+      "height": 735,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "08-trip-home.png",
+      "width": 1265,
+      "height": 1029,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "09-itinerary.png",
+      "width": 1265,
+      "height": 846,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "10-places.png",
+      "width": 1265,
+      "height": 1057,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "11-packing.png",
+      "width": 1265,
+      "height": 1026,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "12-expenses.png",
+      "width": 1265,
+      "height": 1070,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "13-polls.png",
+      "width": 1265,
+      "height": 1052,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "14-people.png",
+      "width": 1265,
+      "height": 845,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "15-modules.png",
+      "width": 1265,
+      "height": 1343,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "16-ai-example.png",
+      "width": 1265,
+      "height": 1343,
+      "kind": "implemented-local-frontend"
+    },
+    {
+      "file": "17-collaboration-example.png",
+      "width": 1265,
+      "height": 1343,
+      "kind": "implemented-local-frontend"
+    }
+  ]
+}

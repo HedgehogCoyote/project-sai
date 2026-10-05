@@ -1,0 +1,75 @@
+{
+  "type": "approval-mockups-not-product",
+  "screens": [
+    {
+      "file": "01.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "02.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "03.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "04.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "05.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "06.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "07.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "08.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "09.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "10.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "11.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "12.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "13.png",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "file": "14.png",
+      "width": 1440,
+      "height": 1000
+    }
+  ]
+}
