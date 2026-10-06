@@ -24,7 +24,7 @@ async function submit() {
   errorMessage.value = ''
   try {
     await auth.signup({ ...form, loginId: form.loginId.trim(), email: form.email.trim() })
-    await router.replace('/')
+    await router.replace('/spaces')
   } catch (error) {
     errorMessage.value =
       error instanceof ApiError ? error.message : '회원가입 중 문제가 발생했습니다.'

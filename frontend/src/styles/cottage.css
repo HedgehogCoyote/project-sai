@@ -1,0 +1,374 @@
+/* Authenticated SAI workspace, matching the approved 3D cottage mock. */
+html .home-shell.home-shell {
+  --text: #4b4048;
+  --text-muted: #7b6873;
+  --text-soft: #8c7583;
+  --line: #decfc6;
+  --surface: #fff7eb;
+  --navy-900: #71576c;
+  --violet-600: #71576c;
+  min-height: 100svh !important;
+  background: radial-gradient(ellipse at 45% 40%, #a0889d, #8b7388 55%, #756075);
+  font-family: SUIT, 'Malgun Gothic', sans-serif;
+  color: #f9eee5;
+}
+html .home-shell.home-shell .site-header {
+  height: 72px;
+  background: #59475725;
+  border-color: #eee1dc30;
+  padding: 0 34px;
+}
+html .home-shell.home-shell .site-header .brand-note,
+html .home-shell.home-shell .account,
+html .home-shell.home-shell .account button {
+  color: #f4e6e0;
+}
+html .home-shell.home-shell .site-header svg {
+  filter: brightness(0) invert(94%) sepia(10%);
+}
+html .home-shell.home-shell .workspace {
+  display: block;
+  background: transparent;
+  min-height: calc(100svh - 72px);
+}
+html .home-shell.home-shell .space-sidebar {
+  display: none;
+}
+html .home-shell.home-shell .home-main {
+  max-width: 1560px;
+  padding: 24px 34px 40px;
+  margin: auto;
+}
+html .home-shell.home-shell .breadcrumb {
+  color: #f4e6e0;
+  margin-bottom: 24px;
+}
+html .home-shell.home-shell .breadcrumb button {
+  color: #f4e6e0;
+}
+html .home-shell.home-shell h1 {
+  color: #fff3e7;
+  font-size: 28px;
+}
+html .home-shell.home-shell .description {
+  color: #f0e1d8;
+}
+html .home-shell.home-shell .spaces-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+html .home-shell.home-shell .empty-state {
+  background: #fff5eae8;
+  color: #66505e;
+  border: 0;
+  border-radius: 14px;
+  padding: 35px;
+}
+html .home-shell.home-shell .empty-state p {
+  color: #75666c;
+}
+html .home-shell.home-shell .loading-state {
+  color: #fff3e7;
+}
+html .home-shell.home-shell .primary-button {
+  background: #71576c;
+  border-color: #71576c;
+  color: #fff7ec;
+  border-radius: 9px;
+}
+html .home-shell.home-shell .secondary-button {
+  background: #fff7eb;
+  border: 1px solid #d6c8bd;
+  color: #5d4b57;
+  border-radius: 9px;
+}
+html .home-shell.home-shell .secondary-button:hover {
+  background: #eee0ce;
+}
+html .home-shell.home-shell .space-table {
+  max-width: 1120px;
+  margin: 25px auto 0;
+  border: 0;
+  display: grid;
+  gap: 12px;
+}
+html .home-shell.home-shell .space-row {
+  border: 1px solid #fff1de80;
+  border-radius: 14px;
+  background: #fff5eae8;
+  color: #64515e;
+  padding: 15px 20px;
+  grid-template-columns: minmax(0, 1fr) 80px 80px 105px;
+}
+html .home-shell.home-shell .space-row:hover {
+  background: #fff8ee;
+}
+html .home-shell.home-shell .space-row--header {
+  display: none;
+}
+html .home-shell.home-shell .space-row > div:first-child {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  column-gap: 22px;
+  align-items: center;
+}
+html .home-shell.home-shell .space-cover {
+  grid-row: 1/3;
+  height: 105px;
+  background: #e4d1cd;
+  border-radius: 9px;
+  overflow: hidden;
+}
+html .home-shell.home-shell .space-cover svg {
+  height: 100%;
+  width: 100%;
+}
+html .home-shell.home-shell .space-row h2 {
+  font-size: 21px;
+  margin: 0;
+  align-self: end;
+}
+html .home-shell.home-shell .space-id {
+  margin: 8px 0 14px;
+  align-self: start;
+  color: #8b7381;
+  font-size: 12px;
+}
+html .home-shell.home-shell .role-badge {
+  background: #efe1d5;
+  color: #705767;
+  border-color: #dfccbe;
+}
+html .home-shell.home-shell .space-content > h1 {
+  margin-top: 0;
+}
+html .home-shell.home-shell .context-description {
+  color: #f1e4de;
+}
+html .home-shell.home-shell .content-tabs {
+  border-color: #eee1dc38;
+}
+html .home-shell.home-shell .content-tabs button {
+  color: #ede0db;
+}
+html .home-shell.home-shell .content-tabs button.active {
+  color: #fff4e6;
+  border-color: #f0cda3;
+}
+html .home-shell.home-shell .demo-banner {
+  background: #64516430;
+  border: 1px solid #eddfd540;
+  color: #f5e5d9;
+  border-radius: 8px;
+  font-size: 11px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+}
+html .home-shell.home-shell .space-content > .section-heading,
+html .home-shell.home-shell .toolbar {
+  color: #fff3e7;
+}
+html .home-shell.home-shell .space-content > section:not([aria-label='우리 방']),
+html .home-shell.home-shell .space-content > template > section {
+  color: #51434c;
+}
+html .home-shell.home-shell .space-content .summary-grid > section,
+html .home-shell.home-shell .space-content .data-row,
+html .home-shell.home-shell .space-content .record-editor,
+html .home-shell.home-shell .space-content .records-layout,
+html .home-shell.home-shell .space-content .modules-grid,
+html .home-shell.home-shell .space-content .summary-stats,
+html .home-shell.home-shell .space-content .section,
+html .home-shell.home-shell .space-content .people-list,
+html .home-shell.home-shell .space-content .calendar-grid {
+  background: #fff6eaef;
+  border-color: #dacabd;
+  border-radius: 12px;
+  color: #51434c;
+}
+html .home-shell.home-shell .space-content .summary-grid > section {
+  padding: 20px;
+}
+html .home-shell.home-shell .space-content .data-row {
+  margin: 9px 0;
+  padding: 18px;
+}
+html .home-shell.home-shell .space-content .section {
+  padding: 20px;
+  margin-top: 20px;
+}
+html .home-shell.home-shell .space-content .section-heading h2,
+html .home-shell.home-shell .space-content .toolbar h2 {
+  color: inherit;
+}
+html .home-shell.home-shell .space-content .activity-return button {
+  color: #fff0e3;
+}
+html .home-shell.home-shell .space-content .context-description + .content-tabs {
+  margin-bottom: 15px;
+}
+html .home-shell.home-shell .space-content .empty,
+html .home-shell.home-shell .space-content .muted {
+  color: #f0e0d6;
+}
+html .home-shell.home-shell .room-panel .room-muted {
+  color: #75666c;
+}
+html .home-shell.home-shell .space-content .module-card {
+  background: #fff6eaef;
+  border-color: #dacabd;
+  border-radius: 12px;
+}
+html .home-shell.home-shell .space-content .content-notice {
+  background: #fff2dd;
+  color: #65545e;
+}
+html .home-shell.home-shell .space-content .content-error {
+  background: #fff3ee;
+  color: #993c39;
+  padding: 12px;
+  border-radius: 9px;
+}
+html .home-shell.home-shell .invitation-form,
+html .home-shell.home-shell .invite-box {
+  background: #fff7ebed;
+  color: #51434c;
+  border-radius: 14px;
+  padding: 24px;
+}
+html .home-shell.home-shell .fixed-space {
+  background: #f6ebdf;
+  border-color: #e0ccba;
+}
+html .home-shell.home-shell .create-dialog,
+html .home-shell.home-shell .content-dialog {
+  background: #fff7eb;
+  color: #51434c;
+  border-radius: 14px;
+  border-color: #e5cfbf;
+}
+html .home-shell.home-shell input,
+html .home-shell.home-shell select,
+html .home-shell.home-shell textarea {
+  border-color: #dbcabb;
+  border-radius: 7px;
+  background: #fffaf2;
+  color: #51434c;
+}
+html .home-shell.home-shell label,
+html .home-shell.home-shell .field-label {
+  color: inherit;
+}
+html .home-shell.home-shell .status-message--error {
+  color: #993c39;
+}
+html .home-shell.home-shell .status-message--success {
+  color: #25623e;
+}
+html .landing {
+  background: #faf5ed;
+  color: #5f4c61;
+}
+html .auth-layout {
+  background: #faf5ed;
+}
+html .auth-panel {
+  background: #fffaf1;
+}
+html .visual-panel {
+  background: linear-gradient(145deg, #e9ddd2, #d5c2d1);
+}
+@media (max-width: 900px) {
+  html .home-shell.home-shell .home-main {
+    padding: 24px;
+  }
+  html .home-shell.home-shell .site-header {
+    padding: 0 24px;
+  }
+  html .home-shell.home-shell .space-row > div:first-child {
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 15px;
+  }
+}
+@media (max-width: 650px) {
+  html .home-shell.home-shell .home-main {
+    padding: 22px 16px;
+  }
+  html .home-shell.home-shell .site-header {
+    height: 64px;
+    padding: 0 16px;
+  }
+  html .home-shell.home-shell .space-row {
+    grid-template-columns: minmax(0, 1fr) 90px;
+    gap: 12px;
+    padding: 13px;
+  }
+  html .home-shell.home-shell .space-row > div:first-child {
+    grid-template-columns: 90px minmax(0, 1fr);
+    grid-column: 1/-1;
+  }
+  html .home-shell.home-shell .space-row > div:last-child {
+    grid-column: 2;
+    grid-row: 2/4;
+  }
+  html .home-shell.home-shell .space-cover {
+    height: 95px;
+  }
+  html .home-shell.home-shell .space-row h2 {
+    font-size: 19px;
+  }
+  html .home-shell.home-shell .spaces-heading {
+    flex-wrap: wrap;
+  }
+  html .home-shell.home-shell .content-tabs {
+    gap: 18px;
+  }
+}
+
+html .home-shell.home-shell .space-sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 34px;
+  background: #59475715;
+  border-right: 0;
+  border-bottom: 1px solid #eee1dc25;
+}
+html .home-shell.home-shell .space-link {
+  width: auto;
+  margin: 0;
+  padding: 8px 12px;
+  color: #f4e7de;
+  border-radius: 8px;
+  font-size: 12px;
+}
+html .home-shell.home-shell .space-link.active {
+  background: #f4e5d955;
+  color: #fff6e9;
+}
+html .home-shell.home-shell .sidebar-label,
+html .home-shell.home-shell .sidebar-empty {
+  display: none;
+}
+html .home-shell.home-shell .sidebar-create {
+  width: auto;
+  margin: 0 0 0 auto;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+html .auth-layout .auth-brand {
+  background: linear-gradient(145deg, #9f879b, #71596f);
+}
+@media (max-width: 650px) {
+  html .home-shell.home-shell .space-sidebar {
+    padding: 9px 16px;
+  }
+  html .home-shell.home-shell .sidebar-create {
+    margin-left: 0;
+  }
+}
+html .home-shell.home-shell .content-tabs{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;gap:20px}
+html .home-shell.home-shell .content-tabs button{flex-shrink:0}

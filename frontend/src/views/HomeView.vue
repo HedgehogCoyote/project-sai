@@ -143,7 +143,7 @@ onMounted(loadSpaces)
         :disabled="spacesStore.inviting"
         @click="navigate()"
       >
-        <AppLogo />
+        <AppLogo light />
       </button>
       <span class="brand-note">함께할 공간</span>
       <div class="account">
@@ -154,7 +154,7 @@ onMounted(loadSpaces)
       </div>
     </header>
     <div class="workspace">
-      <aside class="space-sidebar" aria-label="공간 선택">
+      <aside v-if="selectedSpace" class="space-sidebar" aria-label="공간 선택">
         <button
           class="space-link"
           :class="{ active: !selectedSpace }"
@@ -204,7 +204,17 @@ onMounted(loadSpaces)
           공간을 불러오는 중...
         </div>
         <template v-else-if="!selectedSpace">
-          <h1>모든 공간</h1>
+          <div class="spaces-heading">
+            <h1>내 공간</h1>
+            <button
+              class="secondary-button"
+              type="button"
+              :disabled="spacesStore.inviting"
+              @click="openCreateDialog"
+            >
+              ＋ 새 공간 만들기
+            </button>
+          </div>
           <p class="description">참여 중인 공간을 선택해 들어가세요.</p>
           <div
             v-if="spacesStore.hasSpaces"
@@ -217,12 +227,34 @@ onMounted(loadSpaces)
               ><span role="columnheader">참여 인원</span><span role="columnheader">이동</span>
             </div>
             <div
-              v-for="space in spacesStore.spaces"
+              v-for="(space, index) in spacesStore.spaces"
               :key="space.spaceId"
               class="space-row"
               role="row"
             >
               <div role="cell">
+                <div class="space-cover" aria-hidden="true">
+                  <svg viewBox="0 0 240 140">
+                    <path
+                      d="M120 8L20 56V99L120 139L220 92V51Z"
+                      :fill="['#c8adbb', '#bfd0be', '#c7bfce'][index % 3]"
+                    />
+                    <path d="M20 99L120 48L220 92L120 139Z" fill="#dfbd94" />
+                    <path d="M43 57L79 40V73L43 89Z" fill="#eee5ce" />
+                    <path d="M51 58L72 48V68L51 80Z" fill="#b8ccc9" />
+                    <path d="M59 85L92 69L133 90L99 111L59 94Z" fill="#8c6f8e" />
+                    <path d="M60 77L92 62L92 83L60 98Z" fill="#a58aa0" />
+                    <path d="M145 70L177 57L202 70L171 84Z" fill="#d1a074" />
+                    <path d="M145 70V96M171 84V111M201 70V97" stroke="#b18761" stroke-width="5" />
+                    <path
+                      d="M187 49V22M187 34Q164 24 174 11M187 36Q209 19 203 10"
+                      stroke="#7b9677"
+                      stroke-width="6"
+                      stroke-linecap="round"
+                    />
+                    <path d="M177 43L198 43L194 61L181 61Z" fill="#e6cfb3" />
+                  </svg>
+                </div>
                 <h2>{{ space.title }}</h2>
                 <p class="space-id">공간 ID {{ space.spaceId }}</p>
               </div>
@@ -363,6 +395,67 @@ onMounted(loadSpaces)
 </template>
 
 <style scoped>
+.home-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 36px;
+  margin-bottom: 42px;
+  border: 1px solid #ece7f3;
+  border-radius: 18px;
+  background: #f8f6fc;
+  color: #574473;
+}
+.hero-eyebrow {
+  margin: 0 0 18px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.hero-copy h2 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 40px);
+  letter-spacing: -0.055em;
+  line-height: 1.35;
+  color: var(--navy-900);
+}
+.hero-copy > p:last-of-type {
+  margin: 18px 0 24px;
+  color: #7c718a;
+  font-size: 13px;
+  line-height: 1.9;
+}
+.hero-create {
+  display: inline-flex;
+  gap: 24px;
+  align-items: center;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: #574173;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+.hero-create:hover {
+  background: #34234f;
+}
+@media (max-width: 1100px) {
+  .home-hero {
+    padding: 28px;
+    gap: 12px;
+  }
+}
+@media (max-width: 700px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    padding: 26px 22px;
+  }
+  .home-hero :deep(.union-scene) {
+    max-width: 400px;
+    margin: 12px auto 0;
+  }
+}
 .home-shell {
   min-height: 100svh;
   background: #fff;

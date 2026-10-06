@@ -1,0 +1,7 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {seedRoom,createFurniture,fits,firstFree,validRoom} from '../src/features/room/model.ts'
+test('seed room is valid and binds only installed tools or the selected event',()=>{const room=seedRoom(['tasks','calendar'],'trip');assert.equal(validRoom(room),true);assert.equal(room.find(o=>o.kind==='frame').module,'');assert.equal(room.find(o=>o.kind==='desk').event,'trip');assert.equal(room.find(o=>o.kind==='shelf').module,'activities')})
+test('footprints reject overlaps and boundaries while rugs can sit under furniture',()=>{const sofa=createFurniture('sofa'),desk=createFurniture('desk');assert.equal(fits([sofa],desk,1,0),false);assert.equal(fits([sofa],desk,3,0),true);assert.equal(fits([],desk,7,0),false);assert.equal(fits([],desk,-1,0),false);assert.equal(fits([],desk,0.5,0),false);assert.equal(fits([sofa],createFurniture('rug'),0,0),true)})
+test('rotation changes footprint and validation rejects inconsistent or corrupt persisted rooms',()=>{const sofa=createFurniture('sofa');sofa.rotation=1;[sofa.w,sofa.h]=[sofa.h,sofa.w];assert.equal(validRoom([sofa]),true);assert.equal(validRoom([{...sofa,w:3,h:2}]),false);assert.equal(validRoom([sofa,{...sofa}]),false);assert.equal(validRoom([{...sofa,module:'footprints'}]),false);assert.equal(validRoom([{...sofa,x:9}]),false)})
+test('first free position respects existing furniture',()=>{const sofa=createFurniture('sofa');assert.deepEqual(firstFree([sofa],createFurniture('desk')),{x:3,y:0})})

@@ -34,7 +34,7 @@ test('shows spaces returned by the backend contract', async ({ page }) => {
     })
   })
 
-  await page.goto('/')
+  await page.goto('/spaces')
 
   await expect(page.getByRole('heading', { name: '우리의 공간' })).toBeVisible()
   await expect(page.getByRole('cell', { name: '2명', exact: true })).toBeVisible()
@@ -62,7 +62,7 @@ test('creates a space and refreshes the list', async ({ page }) => {
     await route.fulfill({ status: 201, json: { spaceId: 2 } })
   })
 
-  await page.goto('/')
+  await page.goto('/spaces')
   await page.getByRole('button', { name: '＋ 새 공간 만들기', exact: true }).click()
   await page.getByLabel('공간 이름').fill('새로운 공간')
   await page.getByRole('button', { name: '공간 만들기', exact: true }).click()
@@ -89,7 +89,7 @@ test('accepts the backend maximum space title length', async ({ page }) => {
     await route.fulfill({ status: 201, json: { spaceId: 2 } })
   })
 
-  await page.goto('/')
+  await page.goto('/spaces')
   await page.getByRole('button', { name: '＋ 새 공간 만들기', exact: true }).click()
   await page.getByLabel('공간 이름').fill(maximumLengthTitle)
   await expect(page.getByText('50/50')).toBeVisible()
@@ -119,7 +119,7 @@ test('invites a user with the backend invitation payload', async ({ page }) => {
     await route.fulfill({ status: 201, json: 7 })
   })
 
-  await page.goto('/')
+  await page.goto('/spaces')
   await page.getByRole('button', { name: '초대할 공간 들어가기' }).click()
   await page
     .getByRole('navigation', { name: '현재 공간 메뉴' })
@@ -154,7 +154,7 @@ test('keeps invitation input and results scoped to the selected space', async ({
     expect(route.request().postDataJSON()).toEqual({ spaceId: 2, inviteeUserId: 24 })
     await route.fulfill({ status: 400, json: { message: '이미 참여 중인 사용자입니다.' } })
   })
-  await page.goto('/')
+  await page.goto('/spaces')
   await expect(page.getByRole('navigation', { name: '현재 공간 메뉴' })).toBeHidden()
   await page.getByRole('button', { name: '첫 공간 들어가기' }).click()
   await page

@@ -4,9 +4,25 @@ import { useAuthStore } from '@/stores/auth'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'home', component: () => import('@/views/HomeView.vue'), meta: { auth: true } },
-    { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue'), meta: { guest: true } },
-    { path: '/signup', name: 'signup', component: () => import('@/views/SignupView.vue'), meta: { guest: true } },
+    { path: '/', name: 'landing', component: () => import('@/views/LandingView.vue') },
+    {
+      path: '/spaces',
+      name: 'home',
+      component: () => import('@/views/HomeView.vue'),
+      meta: { auth: true },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/LoginView.vue'),
+      meta: { guest: true },
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('@/views/SignupView.vue'),
+      meta: { guest: true },
+    },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })
@@ -17,7 +33,7 @@ router.beforeEach(async (to) => {
     try {
       await auth.fetchMe()
     } catch {
-      if (to.name !== 'login') {
+      if (to.meta.auth) {
         return { name: 'login', query: { redirect: to.fullPath, status: 'server-unavailable' } }
       }
     }

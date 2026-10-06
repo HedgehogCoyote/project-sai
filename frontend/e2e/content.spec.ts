@@ -33,8 +33,8 @@ test.beforeEach(async ({ page }) => {
       ],
     }),
   )
-  await page.goto('/?space=1')
-  await expect(page.getByRole('heading', { name: '공간 정보', exact: true })).toBeVisible()
+  await page.goto('/spaces?space=1')
+  await expect(page.getByRole('button', { name: '방 꾸미기', exact: true })).toBeVisible()
 })
 
 test('기록 작성·편집·검색·새로고침 유지와 공간 데이터 분리', async ({ page }) => {

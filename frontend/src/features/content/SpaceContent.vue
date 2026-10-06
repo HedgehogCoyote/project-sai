@@ -25,6 +25,8 @@ import {
   validatePoll,
 } from './logic'
 import { useContent } from './useContent'
+import RoomBoard from '@/features/room/RoomBoard.vue'
+const roomBoard = ref<{ canLeave: () => boolean } | null>(null)
 
 const props = defineProps<{
   space: ParticipatingSpace
@@ -281,6 +283,7 @@ watch(
 )
 function canLeave() {
   if (saving.value || props.blocked) return false
+  if (roomBoard.value && !roomBoard.value.canLeave()) return false
   return (
     !recordDirty.value || window.confirm('저장하지 않은 기록이 있습니다. 저장하지 않고 나갈까요?')
   )
@@ -719,7 +722,7 @@ function putPlaceInSchedule(id: string) {
     </div>
     <h1>{{ activity?.title ?? space.title }}</h1>
     <p class="context-description">
-      {{ activity ? period(activity) : '공간 ID ' + space.spaceId }}
+      {{ activity ? period(activity) : '함께하는 공간 · ' + space.spaceMemberCount + '명' }}
     </p>
     <nav class="content-tabs" aria-label="현재 공간 메뉴">
       <button
@@ -761,7 +764,21 @@ function putPlaceInSchedule(id: string) {
       </button>
     </div>
     <template v-else-if="data">
-      <section v-if="tab === 'home'" aria-label="홈 요약">
+      <section v-if="tab === 'home' && !activity" aria-label="우리 방">
+        <RoomBoard
+          ref="roomBoard"
+          :owner="account.loginId"
+          :space-id="space.spaceId"
+          :modules="data.modules"
+          :activities="data.activities"
+          :blocked="busy"
+          @open="(view, scope) => go(view, scope)"
+          @invite="go('invite')"
+          @create-event="openForm('activity')"
+          @modules="go('modules')"
+        />
+      </section>
+      <section v-else-if="tab === 'home'" aria-label="홈 요약">
         <div class="section-heading">
           <h2>{{ activity ? '활동 정보' : '공간 정보' }}</h2>
           <div v-if="activity" class="actions">

@@ -21,7 +21,9 @@ async function submit() {
   errorMessage.value = ''
   try {
     await auth.login(loginId.value.trim(), password.value)
-    await router.replace(typeof route.query.redirect === 'string' ? route.query.redirect : '/')
+    await router.replace(
+      typeof route.query.redirect === 'string' ? route.query.redirect : '/spaces',
+    )
   } catch (error) {
     errorMessage.value =
       error instanceof ApiError ? error.message : '로그인 중 문제가 발생했습니다.'

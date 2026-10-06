@@ -1,0 +1,7 @@
+{
+  "description": "SAI: Share and approve a visual draft before application UI changes.",
+  "hooks": {
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "node C:/TaehoProj/project-sai/docs/workflow/design-first.cjs", "timeout": 5, "statusMessage": "Loading design-first workflow" }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "node C:/TaehoProj/project-sai/docs/workflow/design-first.cjs", "timeout": 5 }] }]
+  }
+}
