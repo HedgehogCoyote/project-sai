@@ -224,16 +224,6 @@ html .auth-layout.auth-layout {
 .auth-layout.auth-layout .panel-footer {
   display: none;
 }
-.logo.logo .logo__mark {
-  display: none;
-}
-.logo.logo .logo__word {
-  color: var(--navy-900);
-  font-size: 34px;
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -2px;
-}
 .auth-footer {
   margin: 65px 0 0;
   text-align: center;

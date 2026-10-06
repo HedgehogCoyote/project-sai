@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import CircleUnion from '@/components/CircleUnion.vue'
+import AppLogo from '@/components/AppLogo.vue'
 import { useAuthStore } from '@/stores/auth'
 const auth = useAuthStore()
 </script>
 <template>
   <div class="landing">
     <header class="landing-header">
-      <RouterLink class="wordmark" to="/" aria-label="SAI 메인">sai</RouterLink>
+      <RouterLink class="wordmark" to="/" aria-label="SAI 메인"><AppLogo /></RouterLink>
       <nav aria-label="계정">
         <RouterLink v-if="auth.user" class="account-link" to="/spaces">내 공간 ↗</RouterLink
         ><template v-else

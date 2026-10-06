@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAI · 로고 시안</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5efe5;color:#51404d;font-family:SUIT,'Malgun Gothic',sans-serif}button{font:inherit;cursor:pointer}main{max-width:1180px;padding:48px 38px 40px;margin:auto}header{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:1px solid #d9cbc4;padding-bottom:24px}h1{margin:10px 0 0;font-size:34px;letter-spacing:-1.4px;font-weight:750}.eyebrow{font-size:11px;letter-spacing:2px;color:#8b737e}header p{margin:0;line-height:1.8;font-size:13px;color:#826d76}.tools{display:flex;align-items:center;gap:12px;margin:22px 0 32px;font-size:12px}.tools button{padding:8px 14px;border:1px solid #d7c6cc;background:transparent;border-radius:6px;color:#6b5365}.tools button[aria-pressed=true]{background:#71576c;color:#fff7eb;border-color:#71576c}.tools span{margin-left:auto;color:#8b737e}.directions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px}.number{font-size:11px;letter-spacing:2px;color:#947982}.title{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}h2{font-size:19px;margin:0;font-weight:650;letter-spacing:-.6px}.recommended{font-size:10px;border-bottom:1px solid #917484;color:#806273;padding-bottom:2px}.hero{height:225px;background:#ede1d9;display:flex;align-items:center;justify-content:center}.hero svg{width:220px;height:80px;color:#71576c}.mono .hero svg{color:#383035}.dark .hero{background:#71576c}.dark .hero svg{color:#fff7eb}.caption{font-size:12px;line-height:1.85;color:#816c75;min-height:66px;margin:15px 0 23px}.label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#947982;margin:0 0 12px}.sample-header{height:60px;border-top:1px solid #ded0c8;border-bottom:1px solid #ded0c8;display:flex;align-items:center;justify-content:space-between;background:#fff9ef;padding:0 12px}.sample-header svg{width:84px;height:30px;color:#71576c}.sample-header span{font-size:11px;color:#a08b93}.small{margin:22px 0 0;display:flex;align-items:center;gap:15px}.favicon{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:#71576c;border-radius:10px;color:#fff7eb}.favicon svg{width:26px;height:26px}.favicon .initial{width:22px;height:28px}.small>svg{width:24px;height:24px;color:#71576c}.small>span{font-size:10px;color:#947982}.choose{margin:24px 0 0;width:100%;padding:12px;border:1px solid #d5c1ca;background:transparent;border-radius:6px;color:#71576c;font-size:12px}.choose:hover,.choose[aria-pressed=true]{background:#71576c;color:#fff7eb}.summary{border-top:1px solid #d9cbc4;margin-top:36px;padding-top:20px;display:flex;justify-content:space-between;gap:20px;color:#88727b;font-size:12px}.summary strong{color:#6a5062;font-weight:650}.sprite{position:absolute;width:0;height:0;overflow:hidden}.dark .peach{fill:currentColor}.mono .peach{fill:currentColor}.mono .left-lobe{fill:currentColor;opacity:1}.dark .left-lobe{fill:currentColor;opacity:1}@media(max-width:800px){main{padding:30px 24px}.directions{grid-template-columns:1fr;gap:38px}.hero{height:180px}.caption{min-height:0}.summary{flex-direction:column}.tools{flex-wrap:wrap}.tools span{margin-left:0}header{align-items:flex-start;flex-direction:column}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<svg class="sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<defs>
+<g id="word" fill="none" stroke="currentColor" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M37 20C31 14 14 14 11 24C7 35 22 36 29 39C43 44 36 56 23 56C16 56 10 53 7 49"/>
+<path d="M86 35C85 12 52 13 51 35C49 60 82 63 86 42M86 21V55"/>
+<path d="M109 29V55"/>
+</g>
+<circle id="dot" cx="109" cy="13" r="4.4" fill="currentColor"/>
+<g id="connection">
+<path class="left-lobe" d="M21 13C7 13 4 24 5 33C6 45 12 51 22 51C33 51 32 39 40 39V25C32 25 32 13 21 13Z" fill="#aa849c"/>
+<path d="M51 13C65 13 68 24 67 33C66 45 60 51 50 51C39 51 40 39 32 39V25C40 25 40 13 51 13Z" fill="currentColor"/>
+</g>
+<g id="room" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M10 49V24C10 16 16 10 24 10H47C53 10 57 14 57 20V48C57 54 53 58 47 58H37"/>
+<path d="M10 49H28V36C28 29 33 25 40 25H57"/>
+<circle class="peach" cx="22" cy="23" r="3.5" fill="#cf9f82" stroke="none"/>
+</g>
+<symbol id="logo-a" viewBox="0 0 210 72">
+<use href="#connection" x="0" y="3"/>
+<g transform="translate(88 0)"><use href="#word"/><use href="#dot"/></g>
+</symbol>
+<symbol id="logo-b" viewBox="0 0 210 72">
+<use href="#room"/>
+<g transform="translate(87 0)"><use href="#word"/><use href="#dot"/></g>
+</symbol>
+<symbol id="logo-c" viewBox="0 0 145 72">
+<g transform="translate(12 0)"><use href="#word"/><circle class="peach" cx="109" cy="13" r="4.4" fill="#cf9f82"/></g>
+</symbol>
+<symbol id="mark-a" viewBox="0 0 72 64"><use href="#connection"/></symbol>
+<symbol id="mark-b" viewBox="0 0 68 68"><use href="#room"/></symbol>
+<symbol id="mark-c" viewBox="0 0 48 68"><g transform="translate(2 0)" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"><path d="M37 20C31 14 14 14 11 24C7 35 22 36 29 39C43 44 36 56 23 56C16 56 10 53 7 49"/></g></symbol>
+</defs></svg>
+<main id="logo-study">
+<header><div><span class="eyebrow">SAI / IDENTITY STUDY · 01</span><h1>우리 사이, 하나의 공간.</h1></div><p>따뜻한 보라 · 크림 · 살구<br>로고 시안 3가지</p></header>
+<div class="tools" role="group" aria-label="로고 색상 비교"><button type="button" data-mode="color" aria-pressed="true">기본 색상</button><button type="button" data-mode="mono" aria-pressed="false">단색</button><button type="button" data-mode="dark" aria-pressed="false">어두운 배경</button><span>큰 로고 → 실제 헤더 → 작은 심볼</span></div>
+<div class="directions">
+<section><span class="number">01 / CONNECTION</span><div class="title"><h2>이어지는 사이</h2><span class="recommended">추천</span></div><div class="hero"><svg role="img" aria-label="두 물방울이 연결된 sai 로고"><use href="#logo-a"/></svg></div><p class="caption">두 형태 사이에 부드러운 연결이 생기는 심볼.<br>처음 이야기한 ‘사이’와 메인 화면의 움직임을 이어갑니다.</p><p class="label">Header / 84 px</p><div class="sample-header"><svg role="img" aria-label="1안 헤더 로고"><use href="#logo-a"/></svg><span>내 공간　 ·　태호</span></div><div class="small"><div class="favicon"><svg role="img" aria-label="1안 앱 아이콘"><use href="#mark-a"/></svg></div><svg role="img" aria-label="1안 작은 심볼"><use href="#mark-a"/></svg><span>앱 아이콘 / 24 px</span></div><button type="button" class="choose" data-choice="1안 · 이어지는 사이" aria-pressed="false">1안 선택</button></section>
+<section><span class="number">02 / SHARED ROOM</span><div class="title"><h2>함께 쓰는 공간</h2></div><div class="hero"><svg role="img" aria-label="열린 공간을 표현한 sai 로고"><use href="#logo-b"/></svg></div><p class="caption">열린 입구와 안쪽 공간을 하나의 선으로 표현.<br>방 꾸미기와 도구를 배치하는 현재 서비스에 가깝습니다.</p><p class="label">Header / 84 px</p><div class="sample-header"><svg role="img" aria-label="2안 헤더 로고"><use href="#logo-b"/></svg><span>내 공간　 ·　태호</span></div><div class="small"><div class="favicon"><svg role="img" aria-label="2안 앱 아이콘"><use href="#mark-b"/></svg></div><svg role="img" aria-label="2안 작은 심볼"><use href="#mark-b"/></svg><span>앱 아이콘 / 24 px</span></div><button type="button" class="choose" data-choice="2안 · 함께 쓰는 공간" aria-pressed="false">2안 선택</button></section>
+<section><span class="number">03 / WORDMARK</span><div class="title"><h2>글자로 남는 사이</h2></div><div class="hero"><svg role="img" aria-label="둥근 글자와 살구색 점을 사용한 sai 로고"><use href="#logo-c"/></svg></div><p class="caption">둥근 획의 sai와 작게 찍힌 살구색 점.<br>장식은 줄이고, 이름을 편안하게 기억하게 합니다.</p><p class="label">Header / 84 px</p><div class="sample-header"><svg role="img" aria-label="3안 헤더 로고"><use href="#logo-c"/></svg><span>내 공간　 ·　태호</span></div><div class="small"><div class="favicon"><svg class="initial" role="img" aria-label="3안 s 앱 아이콘"><use href="#mark-c"/></svg></div><svg role="img" aria-label="3안 작은 s 심볼"><use href="#mark-c"/></svg><span>앱 아이콘 / 24 px</span></div><button type="button" class="choose" data-choice="3안 · 글자로 남는 사이" aria-pressed="false">3안 선택</button></section>
+</div>
+<div class="summary"><strong id="selection" aria-live="polite">선택 전 · 세 방향을 비교해보세요.</strong><span>시안 비교용 · 실제 서비스 로고는 선택 후 반영</span></div>
+</main>
+<script>
+const study=document.getElementById('logo-study');
+study.querySelectorAll('[data-mode]').forEach(button=>button.addEventListener('click',()=>{study.classList.remove('mono','dark');if(button.dataset.mode!=='color')study.classList.add(button.dataset.mode);study.querySelectorAll('[data-mode]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));}));
+study.querySelectorAll('[data-choice]').forEach(button=>button.addEventListener('click',()=>{study.querySelectorAll('[data-choice]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));document.getElementById('selection').textContent=button.dataset.choice+' 선택 · 시안 선택만 기록되며 서비스 로고는 바뀌지 않습니다.';}));
+</script>
+</body></html>

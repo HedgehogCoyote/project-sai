@@ -333,6 +333,7 @@ npx playwright test --config playwright.cottage.config.ts
 - [기술 스택](docs/architecture/stack.md)
 - [ERD](docs/database/ERD.puml)
 - [개발 기록](docs/devlog)
+- [2026-10-06 · 3D 공간과 승인 로고 적용](docs/devlog/261006.md)
 
 ## 라이선스
 
