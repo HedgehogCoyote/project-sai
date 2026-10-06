@@ -5,7 +5,7 @@ delete names.footprints;
 const footprintsByKind={sofa:[3,2],desk:[2,2],shelf:[2,1],plant:[1,1],cat:[1,1],frame:[1,1],rug:[3,2],calendar:[1,1]};
 const renderBeforeLayout=render;
 let gridVisible=true;
-function simplifySpace(s){s.modules=s.modules.filter(m=>m in names);const accepted=[];for(const o of s.room){if(o.module&&!(o.module in names)){o.module='';o.label='';delete o.event;}delete o.memory;const dims=footprintsByKind[o.kind]||[1,1];o.w=dims[0];o.h=dims[1];if(!fits(accepted,o,o.x,o.y)){let found=false;for(let y=0;y<8&&!found;y++)for(let x=0;x<8&&!found;x++)if(fits(accepted,o,x,y)){o.x=x;o.y=y;found=true;}}accepted.push(o);}s.room=accepted;}
+function simplifySpace(s){s.modules=s.modules.filter(m=>m in names);const accepted=[];for(const o of s.room){if(o.module&&!(o.module in names)&&!(o.event&&s.events.find(e=>e.id===o.event)?.modules.includes(o.module))){o.module='';o.label='';delete o.event;}delete o.memory;const dims=footprintsByKind[o.kind]||[1,1];o.w=dims[0];o.h=dims[1];if(!fits(accepted,o,o.x,o.y)){let found=false;for(let y=0;y<8&&!found;y++)for(let x=0;x<8&&!found;x++)if(fits(accepted,o,x,y)){o.x=x;o.y=y;found=true;}}accepted.push(o);}s.room=accepted;}
 render=function(){data.spaces.forEach(simplifySpace);if(['repeat','footprints'].includes(page))page='room';renderBeforeLayout();};
 spriteSizes.sofa=[190,145];spriteSizes.desk=[160,145];spriteSizes.shelf=[120,175];spriteSizes.plant=[85,125];spriteSizes.cat=[80,75];spriteSizes.frame=[70,100];spriteSizes.rug=[195,125];spriteSizes.calendar=[65,95];
 spriteCells.plant=[15,470,415,360];
