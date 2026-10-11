@@ -1,0 +1,10 @@
+Prepared=S_2; generic_plans=78; custom_plans=292
+Limit  (cost=0.42..140.40 rows=10 width=43) (actual time=0.063..89.836 rows=1.00 loops=1)
+  Buffers: local hit=67 read=2973
+  ->  Index Scan using search_bench_users_login_id_key on search_bench_users  (cost=0.42..7055.46 rows=504 width=43) (actual time=0.062..89.834 rows=1.00 loops=1)
+        Filter: (upper((login_id)::text) ~~ like_escape(upper(($1)::text), '\'::text))
+        Rows Removed by Filter: 99999
+        Index Searches: 1
+        Buffers: local hit=67 read=2973
+Planning Time: 0.005 ms
+Execution Time: 89.848 ms

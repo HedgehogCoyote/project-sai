@@ -1,0 +1,14 @@
+SQL: SELECT id, name, login_id, password_hash, created_at, phone_number, email FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %zznomatch%
+Limit  (cost=3938.17..3938.19 rows=10 width=156) (actual time=48.782..48.782 rows=0.00 loops=1)
+  Buffers: local read=2438
+  ->  Sort  (cost=3938.17..3938.19 rows=10 width=156) (actual time=48.781..48.781 rows=0.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local read=2438
+        ->  Seq Scan on search_bench_users  (cost=0.00..3938.00 rows=10 width=156) (actual time=48.775..48.775 rows=0.00 loops=1)
+              Filter: (upper((login_id)::text) ~~ '%ZZNOMATCH%'::text)
+              Rows Removed by Filter: 100000
+              Buffers: local read=2438
+Planning Time: 0.111 ms
+Execution Time: 48.802 ms

@@ -1,0 +1,14 @@
+SQL: SELECT id, name, login_id, password_hash, created_at, phone_number, email FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %miXed%
+Limit  (cost=393.32..393.35 rows=10 width=154) (actual time=4.068..4.069 rows=1.00 loops=1)
+  Buffers: local hit=243
+  ->  Sort  (cost=393.32..393.36 rows=16 width=154) (actual time=4.067..4.068 rows=1.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local hit=243
+        ->  Seq Scan on search_bench_users  (cost=0.00..393.00 rows=16 width=154) (actual time=0.018..4.060 rows=1.00 loops=1)
+              Filter: (upper((login_id)::text) ~~ '%MIXED%'::text)
+              Rows Removed by Filter: 9999
+              Buffers: local hit=243
+Planning Time: 0.118 ms
+Execution Time: 4.086 ms

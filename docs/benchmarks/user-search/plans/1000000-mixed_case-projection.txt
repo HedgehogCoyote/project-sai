@@ -1,0 +1,11 @@
+SQL: SELECT id, login_id, name FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %miXed%
+Limit  (cost=0.42..403.30 rows=10 width=44) (actual time=0.061..665.506 rows=1.00 loops=1)
+  Buffers: local hit=2 read=30320
+  ->  Index Scan using search_bench_users_login_id_key on search_bench_users  (cost=0.42..64461.12 rows=1600 width=44) (actual time=0.061..665.504 rows=1.00 loops=1)
+        Filter: (upper((login_id)::text) ~~ '%MIXED%'::text)
+        Rows Removed by Filter: 999999
+        Index Searches: 1
+        Buffers: local hit=2 read=30320
+Planning Time: 0.091 ms
+Execution Time: 665.521 ms

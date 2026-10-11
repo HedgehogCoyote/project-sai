@@ -1,0 +1,20 @@
+SQL: SELECT id, login_id, name FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %miXed%
+Limit  (cost=182.98..182.99 rows=1 width=42) (actual time=0.183..0.184 rows=1.00 loops=1)
+  Buffers: local hit=43
+  ->  Sort  (cost=182.98..182.99 rows=1 width=42) (actual time=0.183..0.183 rows=1.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local hit=43
+        ->  Bitmap Heap Scan on search_bench_users  (cost=178.96..182.97 rows=1 width=42) (actual time=0.181..0.181 rows=1.00 loops=1)
+              Recheck Cond: (upper((login_id)::text) ~~ '%MIXED%'::text)
+              Heap Blocks: exact=1
+              Buffers: local hit=43
+              ->  Bitmap Index Scan on search_bench_trgm  (cost=0.00..178.96 rows=1 width=0) (actual time=0.175..0.175 rows=1.00 loops=1)
+                    Index Cond: (upper((login_id)::text) ~~ '%MIXED%'::text)
+                    Index Searches: 1
+                    Buffers: local hit=42
+Planning:
+  Buffers: local hit=1
+Planning Time: 0.052 ms
+Execution Time: 0.192 ms

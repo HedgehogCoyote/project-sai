@@ -1,0 +1,21 @@
+SQL: SELECT id, login_id, name FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %rare00001000%
+Limit  (cost=294.88..294.90 rows=10 width=43) (actual time=0.872..0.872 rows=1.00 loops=1)
+  Buffers: local hit=95
+  ->  Sort  (cost=294.88..294.90 rows=10 width=43) (actual time=0.872..0.872 rows=1.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local hit=95
+        ->  Bitmap Heap Scan on search_bench_users  (cost=256.47..294.71 rows=10 width=43) (actual time=0.868..0.870 rows=1.00 loops=1)
+              Recheck Cond: (upper((login_id)::text) ~~ '%RARE00001000%'::text)
+              Rows Removed by Index Recheck: 2
+              Heap Blocks: exact=3
+              Buffers: local hit=95
+              ->  Bitmap Index Scan on search_bench_trgm  (cost=0.00..256.47 rows=10 width=0) (actual time=0.861..0.861 rows=3.00 loops=1)
+                    Index Cond: (upper((login_id)::text) ~~ '%RARE00001000%'::text)
+                    Index Searches: 1
+                    Buffers: local hit=92
+Planning:
+  Buffers: local hit=1
+Planning Time: 0.054 ms
+Execution Time: 0.882 ms

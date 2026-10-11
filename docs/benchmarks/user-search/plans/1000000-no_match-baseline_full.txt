@@ -1,0 +1,11 @@
+SQL: SELECT id, name, login_id, password_hash, created_at, phone_number, email FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %zznomatch%
+Limit  (cost=0.42..6446.49 rows=10 width=158) (actual time=653.472..653.473 rows=0.00 loops=1)
+  Buffers: local hit=2 read=30320
+  ->  Index Scan using search_bench_users_login_id_key on search_bench_users  (cost=0.42..64461.12 rows=100 width=158) (actual time=653.471..653.471 rows=0.00 loops=1)
+        Filter: (upper((login_id)::text) ~~ '%ZZNOMATCH%'::text)
+        Rows Removed by Filter: 1000000
+        Index Searches: 1
+        Buffers: local hit=2 read=30320
+Planning Time: 0.085 ms
+Execution Time: 653.489 ms

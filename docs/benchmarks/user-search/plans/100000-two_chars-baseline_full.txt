@@ -1,0 +1,11 @@
+SQL: SELECT id, name, login_id, password_hash, created_at, phone_number, email FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %ab%
+Limit  (cost=0.42..3.65 rows=10 width=156) (actual time=0.069..0.144 rows=10.00 loops=1)
+  Buffers: local hit=109
+  ->  Index Scan using search_bench_users_login_id_key on search_bench_users  (cost=0.42..6469.83 rows=20000 width=156) (actual time=0.068..0.143 rows=10.00 loops=1)
+        Filter: (upper((login_id)::text) ~~ '%AB%'::text)
+        Rows Removed by Filter: 257
+        Index Searches: 1
+        Buffers: local hit=109
+Planning Time: 0.080 ms
+Execution Time: 0.150 ms

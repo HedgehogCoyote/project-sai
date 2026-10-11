@@ -1,0 +1,19 @@
+SQL: SELECT id, login_id, name FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %zznomatch%
+Limit  (cost=217.75..217.76 rows=1 width=42) (actual time=0.334..0.334 rows=0.00 loops=1)
+  Buffers: local hit=50
+  ->  Sort  (cost=217.75..217.76 rows=1 width=42) (actual time=0.333..0.333 rows=0.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local hit=50
+        ->  Bitmap Heap Scan on search_bench_users  (cost=213.73..217.74 rows=1 width=42) (actual time=0.332..0.332 rows=0.00 loops=1)
+              Recheck Cond: (upper((login_id)::text) ~~ '%ZZNOMATCH%'::text)
+              Buffers: local hit=50
+              ->  Bitmap Index Scan on search_bench_trgm  (cost=0.00..213.73 rows=1 width=0) (actual time=0.326..0.326 rows=0.00 loops=1)
+                    Index Cond: (upper((login_id)::text) ~~ '%ZZNOMATCH%'::text)
+                    Index Searches: 1
+                    Buffers: local hit=50
+Planning:
+  Buffers: local hit=1
+Planning Time: 0.055 ms
+Execution Time: 0.343 ms

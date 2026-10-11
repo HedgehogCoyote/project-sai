@@ -1,0 +1,21 @@
+SQL: SELECT id, login_id, name FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %\_user%
+Limit  (cost=618.51..618.54 rows=10 width=44) (actual time=612.168..612.169 rows=1.00 loops=1)
+  Buffers: local hit=26 read=24966
+  ->  Sort  (cost=618.51..618.76 rows=100 width=44) (actual time=612.166..612.167 rows=1.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local hit=26 read=24966
+        ->  Bitmap Heap Scan on search_bench_users  (cost=234.05..616.35 rows=100 width=44) (actual time=101.160..612.159 rows=1.00 loops=1)
+              Recheck Cond: (upper((login_id)::text) ~~ '%\_USER%'::text)
+              Rows Removed by Index Recheck: 998998
+              Heap Blocks: exact=24390
+              Buffers: local hit=26 read=24966
+              ->  Bitmap Index Scan on search_bench_trgm  (cost=0.00..234.02 rows=100 width=0) (actual time=98.563..98.563 rows=998999.00 loops=1)
+                    Index Cond: (upper((login_id)::text) ~~ '%\_USER%'::text)
+                    Index Searches: 1
+                    Buffers: local hit=26 read=576
+Planning:
+  Buffers: local read=1
+Planning Time: 0.128 ms
+Execution Time: 612.270 ms

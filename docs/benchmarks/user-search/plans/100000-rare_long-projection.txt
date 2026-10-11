@@ -1,0 +1,14 @@
+SQL: SELECT id, login_id, name FROM search_bench_users WHERE upper(login_id) LIKE upper(?) ESCAPE '\' ORDER BY login_id FETCH FIRST 10 ROWS ONLY
+Pattern: %rare00001000%
+Limit  (cost=3938.17..3938.19 rows=10 width=43) (actual time=49.334..49.336 rows=1.00 loops=1)
+  Buffers: local read=2438
+  ->  Sort  (cost=3938.17..3938.19 rows=10 width=43) (actual time=49.334..49.335 rows=1.00 loops=1)
+        Sort Key: login_id
+        Sort Method: quicksort  Memory: 25kB
+        Buffers: local read=2438
+        ->  Seq Scan on search_bench_users  (cost=0.00..3938.00 rows=10 width=43) (actual time=0.646..49.326 rows=1.00 loops=1)
+              Filter: (upper((login_id)::text) ~~ '%RARE00001000%'::text)
+              Rows Removed by Filter: 99999
+              Buffers: local read=2438
+Planning Time: 0.088 ms
+Execution Time: 49.350 ms

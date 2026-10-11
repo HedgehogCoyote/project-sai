@@ -1,0 +1,21 @@
+PostgreSQL: 18.6
+Java: 21.0.12.1
+Started at UTC: 2026-10-11T03:24:49.414197500Z
+OS: Windows 10; processors=16
+Warmup: 5; samples per case: 30
+Timing: sequential JDBC execute + result consumption; not HTTP/JPA API latency.
+Temporary table, warm cache, synthetic distribution; not production concurrency or cold-cache measurements.
+Users=10000; GIN build ms=68.5772; bytes=958464; insert 1000 rows single observation: baseline ms=12.4952, GIN ms=12.1779
+Users=100000; GIN build ms=579.3902; bytes=6053888; insert 1000 rows single observation: baseline ms=11.3322, GIN ms=26.4119
+Users=1000000; GIN build ms=6319.0466; bytes=75087872; insert 1000 rows single observation: baseline ms=12.8079, GIN ms=25.5139
+Additional diagnostic phase: force_custom_plan; prior default-plan measurements preserved.
+PostgreSQL: 18.6
+Java: 21.0.12.1
+Started at UTC: 2026-10-11T03:34:11.627381200Z
+OS: Windows 10; processors=16
+Warmup: 5; samples per case: 30
+Timing: sequential JDBC execute + result consumption; not HTTP/JPA API latency.
+Temporary table, warm cache, synthetic distribution; not production concurrency or cold-cache measurements.
+Phase=custom; Users=10000; GIN build ms=65.7213; bytes=958464; insert 1000 rows single observation: baseline ms=13.3791, GIN ms=12.1622
+Phase=custom; Users=100000; GIN build ms=578.6683; bytes=6053888; insert 1000 rows single observation: baseline ms=11.4449, GIN ms=25.3838
+Phase=custom; Users=1000000; GIN build ms=6526.9246; bytes=75087872; insert 1000 rows single observation: baseline ms=12.7393, GIN ms=29.5409
