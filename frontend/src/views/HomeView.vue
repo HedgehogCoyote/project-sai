@@ -3,6 +3,8 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLogo from '@/components/AppLogo.vue'
 import UserInvitation from '@/components/UserInvitation.vue'
+import InvitationInbox from '@/components/InvitationInbox.vue'
+import { useInvitationsStore } from '@/stores/invitations'
 import SpaceContent from '@/features/content/SpaceContent.vue'
 import { ApiError } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
@@ -10,6 +12,7 @@ import { useSpacesStore, type SpaceRole } from '@/stores/spaces'
 
 const auth = useAuthStore()
 const spacesStore = useSpacesStore()
+const inbox = useInvitationsStore()
 const route = useRoute()
 const router = useRouter()
 const contentView = ref<{ canLeave: () => boolean } | null>(null)
@@ -18,6 +21,8 @@ const createDialog = ref<HTMLDialogElement | null>(null)
 const newSpaceTitle = ref('')
 const pageError = ref('')
 const createError = ref('')
+const inboxOpen = computed(() => route.query.panel === 'invitations')
+const blocked = computed(() => spacesStore.inviting || inbox.processing !== null)
 const selectedSpace = computed(() =>
   spacesStore.spaces.find((space) => String(space.spaceId) === route.query.space),
 )
@@ -32,7 +37,7 @@ watch(createOpen, async (open) => {
   }
 })
 async function navigate(spaceId?: number, view = 'home') {
-  if (spacesStore.inviting) return
+  if (blocked.value) return
   await router.push({
     name: 'home',
     query:
@@ -82,6 +87,7 @@ async function submitCreate() {
   }
 }
 async function logout() {
+  if (blocked.value) return
   if (contentView.value && !contentView.value.canLeave()) return
   pageError.value = ''
   try {
@@ -93,6 +99,20 @@ async function logout() {
   }
 }
 onMounted(loadSpaces)
+onMounted(() => {
+  void inbox.refresh()
+})
+watch(
+  () => inbox.sessionError,
+  (error) => {
+    if (error) void handleApiError(error, '로그인이 만료되었습니다.')
+  },
+)
+async function openInbox() {
+  if (blocked.value) return
+  await router.push({ name: 'home', query: { panel: 'invitations' } })
+  if (inboxOpen.value) void inbox.refresh()
+}
 </script>
 
 <template>
@@ -102,27 +122,38 @@ onMounted(loadSpaces)
         class="brand-link"
         type="button"
         aria-label="모든 공간으로 이동"
-        :disabled="spacesStore.inviting"
+        :disabled="blocked"
         @click="navigate()"
       >
         <AppLogo light />
       </button>
       <span class="brand-note">함께할 공간</span>
       <div class="account">
+        <button
+          class="inbox-entry"
+          type="button"
+          :disabled="blocked || auth.pending"
+          @click="openInbox"
+        >
+          받은 초대
+          <span v-if="inbox.pendingCount !== null" class="inbox-badge">{{
+            inbox.pendingCount
+          }}</span>
+        </button>
         <span>{{ auth.user?.name }} 님</span
-        ><button type="button" :disabled="auth.pending || spacesStore.inviting" @click="logout">
+        ><button type="button" :disabled="auth.pending || blocked" @click="logout">
           {{ auth.pending ? '로그아웃 중...' : '로그아웃' }}
         </button>
       </div>
     </header>
     <div class="workspace">
-      <aside v-if="selectedSpace" class="space-sidebar" aria-label="공간 선택">
+      <aside v-if="selectedSpace && !inboxOpen" class="space-sidebar" aria-label="공간 선택">
         <button
           class="space-link"
           :class="{ active: !selectedSpace }"
           type="button"
           :aria-current="!selectedSpace ? 'page' : undefined"
-          :disabled="spacesStore.inviting"
+          :disabled="blocked"
           @click="navigate()"
         >
           모든 공간
@@ -135,7 +166,7 @@ onMounted(loadSpaces)
           :class="{ active: selectedSpace?.spaceId === space.spaceId }"
           type="button"
           :aria-current="selectedSpace?.spaceId === space.spaceId ? 'page' : undefined"
-          :disabled="spacesStore.inviting"
+          :disabled="blocked"
           @click="navigate(space.spaceId)"
         >
           {{ space.title }}
@@ -146,7 +177,7 @@ onMounted(loadSpaces)
         <button
           class="sidebar-create secondary-button"
           type="button"
-          :disabled="spacesStore.inviting"
+          :disabled="blocked"
           @click="openCreateDialog"
         >
           ＋ 새 공간 만들기
@@ -154,15 +185,18 @@ onMounted(loadSpaces)
       </aside>
       <main class="home-main">
         <div class="breadcrumb">
-          <button type="button" :disabled="spacesStore.inviting" @click="navigate()">내 공간</button
-          ><template v-if="selectedSpace"
+          <button type="button" :disabled="blocked" @click="navigate()">내 공간</button
+          ><template v-if="inboxOpen"
+            ><span aria-hidden="true">/</span><span>받은 초대</span></template
+          ><template v-else-if="selectedSpace"
             ><span aria-hidden="true">/</span><span>{{ selectedSpace.title }}</span></template
           >
         </div>
         <p v-if="pageError" class="status-message status-message--error" role="alert">
           {{ pageError }} <button type="button" @click="loadSpaces">다시 시도</button>
         </p>
-        <div v-if="spacesStore.loading" class="loading-state" role="status">
+        <InvitationInbox v-if="inboxOpen" @navigate="navigate" />
+        <div v-else-if="spacesStore.loading" class="loading-state" role="status">
           공간을 불러오는 중...
         </div>
         <template v-else-if="!selectedSpace">
@@ -171,7 +205,7 @@ onMounted(loadSpaces)
             <button
               class="secondary-button"
               type="button"
-              :disabled="spacesStore.inviting"
+              :disabled="blocked"
               @click="openCreateDialog"
             >
               ＋ 새 공간 만들기
@@ -246,7 +280,7 @@ onMounted(loadSpaces)
           :key="`${auth.user?.loginId}:${selectedSpace.spaceId}`"
           :space="selectedSpace"
           :account="{ loginId: auth.user?.loginId ?? '', name: auth.user?.name ?? '나' }"
-          :blocked="spacesStore.inviting"
+          :blocked="blocked"
           @session-expired="handleApiError($event, '로그인이 만료되었습니다.')"
         >
           <template #invitation>
@@ -411,6 +445,19 @@ onMounted(loadSpaces)
   color: var(--text);
   background: none;
   cursor: pointer;
+}
+.account .inbox-entry {
+  border: 1px solid #eee1dc60;
+  border-radius: 9px;
+  padding: 10px 12px;
+}
+.inbox-badge {
+  display: inline-block;
+  margin-left: 5px;
+  border-radius: 50%;
+  background: #f2dcc5;
+  color: #70566e;
+  padding: 3px 7px;
 }
 .workspace {
   display: grid;
@@ -770,7 +817,10 @@ button:disabled {
     display: none;
   }
   .account {
-    gap: 12px;
+    gap: 8px;
+  }
+  .account > span {
+    display: none;
   }
   .account button {
     padding-left: 12px;

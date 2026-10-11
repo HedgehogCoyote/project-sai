@@ -44,7 +44,11 @@ npx playwright test --config playwright.cottage.config.ts
 
 E2E는 모의 API로 요청 계약과 화면을 검사합니다. 실제 DB 통합 검증을 대신하지 않으며, 3D 검사에서는 소프트웨어 WebGL을 사용합니다. 실제 모바일 GPU 성능은 별도 확인이 필요합니다. 3D 엔진은 지연 로딩하며 Vite의 번들 크기 경고가 남아 있습니다.
 
-## 독립 목업
+## 받은 초대함
+
+헤더의 받은 초대에서 대기 중·처리 완료 초대를 조회하고 수락·거절합니다. 수락 후 공간 목록에서 참여를 확인한 뒤 직접 공간으로 이동합니다. 처리 결과가 불명확하면 서버 상태부터 확인하며 자동 재전송하지 않습니다. [동작·검증·제한](../docs/architecture/invitation-inbox.md), [구현 전 시안](../docs/mockups/invitation-inbox/design.md)을 참고하세요.
+
+## 독립 목업 실행
 
 저장소 루트에서 실행합니다. Python이 필요합니다.
 
