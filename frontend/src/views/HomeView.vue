@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLogo from '@/components/AppLogo.vue'
+import UserInvitation from '@/components/UserInvitation.vue'
 import SpaceContent from '@/features/content/SpaceContent.vue'
 import { ApiError } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
@@ -15,32 +16,15 @@ const contentView = ref<{ canLeave: () => boolean } | null>(null)
 const createOpen = ref(false)
 const createDialog = ref<HTMLDialogElement | null>(null)
 const newSpaceTitle = ref('')
-const inviteeUserId = ref<number | null>(null)
 const pageError = ref('')
 const createError = ref('')
-const inviteError = ref('')
-const inviteSuccess = ref('')
 const selectedSpace = computed(() =>
   spacesStore.spaces.find((space) => String(space.spaceId) === route.query.space),
 )
 
-const canInvite = computed(
-  () =>
-    !!selectedSpace.value &&
-    Number.isSafeInteger(inviteeUserId.value) &&
-    Number(inviteeUserId.value) > 0,
-)
 function roleLabel(role: SpaceRole) {
   return { OWNER: '소유자', MANAGER: '관리자', MEMBER: '멤버' }[role]
 }
-watch(
-  () => selectedSpace.value?.spaceId,
-  () => {
-    inviteeUserId.value = null
-    inviteError.value = ''
-    inviteSuccess.value = ''
-  },
-)
 watch(createOpen, async (open) => {
   if (open) {
     await nextTick()
@@ -95,28 +79,6 @@ async function submitCreate() {
     await navigate(id)
   } catch (error) {
     createError.value = await handleApiError(error, '공간을 만들지 못했습니다.')
-  }
-}
-async function submitInvitation() {
-  if (spacesStore.inviting) return
-  inviteError.value = ''
-  inviteSuccess.value = ''
-  if (!canInvite.value || !selectedSpace.value || inviteeUserId.value === null) {
-    inviteError.value = '초대할 사용자 ID를 양의 정수로 입력해 주세요.'
-    return
-  }
-  const spaceId = selectedSpace.value.spaceId
-  const userId = inviteeUserId.value
-  try {
-    await spacesStore.inviteUser(spaceId, userId)
-    // 뒤로 가기로 공간을 바꿨다면 이전 공간의 결과를 표시하지 않는다.
-    if (selectedSpace.value?.spaceId === spaceId) {
-      inviteSuccess.value = `${userId}번 사용자에게 초대를 보냈습니다.`
-      inviteeUserId.value = null
-    }
-  } catch (error) {
-    const message = await handleApiError(error, '초대를 보내지 못했습니다.')
-    if (selectedSpace.value?.spaceId === spaceId) inviteError.value = message
   }
 }
 async function logout() {
@@ -287,54 +249,7 @@ onMounted(loadSpaces)
           :blocked="spacesStore.inviting"
         >
           <template #invitation>
-            <section aria-labelledby="invitation-title">
-              <h2 id="invitation-title">사용자 초대</h2>
-              <p class="description">현재 공간에 함께할 사용자를 초대합니다.</p>
-              <form class="invitation-form" @submit.prevent="submitInvitation">
-                <div class="field">
-                  <span class="field-label">초대할 공간</span>
-                  <div class="fixed-space">
-                    <strong>{{ selectedSpace.title }}</strong
-                    ><span>ID {{ selectedSpace.spaceId }}</span>
-                  </div>
-                  <p class="field-hint">초대할 공간을 바꾸려면 왼쪽에서 다른 공간을 선택하세요.</p>
-                </div>
-                <div class="field">
-                  <label for="inviteeUserId">사용자 ID</label
-                  ><input
-                    id="inviteeUserId"
-                    v-model.number="inviteeUserId"
-                    type="number"
-                    min="1"
-                    step="1"
-                    placeholder="예: 24"
-                    required
-                    :disabled="spacesStore.inviting"
-                  />
-                  <p class="field-hint">로그인 아이디가 아닌 숫자 사용자 ID를 입력하세요.</p>
-                </div>
-                <button
-                  class="primary-button invitation-submit"
-                  type="submit"
-                  :disabled="!canInvite || spacesStore.inviting"
-                >
-                  {{ spacesStore.inviting ? '초대 중...' : '초대 보내기' }}
-                </button>
-                <p v-if="spacesStore.inviting" class="field-hint" role="status">
-                  초대를 보내고 있습니다. 잠시 기다려 주세요.
-                </p>
-                <p v-if="inviteError" class="status-message status-message--error" role="alert">
-                  {{ inviteError }}
-                </p>
-                <p
-                  v-if="inviteSuccess"
-                  class="status-message status-message--success"
-                  role="status"
-                >
-                  {{ inviteSuccess }}
-                </p>
-              </form>
-            </section>
+            <UserInvitation :space="selectedSpace" @session-expired="handleApiError($event, '로그인이 만료되었습니다.')" />
           </template>
         </SpaceContent>
       </main>
