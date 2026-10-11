@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
+import { mockRoomApi } from './room-fixture'
 
 const menu = (page: Page) => page.getByRole('navigation', { name: '현재 공간 메뉴' })
 const tab = async (page: Page, name: string) =>
@@ -15,6 +16,7 @@ async function trip(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
+  await mockRoomApi(page)
   await page.route('**/api/auth/me', (route) =>
     route.fulfill({
       json: {

@@ -26,6 +26,8 @@ import {
 } from './logic'
 import { useContent } from './useContent'
 import RoomBoard from '@/features/room/RoomBoard.vue'
+import type { ApiError } from '@/services/api'
+const emit = defineEmits<{ sessionExpired: [error: ApiError] }>()
 const roomBoard = ref<{ canLeave: () => boolean } | null>(null)
 
 const props = defineProps<{
@@ -738,7 +740,7 @@ function putPlaceInSchedule(id: string) {
       </button>
     </nav>
     <div class="demo-banner">
-      체험 데이터 · 새 세부 기능은 이 브라우저에만 저장됩니다. 다른 기기나 사용자와 공유되지
+      체험 데이터 · 도구의 내용은 이 브라우저에만 저장됩니다. 다른 기기나 사용자와 공유되지
       않습니다.
     </div>
     <div v-if="readOnly" class="archive-banner" role="status">
@@ -769,6 +771,7 @@ function putPlaceInSchedule(id: string) {
           ref="roomBoard"
           :owner="account.loginId"
           :space-id="space.spaceId"
+          :role="space.role"
           :modules="data.modules"
           :activities="data.activities"
           :blocked="busy"
@@ -776,6 +779,7 @@ function putPlaceInSchedule(id: string) {
           @invite="go('invite')"
           @create-event="openForm('activity')"
           @modules="go('modules')"
+          @session-expired="emit('sessionExpired', $event)"
         />
       </section>
       <section v-else-if="tab === 'home'" aria-label="홈 요약">

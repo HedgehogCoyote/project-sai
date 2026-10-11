@@ -1,7 +1,8 @@
 # 공간 맵 JSON 저장 API
 
 2026-10-10 구현. 공간별 맵 요소를 PostgreSQL `space_room.layout`의 JSONB로 저장한다.
-이번 범위는 백엔드 API다. Vue 방 편집 화면은 아직 기존 localStorage를 사용하며 이 API를 호출하지 않는다.
+최초 구현 범위는 백엔드 API였으며, 2026-10-11 Vue 방 편집 화면의 [서버 연동](room-server-sync.md)을 추가했다.
+활동 연결과 콘텐츠·개인 설정은 여전히 로컬이다. API 계약은 그대로 유지한다.
 
 ## API 계약
 

@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
+import { mockRoomApi } from './room-fixture'
 
 test.beforeEach(async ({ page }) => {
+  await mockRoomApi(page, true)
   await page.route('**/api/auth/me', (r) =>
     r.fulfill({
       json: {
@@ -15,7 +17,7 @@ test.beforeEach(async ({ page }) => {
     r.fulfill({
       json: [
         { spaceId: 1, title: '우리 방', role: 'OWNER', spaceMemberCount: 4 },
-        { spaceId: 2, title: '두 번째 방', role: 'MEMBER', spaceMemberCount: 2 },
+        { spaceId: 2, title: '두 번째 방', role: 'MANAGER', spaceMemberCount: 2 },
       ],
     }),
   )
@@ -31,6 +33,7 @@ test('3D furniture rotation persists per space, links to tools, and retains canc
   await page.getByRole('button', { name: '↻ 90° 회전', exact: true }).click()
   await expect(page.getByText('차지하는 격자 · 2 × 3칸')).toBeVisible()
   await page.getByRole('button', { name: '배치 저장', exact: true }).click()
+  await expect(page.getByText('배치를 저장했어요. 공간 멤버와 같은 배치를 볼 수 있어요.')).toBeVisible()
   await page.reload()
   await page.getByRole('button', { name: '방 꾸미기', exact: true }).click()
   await page.getByRole('button', { name: '소파 할 일', exact: true }).click()

@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test'
+import { mockRoomApi } from './room-fixture'
+
+test.beforeEach(async ({ page }) => {
+  await mockRoomApi(page)
+})
 
 test('shows the SAI login experience', async ({ page }) => {
   await page.goto('/login')
@@ -118,7 +123,9 @@ test('invites a user with the backend invitation payload', async ({ page }) => {
     expect(route.request().postDataJSON()).toEqual({ spaceId: 3, inviteeUserId: 12 })
     await route.fulfill({ status: 201, json: 7 })
   })
-  await page.route('**/api/users/search?*', (route) => route.fulfill({ json: [{ userId: 12, loginId: 'invitee12', name: '초대 대상' }] }))
+  await page.route('**/api/users/search?*', (route) =>
+    route.fulfill({ json: [{ userId: 12, loginId: 'invitee12', name: '초대 대상' }] }),
+  )
 
   await page.goto('/spaces')
   await page.getByRole('button', { name: '초대할 공간 들어가기' }).click()
@@ -157,7 +164,9 @@ test('keeps invitation input and results scoped to the selected space', async ({
     expect(route.request().postDataJSON()).toEqual({ spaceId: 2, inviteeUserId: 24 })
     await route.fulfill({ status: 400, json: { message: '이미 참여 중인 사용자입니다.' } })
   })
-  await page.route('**/api/users/search?*', (route) => route.fulfill({ json: [{ userId: 24, loginId: 'invitee24', name: '초대 대상' }] }))
+  await page.route('**/api/users/search?*', (route) =>
+    route.fulfill({ json: [{ userId: 24, loginId: 'invitee24', name: '초대 대상' }] }),
+  )
   await page.goto('/spaces')
   await expect(page.getByRole('navigation', { name: '현재 공간 메뉴' })).toBeHidden()
   await page.getByRole('button', { name: '첫 공간 들어가기' }).click()

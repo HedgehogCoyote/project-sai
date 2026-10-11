@@ -21,7 +21,7 @@ npm run dev
 - 이벤트·기록·일반 할 일·달력·여행 일정·장소·준비물·정산·투표: 계정·공간별 브라우저 저장.
 - 반복 할 일·Foot Print는 현재 범위에서 제외합니다.
 
-가구와 세부 도구는 아직 다른 멤버·기기에 동기화되지 않습니다. 받은 초대함과 멤버 관리는 후속 범위입니다. [사용자 검색 구현](../docs/architecture/user-search.md), [저장 구조와 렌더링](src/features/room/README.md), [전체 실행·API 설명](../README.md)을 참고하세요.
+가구 배치는 공간 맵 API에 저장되어 같은 공간의 멤버가 재조회할 수 있습니다. OWNER/MANAGER만 수정합니다. 도구의 내용·활동 연결·낮/저녁 설정은 아직 브라우저 로컬입니다. 실시간 동기화와 받은 초대함·멤버 관리는 후속 범위입니다. [맵 서버 연동](../docs/architecture/room-server-sync.md), [사용자 검색 구현](../docs/architecture/user-search.md), [저장 구조와 렌더링](src/features/room/README.md), [전체 실행·API 설명](../README.md)을 참고하세요.
 
 ## 검증
 

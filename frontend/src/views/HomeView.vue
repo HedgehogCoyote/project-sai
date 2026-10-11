@@ -247,9 +247,13 @@ onMounted(loadSpaces)
           :space="selectedSpace"
           :account="{ loginId: auth.user?.loginId ?? '', name: auth.user?.name ?? '나' }"
           :blocked="spacesStore.inviting"
+          @session-expired="handleApiError($event, '로그인이 만료되었습니다.')"
         >
           <template #invitation>
-            <UserInvitation :space="selectedSpace" @session-expired="handleApiError($event, '로그인이 만료되었습니다.')" />
+            <UserInvitation
+              :space="selectedSpace"
+              @session-expired="handleApiError($event, '로그인이 만료되었습니다.')"
+            />
           </template>
         </SpaceContent>
       </main>

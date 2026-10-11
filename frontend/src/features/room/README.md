@@ -2,7 +2,7 @@
 
 `RoomBoard.vue` manages account/space-specific furniture, grid placement, rotation, tool bindings and day/evening selection. `RoomCanvas.vue` loads `engine.js` only when the space room is opened. Three.js and the GLTF loader are compiled by Vite; public GLB models are resolved using Vite's configured base URL.
 
-No backend endpoints are added. Authentication, space creation and invitations use the existing API. Furniture is stored at `sai:room:v1:<encoded-loginId>:<spaceId>` in localStorage, separate from content and the standalone mock. Mock example accounts and furniture are not migrated into real accounts. Failed saves keep the editing draft. Unsaved changes use the existing route/logout confirmation flow.
+Furniture uses the existing GET/PUT `/api/spaces/{spaceId}/room` API. OWNER/MANAGER may edit; MEMBER may view. Empty rooms stay empty. Old `sai:room:v1:<encoded-loginId>:<spaceId>` layouts can be explicitly imported into a draft; they are never uploaded automatically or deleted. Private activity bindings use account/space/furniture-scoped `sai:room-bindings:v1` storage. A write-ahead `sai:room-draft:v1` record preserves private bindings across interrupted saves; discarded conflict drafts are archived under `:backup:<uuid>` keys. These archived drafts can currently be inspected in browser storage, without a history-picker UI. Day/evening remains local. Failed saves keep drafts; 409 blocks saving and supports latest-layout inspection, with confirmation and backup before starting fresh. Unsaved changes use the existing route/logout confirmation flow, and navigation is blocked while saving. See [server integration](../../../../docs/architecture/room-server-sync.md).
 
 Tools and events use the existing content repository and routes. Furniture can bind to an installed space tool, an event's installed tool, or the event list. Missing tool bindings do not discard content and prompt the user to add the tool. Recurring tasks and Foot Print are not introduced.
 
@@ -16,7 +16,7 @@ Tools and events use the existing content repository and routes. Furniture can b
 
 ## Verification
 
-Type check and production build passed. 18 unit tests passed. Chromium API-contract/content/3D integration tests passed using stubbed API responses; this does not verify a running backend. 3D tests cover dragging, collision/boundary rejection, rotation and reload persistence, cancelled drafts, space isolation and furniture-to-event-tool routing. The extra room test checks desktop/mobile-width layouts. Actual mobile GPU performance and multi-user synchronization are not tested.
+2026-10-11: Type check/build and 24 unit tests passed. The complete Chromium suite passed 46 tests using stubbed API responses, including room permissions, import, conflicts, interrupted-save recovery and desktop/mobile layouts. Backend tests passed 58 cases, including two real HTTP cookie sessions with PostgreSQL for signup/search/invite/join/shared-room read, MEMBER write denial and stale-version conflicts. This is not a live Vue-to-server browser E2E. Actual mobile GPU performance and real-time synchronization are not tested. See [verification evidence](../../../../docs/architecture/room-server-sync.md).
 
 The engine is a lazy chunk (~607 kB minified, ~157 kB gzip), excluded from the initial login/landing load. Three.js size currently causes Vite's generic 500 kB chunk warning.
 

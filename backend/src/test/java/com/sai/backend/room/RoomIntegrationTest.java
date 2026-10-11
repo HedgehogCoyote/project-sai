@@ -5,6 +5,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.sql.DriverManager;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Map;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -17,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,7 +42,7 @@ import com.sai.backend.room.service.RoomService;
 
 import tools.jackson.databind.json.JsonMapper;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class RoomIntegrationTest {
     // Isolate all migrations and fixtures from the developer's application tables.
@@ -64,6 +73,7 @@ class RoomIntegrationTest {
     @Autowired JdbcTemplate jdbc;
     @Autowired MockMvc mvc;
     @Autowired RoomService service;
+    @LocalServerPort int port;
     Long owner, manager, member, outsider, space;
 
     @BeforeEach
@@ -91,6 +101,53 @@ class RoomIntegrationTest {
 
     private String body(long version, RoomLayout layout) {
         return JSON.writeValueAsString(new SaveRoomRequest(version, layout));
+    }
+
+    private HttpResponse<String> http(HttpClient client, String method, String path, Object payload) throws Exception {
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
+                .timeout(Duration.ofSeconds(10)).header("Content-Type", "application/json")
+                .method(method, payload == null ? HttpRequest.BodyPublishers.noBody()
+                        : HttpRequest.BodyPublishers.ofString(JSON.writeValueAsString(payload))).build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpClient browserSession() {
+        return HttpClient.newBuilder().cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL)).build();
+    }
+
+    @Test
+    void realHttpSessionsSearchInviteJoinAndShareRoom() throws Exception {
+        var first = browserSession(); var second = browserSession();
+        String suffix = UUID.randomUUID().toString().substring(0, 8);
+        String firstLogin = "owner" + suffix, secondLogin = "member" + suffix;
+        String password = "Test-password-123";
+        long secondId = 0;
+        for (var entry : Map.of(firstLogin, first, secondLogin, second).entrySet()) {
+            var signup = http(entry.getValue(), "POST", "/api/auth/signup", Map.of("name", "HTTP test",
+                    "loginId", entry.getKey(), "password", password, "phoneNumber", "010-1234-5678", "email", entry.getKey() + "@example.invalid"));
+            assertEquals(201, signup.statusCode(), signup.body());
+            if (entry.getKey().equals(secondLogin)) secondId = Long.parseLong(signup.body());
+            assertEquals(202, http(entry.getValue(), "POST", "/api/auth/login", Map.of("loginId", entry.getKey(), "password", password)).statusCode());
+        }
+        var created = http(first, "POST", "/api/spaces", Map.of("title", "HTTP shared room"));
+        assertEquals(201, created.statusCode(), created.body());
+        long spaceId = JSON.readTree(created.body()).get("spaceId").asLong();
+        var search = http(first, "GET", "/api/users/search?loginId=" + secondLogin, null);
+        assertEquals(200, search.statusCode());
+        assertEquals(secondId, JSON.readTree(search.body()).get(0).get("userId").asLong());
+        var invited = http(first, "POST", "/api/invitations", Map.of("spaceId", spaceId, "inviteeUserId", secondId));
+        assertEquals(201, invited.statusCode(), invited.body());
+        var joined = http(second, "POST", "/api/invitations/join", Map.of("invitationId", Long.parseLong(invited.body())));
+        assertEquals(201, joined.statusCode(), joined.body());
+        String endpoint = "/api/spaces/" + spaceId + "/room";
+        var saved = http(first, "PUT", endpoint, new SaveRoomRequest(0L, layout()));
+        assertEquals(200, saved.statusCode(), saved.body());
+        var shared = http(second, "GET", endpoint, null);
+        assertEquals(200, shared.statusCode());
+        assertEquals(JSON.readTree(saved.body()), JSON.readTree(shared.body()));
+        assertEquals(403, http(second, "PUT", endpoint, new SaveRoomRequest(1L, RoomLayout.empty())).statusCode());
+        assertEquals(409, http(first, "PUT", endpoint, new SaveRoomRequest(0L, RoomLayout.empty())).statusCode());
+        assertEquals(JSON.readTree(saved.body()), JSON.readTree(http(first, "GET", endpoint, null).body()));
     }
 
     @Test
