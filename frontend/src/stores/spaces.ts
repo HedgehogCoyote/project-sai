@@ -21,7 +21,12 @@ export const useSpacesStore = defineStore('spaces', () => {
 
   const hasSpaces = computed(() => spaces.value.length > 0)
 
-  async function fetchMySpaces() {
+  /** `silent` refreshes titles and roles without swapping the open space for a loading screen. */
+  async function fetchMySpaces(silent = false) {
+    if (silent) {
+      spaces.value = await apiRequest<ParticipatingSpace[]>('/api/spaces/my')
+      return
+    }
     loading.value = true
     try {
       spaces.value = await apiRequest<ParticipatingSpace[]>('/api/spaces/my')

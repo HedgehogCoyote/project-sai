@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import type { Furniture } from './model'
+import type { RoomSouvenir } from './engine'
 const props = defineProps<{
   items: Furniture[]
   editing: boolean
   selected: string | null
   time: 'day' | 'evening'
   gridVisible: boolean
+  souvenirs?: RoomSouvenir[]
+  colors?: { primary: string; secondary: string } | null
+  badges?: Record<string, number>
 }>()
 const emit = defineEmits<{
   select: [id: string]
@@ -37,7 +41,7 @@ onMounted(async () => {
   }
 })
 watch(
-  () => [props.items, props.editing, props.selected, props.time, props.gridVisible],
+  () => [props.items, props.editing, props.selected, props.time, props.gridVisible, props.souvenirs, props.colors, props.badges],
   () => {
     engine?.update().catch(() => {
       error.value = '방을 표시하지 못했어요. 다시 열어주세요.'
@@ -83,6 +87,23 @@ onBeforeUnmount(() => {
   touch-action: none;
   cursor: pointer;
   color: #5b4358;
+}
+.three-object-label.souvenir {
+  background: #fff8ee;
+  border-color: #d9b98f;
+}
+.three-object-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  margin-left: 5px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #b0526f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
 }
 .three-object-label.decorative {
   padding: 3px 7px;

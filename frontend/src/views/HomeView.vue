@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppLogo from '@/components/AppLogo.vue'
 import UserInvitation from '@/components/UserInvitation.vue'
@@ -9,6 +9,9 @@ import SpaceContent from '@/features/content/SpaceContent.vue'
 import { ApiError } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
 import { useSpacesStore, type SpaceRole } from '@/stores/spaces'
+import NotificationsPanel from '@/components/workspace/NotificationsPanel.vue'
+import AccountSettings from '@/components/workspace/AccountSettings.vue'
+import { api, type Overview } from '@/services/workspace'
 
 const auth = useAuthStore()
 const spacesStore = useSpacesStore()
@@ -22,6 +25,36 @@ const newSpaceTitle = ref('')
 const pageError = ref('')
 const createError = ref('')
 const inboxOpen = computed(() => route.query.panel === 'invitations')
+const panel = computed(() => (typeof route.query.panel === 'string' ? route.query.panel : ''))
+const overview = ref<Overview[]>([])
+const overviewOf = (spaceId: number) => overview.value.find((o) => o.spaceId === spaceId)
+const unreadTotal = computed(() => overview.value.reduce((a, o) => a + o.unread, 0))
+async function loadOverview() {
+  try {
+    overview.value = await api.overview()
+  } catch {
+    // Colours and badges are extras; an expired session is handled by the main requests.
+  }
+}
+let poll: ReturnType<typeof setInterval> | undefined
+onMounted(() => {
+  void loadOverview()
+  // New activity from other members shows up without a reload.
+  poll = setInterval(() => void loadOverview(), 60_000)
+})
+onBeforeUnmount(() => clearInterval(poll))
+async function openPanel(name: string) {
+  if (blocked.value) return
+  await router.push({ name: 'home', query: { panel: name } })
+}
+async function openFromNotification(spaceId: number, module: string | null) {
+  await router.push({ name: 'home', query: { space: String(spaceId), ...(module && module !== 'activities' ? { view: module } : module === 'activities' ? { view: 'activities' } : {}) } })
+}
+async function spaceLeft() {
+  await loadSpaces()
+  await loadOverview()
+  await router.push({ name: 'home' })
+}
 const blocked = computed(() => spacesStore.inviting || inbox.processing !== null)
 const selectedSpace = computed(() =>
   spacesStore.spaces.find((space) => String(space.spaceId) === route.query.space),
@@ -140,14 +173,18 @@ async function openInbox() {
             inbox.pendingCount
           }}</span>
         </button>
-        <span>{{ auth.user?.name }} 님</span
+        <button class="inbox-entry" type="button" :disabled="blocked" @click="openPanel('notifications')">
+          알림
+          <span v-if="unreadTotal" class="inbox-badge">{{ unreadTotal }}</span>
+        </button>
+        <button class="account-entry" type="button" :disabled="blocked" @click="openPanel('account')">{{ auth.user?.name }} 님</button
         ><button type="button" :disabled="auth.pending || blocked" @click="logout">
           {{ auth.pending ? '로그아웃 중...' : '로그아웃' }}
         </button>
       </div>
     </header>
     <div class="workspace">
-      <aside v-if="selectedSpace && !inboxOpen" class="space-sidebar" aria-label="공간 선택">
+      <aside v-if="selectedSpace && !panel" class="space-sidebar" aria-label="공간 선택">
         <button
           class="space-link"
           :class="{ active: !selectedSpace }"
@@ -188,6 +225,10 @@ async function openInbox() {
           <button type="button" :disabled="blocked" @click="navigate()">내 공간</button
           ><template v-if="inboxOpen"
             ><span aria-hidden="true">/</span><span>받은 초대</span></template
+          ><template v-else-if="panel === 'notifications'"
+            ><span aria-hidden="true">/</span><span>알림</span></template
+          ><template v-else-if="panel === 'account'"
+            ><span aria-hidden="true">/</span><span>내 계정</span></template
           ><template v-else-if="selectedSpace"
             ><span aria-hidden="true">/</span><span>{{ selectedSpace.title }}</span></template
           >
@@ -196,6 +237,12 @@ async function openInbox() {
           {{ pageError }} <button type="button" @click="loadSpaces">다시 시도</button>
         </p>
         <InvitationInbox v-if="inboxOpen" @navigate="navigate" />
+        <NotificationsPanel
+          v-else-if="panel === 'notifications'"
+          @navigate="openFromNotification"
+          @session-expired="handleApiError($event, '로그인이 만료되었습니다.')"
+        />
+        <AccountSettings v-else-if="panel === 'account'" />
         <div v-else-if="spacesStore.loading" class="loading-state" role="status">
           공간을 불러오는 중...
         </div>
@@ -251,7 +298,14 @@ async function openInbox() {
                     <path d="M177 43L198 43L194 61L181 61Z" fill="#e6cfb3" />
                   </svg>
                 </div>
-                <h2>{{ space.title }}</h2>
+                <h2>
+                  <svg v-if="overviewOf(space.spaceId)" class="ws-mark" viewBox="0 0 72 54" aria-hidden="true">
+                    <circle cx="24" cy="27" r="20" :fill="overviewOf(space.spaceId)!.colorPrimary" />
+                    <circle cx="48" cy="27" r="20" :fill="overviewOf(space.spaceId)!.colorSecondary" style="mix-blend-mode: multiply" />
+                  </svg>
+                  {{ space.title }}
+                  <span v-if="overviewOf(space.spaceId)?.unread" class="ws-count" :aria-label="`새 소식 ${overviewOf(space.spaceId)!.unread}개`">{{ overviewOf(space.spaceId)!.unread }}</span>
+                </h2>
                 <p class="space-id">공간 ID {{ space.spaceId }}</p>
               </div>
               <span role="cell"
@@ -279,9 +333,14 @@ async function openInbox() {
           v-else
           :key="`${auth.user?.loginId}:${selectedSpace.spaceId}`"
           :space="selectedSpace"
-          :account="{ loginId: auth.user?.loginId ?? '', name: auth.user?.name ?? '나' }"
+          :account="{ loginId: auth.user?.loginId ?? '', name: auth.user?.name ?? '나', userId: auth.user?.userId }"
           :blocked="blocked"
+          :unread-modules="overviewOf(selectedSpace.spaceId)?.modules"
+          :colors="overviewOf(selectedSpace.spaceId) ? { primary: overviewOf(selectedSpace.spaceId)!.colorPrimary, secondary: overviewOf(selectedSpace.spaceId)!.colorSecondary } : null"
           @session-expired="handleApiError($event, '로그인이 만료되었습니다.')"
+          @space-changed="(spacesStore.fetchMySpaces(true).catch(() => undefined), loadOverview())"
+          @left="spaceLeft"
+          @seen="loadOverview"
         >
           <template #invitation>
             <UserInvitation

@@ -4,6 +4,7 @@ import { ApiError, apiRequest } from '@/services/api'
 import type { SpaceRole } from '@/stores/spaces'
 import { RoomLocalData, fromLayout, readResponse, toLayout, type RoomResponse } from './server'
 import RoomCanvas from './RoomCanvas.vue'
+import type { RoomSouvenir } from './engine'
 import { MODULES, type Activity, type ModuleId } from '@/features/content/types'
 import {
   createFurniture,
@@ -21,9 +22,13 @@ const props = defineProps<{
   modules: ModuleId[]
   activities: Activity[]
   blocked: boolean
+  souvenirs?: (RoomSouvenir & { eventId: string })[]
+  colors?: { primary: string; secondary: string } | null
+  badges?: Record<string, number>
 }>()
 const emit = defineEmits<{
   open: [view: string, event: string | null]
+  openSouvenir: [eventId: string]
   invite: []
   createEvent: []
   modules: []
@@ -380,6 +385,11 @@ function target() {
 }
 function open(id: string) {
   if (props.blocked || editing.value || loading.value || saving.value) return
+  if (id.startsWith('souvenir:')) {
+    const souvenir = props.souvenirs?.find((s) => 'souvenir:' + s.id === id)
+    if (souvenir) emit('openSouvenir', souvenir.eventId)
+    return
+  }
   const o = items.value.find((o) => o.id === id)
   if (!o?.module) {
     message.value = '장식 가구예요. 방 꾸미기에서 기능을 연결할 수 있어요.'
@@ -500,6 +510,9 @@ function open(id: string) {
           :selected="selected"
           :time="time"
           :grid-visible="gridVisible"
+          :souvenirs="souvenirs"
+          :colors="colors"
+          :badges="badges"
           @select="selected = $event"
           @move="move"
           @open="open"

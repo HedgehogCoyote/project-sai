@@ -2,8 +2,9 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { ApiError, apiRequest } from '@/services/api'
 
-export type User = { email: string; name: string; phoneNumber: string; loginId: string }
-export type SignupPayload = User & { password: string }
+export type User = { email: string; name: string; phoneNumber: string; loginId: string; userId?: number }
+export type SignupFields = Omit<User, 'userId'>
+export type SignupPayload = SignupFields & { password: string }
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)

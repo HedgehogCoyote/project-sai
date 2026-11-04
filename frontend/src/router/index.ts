@@ -23,6 +23,7 @@ const router = createRouter({
       component: () => import('@/views/SignupView.vue'),
       meta: { guest: true },
     },
+    { path: '/invite/:token', name: 'join', component: () => import('@/views/JoinView.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })

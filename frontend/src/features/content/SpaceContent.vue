@@ -25,23 +25,98 @@ import {
   validatePoll,
 } from './logic'
 import { useContent } from './useContent'
+import { ServerContentRepository } from './serverRepository'
+import FootPrintPanel from './FootPrintPanel.vue'
+import SpaceMembers from '@/components/workspace/SpaceMembers.vue'
+import SpaceSettings from '@/components/workspace/SpaceSettings.vue'
+import SpaceNotices from '@/components/workspace/SpaceNotices.vue'
+import SpaceNews from '@/components/workspace/SpaceNews.vue'
+import PhotoAlbum from '@/components/workspace/PhotoAlbum.vue'
+import CommentThread from '@/components/workspace/CommentThread.vue'
+import { api, fileUrl, type Post } from '@/services/workspace'
 import RoomBoard from '@/features/room/RoomBoard.vue'
 import type { ApiError } from '@/services/api'
-const emit = defineEmits<{ sessionExpired: [error: ApiError] }>()
+const emit = defineEmits<{ sessionExpired: [error: ApiError]; spaceChanged: []; left: []; seen: [] }>()
 const roomBoard = ref<{ canLeave: () => boolean } | null>(null)
 
 const props = defineProps<{
   space: ParticipatingSpace
-  account: { loginId: string; name: string }
+  account: { loginId: string; name: string; userId?: number }
   blocked: boolean
+  unreadModules?: Record<string, number>
+  colors?: { primary: string; secondary: string } | null
 }>()
 const route = useRoute(),
   router = useRouter()
-const { data, loading, saving, error, notice, load, commit } = useContent(
+// Signed-in accounts share content with every member through the server; the browser
+// store remains only for the standalone demo and for importing older local data.
+const serverRepo = props.account.userId ? new ServerContentRepository(props.space.spaceId, props.account.userId) : null
+const { data, loading, saving, error, notice, shared, load, commit, refresh } = useContent(
   props.account.loginId,
   props.space.spaceId,
   props.account.name,
+  serverRepo ?? undefined,
 )
+const canModerate = computed(() => props.space.role !== 'MEMBER')
+const localDraft = ref(serverRepo?.localDraft(props.account.loginId) ?? null)
+const importable = computed(
+  () =>
+    shared &&
+    !!localDraft.value &&
+    !!data.value &&
+    !data.value.activities.length &&
+    !data.value.records.length &&
+    !data.value.tasks.length,
+)
+async function importLocal() {
+  const draft = localDraft.value
+  if (!draft) return
+  if (
+    await commit((next) => {
+      const keep = next.members
+      Object.assign(next, draft, { members: [...keep, ...draft.members.filter((m) => m.example)] })
+    })
+  )
+    localDraft.value = null
+}
+// Shared spaces pick up other members' changes every 45 seconds and when the tab regains focus.
+let syncTimer: ReturnType<typeof setInterval> | undefined
+const syncNow = () => {
+  if (!formKind.value && document.visibilityState === 'visible') void refresh()
+}
+onMounted(() => {
+  if (!shared) return
+  syncTimer = setInterval(syncNow, 45_000)
+  document.addEventListener('visibilitychange', syncNow)
+})
+onBeforeUnmount(() => {
+  clearInterval(syncTimer)
+  document.removeEventListener('visibilitychange', syncNow)
+})
+const pinnedNotice = ref<Post | null>(null)
+onMounted(async () => {
+  if (!shared) return
+  try {
+    pinnedNotice.value = (await api.notices(props.space.spaceId)).find((n) => n.pinned) ?? null
+    await api.seen(props.space.spaceId)
+    emit('seen')
+  } catch {
+    /* the space view still works without notices */
+  }
+})
+const roomSouvenirs = computed(() =>
+  (data.value?.footprints ?? [])
+    .filter((f) => f.status === 'published' && f.souvenir)
+    .sort((a, b) => a.publishedAt.localeCompare(b.publishedAt))
+    .map((f) => ({
+      id: f.id,
+      eventId: f.eventId,
+      kind: f.souvenir!.kind,
+      title: f.title,
+      photoUrl: f.souvenir!.photoId ? fileUrl(`/api/spaces/${props.space.spaceId}/photos/${f.souvenir!.photoId}/file`) : null,
+    })),
+)
+const footprint = computed(() => data.value?.footprints?.find((f) => f.eventId === activity.value?.id))
 const eventId = computed(() => (typeof route.query.event === 'string' ? route.query.event : null))
 const activity = computed(() => data.value?.activities.find((a) => a.id === eventId.value))
 const missingActivity = computed(() => !!eventId.value && !!data.value && !activity.value)
@@ -50,6 +125,13 @@ const busy = computed(() => saving.value || props.blocked)
 const installed = computed(() => activity.value?.modules ?? data.value?.modules ?? [])
 const tabs = computed(() => [
   { id: 'home', label: activity.value ? '활동 홈' : '공간 홈' },
+  ...(shared && !activity.value
+    ? [
+        { id: 'news', label: '소식' },
+        { id: 'notices', label: '공지' },
+      ]
+    : []),
+  ...(shared ? [{ id: 'photos', label: activity.value ? '사진' : '사진첩' }] : []),
   ...(!activity.value ? [{ id: 'activities', label: '활동' }] : []),
   ...MODULES.filter((m) => installed.value.includes(m.id)).map((m) => ({
     id: m.id,
@@ -58,7 +140,13 @@ const tabs = computed(() => [
   { id: 'people', label: activity.value ? '참여자' : '사람' },
   ...(!activity.value ? [{ id: 'invite', label: '사용자 초대' }] : []),
   { id: 'modules', label: '기능 추가' },
+  ...(shared && !activity.value ? [{ id: 'settings', label: '설정' }] : []),
 ])
+const tabBadge = (id: string) => {
+  if (activity.value || !props.unreadModules) return 0
+  if (id === 'news') return Object.values(props.unreadModules).reduce((a, b) => a + b, 0)
+  return props.unreadModules[id] ?? 0
+}
 const tab = computed(() =>
   tabs.value.some((t) => t.id === route.query.view) ? String(route.query.view) : 'home',
 )
@@ -736,10 +824,18 @@ function putPlaceInSchedule(id: string) {
         :disabled="busy"
         @click="go(item.id)"
       >
-        {{ item.label }}
+        {{ item.label }}<span v-if="tabBadge(item.id)" class="ws-count tab-count">{{ tabBadge(item.id) }}</span>
       </button>
     </nav>
-    <div class="demo-banner">
+    <div v-if="pinnedNotice && !activity && tab === 'home'" class="ws-card notice pinned">
+      <span class="ws-meta">고정 공지 · {{ pinnedNotice.authorName }}</span>
+      <p class="ws-pre">{{ pinnedNotice.body }}</p>
+    </div>
+    <div v-if="importable" class="archive-banner" role="status">
+      이 브라우저에 예전 체험 데이터가 있습니다. 공간 멤버와 함께 쓰도록 가져올 수 있습니다.
+      <button class="secondary-button" type="button" :disabled="busy" @click="importLocal">가져오기</button>
+    </div>
+    <div v-if="!shared" class="demo-banner">
       체험 데이터 · 도구의 내용은 이 브라우저에만 저장됩니다. 다른 기기나 사용자와 공유되지
       않습니다.
     </div>
@@ -758,7 +854,7 @@ function putPlaceInSchedule(id: string) {
       {{ error }} <button v-if="!data" type="button" @click="load">다시 시도</button>
     </p>
     <p v-if="notice" class="content-notice" role="status">{{ notice }}</p>
-    <p v-if="loading" role="status">체험 데이터를 불러오는 중...</p>
+    <p v-if="loading" role="status">{{ shared ? '공간 내용을 불러오는 중...' : '체험 데이터를 불러오는 중...' }}</p>
     <div v-else-if="missingActivity" class="empty">
       <h2>활동을 찾을 수 없습니다</h2>
       <button class="secondary-button" type="button" @click="go('activities', null)">
@@ -775,7 +871,11 @@ function putPlaceInSchedule(id: string) {
           :modules="data.modules"
           :activities="data.activities"
           :blocked="busy"
+          :souvenirs="roomSouvenirs"
+          :colors="colors"
+          :badges="unreadModules"
           @open="(view, scope) => go(view, scope)"
+          @open-souvenir="(event) => go('home', event)"
           @invite="go('invite')"
           @create-event="openForm('activity')"
           @modules="go('modules')"
@@ -807,7 +907,7 @@ function putPlaceInSchedule(id: string) {
         </div>
         <dl class="summary-stats">
           <div>
-            <dt>{{ activity ? '체험 참여자' : '실제 공간 참여 인원' }}</dt>
+            <dt>{{ activity ? (shared ? '참여자' : '체험 참여자') : '실제 공간 참여 인원' }}</dt>
             <dd>{{ activity ? members.length : space.spaceMemberCount }}명</dd>
           </div>
           <div>
@@ -923,6 +1023,50 @@ function putPlaceInSchedule(id: string) {
             </button>
           </div>
         </section>
+        <template v-if="activity && shared">
+          <FootPrintPanel
+            :space-id="space.spaceId"
+            :activity="activity"
+            :footprint="footprint"
+            :members="data.members"
+            :can-moderate="canModerate"
+            :busy="busy"
+            :read-only="readOnly"
+            :commit="commit"
+            @session-expired="emit('sessionExpired', $event)"
+          />
+          <section class="section">
+            <CommentThread
+              :space-id="space.spaceId"
+              :target="`activities:${activity.id}`"
+              :can-moderate="canModerate"
+              title="활동 이야기"
+              @session-expired="emit('sessionExpired', $event)"
+            />
+          </section>
+        </template>
+      </section>
+      <section v-else-if="tab === 'news'" aria-label="최근 소식">
+        <SpaceNews :space-id="space.spaceId" @seen="emit('seen')" @open="(m) => go(m && tabs.some((t) => t.id === m) ? m : 'home')" @session-expired="emit('sessionExpired', $event)" />
+      </section>
+      <section v-else-if="tab === 'notices'" aria-label="공지">
+        <SpaceNotices :space-id="space.spaceId" :can-manage="canModerate" @session-expired="emit('sessionExpired', $event)" />
+      </section>
+      <section v-else-if="tab === 'photos'" aria-label="사진첩">
+        <PhotoAlbum
+          :space-id="space.spaceId"
+          :event-id="activity?.id ?? null"
+          :can-moderate="canModerate"
+          :activities="data.activities.map((a) => ({ id: a.id, title: a.title }))"
+          :read-only="readOnly"
+          @session-expired="emit('sessionExpired', $event)"
+        />
+      </section>
+      <section v-else-if="tab === 'settings'" aria-label="공간 설정">
+        <SpaceSettings :space-id="space.spaceId" @changed="emit('spaceChanged')" @left="emit('left')" @session-expired="emit('sessionExpired', $event)" />
+      </section>
+      <section v-else-if="tab === 'people' && shared && !activity && account.userId" aria-label="사람">
+        <SpaceMembers :space-id="space.spaceId" :my-user-id="account.userId" :my-role="space.role" @changed="emit('spaceChanged')" @session-expired="emit('sessionExpired', $event)" />
       </section>
       <section v-else-if="tab === 'activities'" aria-label="활동 목록">
         <div class="toolbar">
@@ -950,7 +1094,7 @@ function putPlaceInSchedule(id: string) {
           <span class="badge">{{
             item.archived ? '보관됨' : item.status === 'completed' ? '완료' : '진행 중'
           }}</span
-          ><span>{{ item.participants.length }}명 · 체험 참여자</span
+          ><span>{{ item.participants.length }}명 · {{ shared ? '참여자' : '체험 참여자' }}</span
           ><button class="secondary-button" type="button" @click="go('home', item.id)">
             활동 열기
           </button>
@@ -1492,13 +1636,13 @@ function putPlaceInSchedule(id: string) {
             실제 사용자 초대
           </button>
         </div>
-        <p class="hint">
+        <p v-if="!shared" class="hint">
           실제 멤버 조회 API가 없어 현재 계정과 예시 참여자를 표시합니다. 이 목록은 실제 공간
           인원·권한과 다릅니다.
         </p>
         <div v-for="person in members" :key="person.id" class="list-line">
           <strong>{{ person.name }}</strong
-          ><span>{{ person.example ? '예시 참여자' : '현재 계정 · 체험 사용자' }}</span>
+          ><span>{{ person.example ? '예시 참여자' : shared ? (person.id === 'self' ? '나' : '공간 멤버') : '현재 계정 · 체험 사용자' }}</span>
         </div>
         <p v-if="!members.some((m) => m.id === 'self')" class="hint">
           본인이 활동 참여자에 포함되지 않아 투표할 수 없습니다. 참여자 선택에서 본인을 추가하세요.
@@ -1882,6 +2026,13 @@ function putPlaceInSchedule(id: string) {
   border-bottom-color: var(--navy-900);
   color: var(--navy-900);
   font-weight: 700;
+}
+.tab-count {
+  margin-left: 6px;
+  vertical-align: 1px;
+}
+.pinned {
+  margin: 0 0 18px;
 }
 .demo-banner {
   margin-bottom: 24px;

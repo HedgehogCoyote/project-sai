@@ -1,4 +1,4 @@
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080').replace(/\/$/, '')
+export const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080').replace(/\/$/, '')
 
 export class ApiError extends Error {
   constructor(message: string, public readonly status: number, public readonly code?: string) {
@@ -9,7 +9,8 @@ export class ApiError extends Error {
 
 export async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers)
-  if (options.body) headers.set('Content-Type', 'application/json')
+  // FormData sets its own multipart boundary; only JSON strings get a JSON content type.
+  if (typeof options.body === 'string') headers.set('Content-Type', 'application/json')
 
   let response: Response
   try {

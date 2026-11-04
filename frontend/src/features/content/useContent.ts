@@ -1,6 +1,7 @@
 import { onMounted, ref } from 'vue'
 import type { ContentRepository } from './repository'
 import { BrowserContentRepository } from './repository'
+import { isConflict } from './serverRepository'
 import type { ContentState } from './types'
 
 export function useContent(
@@ -9,6 +10,7 @@ export function useContent(
   name: string,
   repository: ContentRepository = new BrowserContentRepository(),
 ) {
+  const shared = 'shared' in repository && repository.shared === true
   const data = ref<ContentState | null>(null),
     loading = ref(true),
     saving = ref(false),
@@ -31,11 +33,20 @@ export function useContent(
     notice.value = ''
     saving.value = true
     try {
-      const next = JSON.parse(JSON.stringify(data.value)) as ContentState
-      mutate(next)
-      await repository.save(owner, spaceId, next)
-      data.value = next
-      notice.value = '이 브라우저에 저장했습니다.'
+      // A conflict means another member saved first: take their version and re-apply this change.
+      for (let attempt = 0; ; attempt++) {
+        const next = JSON.parse(JSON.stringify(data.value)) as ContentState
+        mutate(next)
+        try {
+          await repository.save(owner, spaceId, next)
+          data.value = next
+          break
+        } catch (e) {
+          if (!shared || !isConflict(e) || attempt >= 2) throw e
+          data.value = await repository.load(owner, spaceId, name)
+        }
+      }
+      notice.value = shared ? '공간 멤버와 함께 저장했습니다.' : '이 브라우저에 저장했습니다.'
       return true
     } catch (e) {
       error.value = e instanceof Error ? e.message : '저장하지 못했습니다. 입력을 유지했습니다.'
@@ -44,6 +55,16 @@ export function useContent(
       saving.value = false
     }
   }
+  /** Pulls other members' changes without a loading screen; skipped while a save is running. */
+  async function refresh() {
+    if (!shared || saving.value || loading.value || !data.value) return
+    try {
+      const next = await repository.load(owner, spaceId, name)
+      if (!saving.value) data.value = next
+    } catch {
+      /* keep the current view; the next save reports real problems */
+    }
+  }
   onMounted(load)
-  return { data, loading, saving, error, notice, load, commit }
+  return { data, loading, saving, error, notice, shared, load, commit, refresh }
 }

@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import AuthLayout from '@/components/AuthLayout.vue'
 import { ApiError } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+// Only same-app paths; an invite link sends people back to /invite/<token> after signup.
+const redirect = computed(() => {
+  const r = route.query.redirect
+  return typeof r === 'string' && r.startsWith('/') && !r.startsWith('//') ? r : '/spaces'
+})
 const showPassword = ref(false)
 const errorMessage = ref('')
 const form = reactive({ name: '', loginId: '', email: '', phoneNumber: '', password: '' })
@@ -24,7 +30,7 @@ async function submit() {
   errorMessage.value = ''
   try {
     await auth.signup({ ...form, loginId: form.loginId.trim(), email: form.email.trim() })
-    await router.replace('/spaces')
+    await router.replace(redirect.value)
   } catch (error) {
     errorMessage.value =
       error instanceof ApiError ? error.message : '회원가입 중 문제가 발생했습니다.'
@@ -107,7 +113,7 @@ async function submit() {
         >{{ auth.pending ? '계정 만드는 중...' : 'SAI 시작하기' }}
       </button>
     </form>
-    <p class="form-switch">이미 계정이 있나요? <RouterLink to="/login">로그인</RouterLink></p>
+    <p class="form-switch">이미 계정이 있나요? <RouterLink :to="{ path: '/login', query: route.query.redirect ? { redirect: redirect } : {} }">로그인</RouterLink></p>
     <p class="auth-footer">© 2026 SAI</p>
   </AuthLayout>
 </template>

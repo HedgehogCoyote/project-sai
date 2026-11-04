@@ -71,6 +71,21 @@ export type Poll = {
   deadline: string
   closed: boolean
 }
+export type FootPrintNote = { id: string; memberId: string; body: string; createdAt: string }
+/** A finished activity's shared record: photos, short notes and the souvenir placed in the room. */
+export type FootPrint = {
+  id: string
+  eventId: string
+  title: string
+  start: string
+  end: string
+  status: 'draft' | 'published'
+  photoIds: number[]
+  coverPhotoId: number | null
+  notes: FootPrintNote[]
+  souvenir: { kind: string; photoId: number | null } | null
+  publishedAt: string
+}
 export type ContentState = {
   version: 1
   members: Member[]
@@ -83,6 +98,7 @@ export type ContentState = {
   packing: PackingItem[]
   expenses: Expense[]
   polls: Poll[]
+  footprints?: FootPrint[]
 }
 export const MODULES: {
   id: ModuleId

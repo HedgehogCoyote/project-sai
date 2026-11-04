@@ -1,8 +1,9 @@
 import * as THREE from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/GLTFLoader.js';
 import {RoundedBoxGeometry} from './vendor/RoundedBoxGeometry.js';
+import {buildSouvenir,mix} from './souvenirMeshes.js';
 export function createRoomRenderer(element,getState,callbacks){
-let editing=false,draft=[],selected=null,cottageTime='evening',gridVisible=true;
+let editing=false,draft=[],selected=null,cottageTime='evening',gridVisible=true,souvenirs=[],spaceColors=null,badges={};
 const kinds={sofa:'소파',desk:'책상',shelf:'선반',plant:'화분',rug:'러그',frame:'액자',cat:'고양이',calendar:'달력'};
 const names={records:'기록',tasks:'할 일',calendar:'공유 일정',itinerary:'여행 일정',places:'장소',packing:'준비물',expenses:'정산',polls:'투표',activities:'이벤트'};
 const footprintsByKind={sofa:[3,2],desk:[2,2],shelf:[2,1],plant:[1,1],cat:[1,1],frame:[1,1],rug:[3,2],calendar:[1,1]};
@@ -32,7 +33,7 @@ function tile(o,color,opacity=.25){const mesh=new THREE.Mesh(new THREE.PlaneGeom
 function updateTiles(){if(!tiles)return;for(const child of [...tiles.children]){child.geometry.dispose();child.material.dispose();tiles.remove(child);}if(editing)for(const o of draft)tiles.add(tile(o,o.id===selected?'#ac84c1':'#b69ea7',o.id===selected?.3:.09));}
 function floorRoom(){const evening=cottageTime==='evening';rounded(scene,8.18,.24,8.18,'#bb9176',4,-.15,4,.08);for(let z=0;z<16;z++)for(let x=0;x<4;x++)rounded(scene,1.99,.08,.495,['#dabb98','#dfc29f','#d5b58f'][(x+z)%3],1+x*2,-.015,.25+z*.5,.008);
   // Two open walls keep all furniture visible from the fixed camera.
-  const wallLeft=evening?'#c5a0b2':'#ead8bf',wallRight=evening?'#b1a4bc':'#c5d1bd';
+  const wallLeft=spaceColors?mix(spaceColors.primary,evening?'#8f7186':'#f6ecdf',evening?.62:.72):evening?'#c5a0b2':'#ead8bf',wallRight=spaceColors?mix(spaceColors.secondary,evening?'#8f7186':'#f3eadf',evening?.5:.78):evening?'#b1a4bc':'#c5d1bd';
   rounded(scene,.16,3.15,8.15,wallLeft,-.08,1.575,4,.03);rounded(scene,8.15,3.15,.16,wallRight,4,1.575,-.08,.03);rounded(scene,.19,.16,8.17,'#b79989',-.06,.12,4,.03);rounded(scene,8.17,.16,.19,'#b79989',4,.12,-.06,.03);
   // Window is a decorative wall panel with a gently lit sky.
   rounded(scene,.12,1.95,2.4,'#d6b391',.035,1.91,5.9,.025);const glass=new THREE.Mesh(new THREE.BoxGeometry(.035,1.71,2.16),new THREE.MeshStandardMaterial({color:evening?'#cfaabd':'#c2d9d1',emissive:evening?'#c7969f':'#b0c9bb',emissiveIntensity:.35,roughness:1}));glass.position.set(.12,1.91,5.9);scene.add(glass);rounded(scene,.08,1.78,.06,'#fff0d5',.15,1.91,5.9,.01);rounded(scene,.08,.06,2.2,'#fff0d5',.15,1.91,5.9,.01);rounded(scene,.35,.12,2.6,'#d9b591',.15,.92,5.9,.025);
@@ -52,7 +53,13 @@ async function mount(){const ticket=++generation;observer?.disconnect();aborter?
   for(const o of room){const group=new THREE.Group();group.userData.objectId=o.id;group.position.set(o.x+o.w/2,0,o.y+o.h/2);group.rotation.y=(o.rotation||0)*Math.PI/2;groups.set(o.id,group);scene.add(group);const quarter=(o.rotation||0)%2,baseW=quarter?o.h:o.w,baseH=quarter?o.w:o.h;
     let h={sofa:1.3,desk:1.25,shelf:2.5,plant:1.65,rug:.06,cat:.65,frame:1,calendar:1}[o.kind]||1;
     if(modelFiles[o.kind])tasks.push(addModel(group,modelFiles[o.kind],baseW*.9,baseH*.85,h).then(async()=>{if(o.kind==='desk'){await addModel(group,'laptop',.65,.45,.4,[0,1.13,-.1]);await addModel(group,'chairDesk',.65,.65,1.1,[0,0,.55]);}if(o.kind==='shelf'){await addModel(group,'books',.9,.3,.4,[0,.65,0]);await addModel(group,'plantSmall1',.5,.4,.5,[.3,2.2,0]);}if(o.kind==='sofa')await addModel(group,'pillow',.5,.35,.45,[.5,.55,0]);}).catch(()=>{if(ticket!==generation)return;rounded(group,baseW*.7,.7,baseH*.7,'#b792a1');toast('일부 가구를 불러오지 못했어요.');}));else if(o.kind==='cat')cat(group);else frame(group,o.kind==='calendar');
-    const button=document.createElement('button');button.className='three-object-label '+(o.module?'functional':'decorative');button.dataset.object=o.id;button.setAttribute('aria-label',`${kinds[o.kind]} ${o.label||names[o.module]||'장식'}`);button.textContent=o.label||names[o.module]||kinds[o.kind];host.append(button);labels.push({o,button,height:h+.22});}
+    const button=document.createElement('button');button.className='three-object-label '+(o.module?'functional':'decorative');button.dataset.object=o.id;button.setAttribute('aria-label',`${kinds[o.kind]} ${o.label||names[o.module]||'장식'}`);button.textContent=o.label||names[o.module]||kinds[o.kind];const unread=!editing&&o.module?badges[o.module]:0;if(unread){const badge=document.createElement('span');badge.className='three-object-badge';badge.textContent=String(unread);badge.setAttribute('aria-label',`새 소식 ${unread}개`);button.append(badge);}host.append(button);labels.push({o,button,height:h+.22});}
+  // Souvenirs from published Foot Prints stand on a two-tier shelf on the left wall.
+  if(!editing&&souvenirs.length){const shelf=new THREE.Group();scene.add(shelf);for(const y of [1.42,2.22]){rounded(shelf,.42,.06,3.5,'#c99c74',.25,y,2.75,.02);rounded(shelf,.05,.18,.05,'#a67b58',.06,y-.11,1.15,.01);rounded(shelf,.05,.18,.05,'#a67b58',.06,y-.11,4.35,.01);}
+    const repaint=()=>{if(ticket===generation)paint();};
+    souvenirs.slice(0,8).forEach((s,i)=>{const y=i<4?1.45:2.25,z=1.4+(i%4)*.8,id='souvenir:'+s.id;const group=new THREE.Group();group.userData.objectId=id;group.position.set(.3,y,z);group.rotation.y=Math.PI/4;groups.set(id,group);scene.add(group);
+      group.scale.setScalar(1.35);const height=1.35*buildSouvenir({rounded,sphere,material},group,s.kind,spaceColors,s.photoUrl,repaint);
+      const button=document.createElement('button');button.className='three-object-label functional souvenir';button.dataset.object=id;button.setAttribute('aria-label',`기념품 ${s.title}`);button.textContent=s.title;host.append(button);labels.push({o:{id},button,height:y+height+.16});});}
   observer=new ResizeObserver(resize);observer.observe(host);resize();aborter=new AbortController();const opts={signal:aborter.signal};
   host.addEventListener('pointerdown',e=>{if(!editing)return;const id=picked(e);if(!id)return;e.preventDefault();const o=draft.find(o=>o.id===id),p=pointer(e);selectObject(id);drag={o,id,p:p.clone(),x:o.x,y:o.y,nx:o.x,ny:o.y,startX:e.clientX,startY:e.clientY,moved:false};host.setPointerCapture(e.pointerId);},opts);
   host.addEventListener('pointermove',e=>{if(!drag)return;const p=pointer(e);if(!p)return;drag.moved ||=Math.hypot(e.clientX-drag.startX,e.clientY-drag.startY)>5;drag.nx=Math.round(drag.x+p.x-drag.p.x);drag.ny=Math.round(drag.y+p.z-drag.p.z);groups.get(drag.id).position.set(drag.nx+drag.o.w/2,0,drag.ny+drag.o.h/2);updateTiles();if(drag.moved)tiles.add(tile({...drag.o,x:drag.nx,y:drag.ny},fits(draft,drag.o,drag.nx,drag.ny)?'#8eb89a':'#d98c82',.5));paint();},opts);
@@ -61,7 +68,9 @@ async function mount(){const ticket=++generation;observer?.disconnect();aborter?
   await Promise.all(tasks);if(ticket===generation){host.dataset.ready='true';paint();buildPreviews().then(()=>{if(ticket===generation)fillPreviews();});}
 }
 
-function update(){const s=getState();editing=s.editing;draft=s.items;selected=s.selected;cottageTime=s.time;gridVisible=s.gridVisible;return mount();}
+function update(){const s=getState();editing=s.editing;draft=s.items;selected=s.selected;cottageTime=s.time;gridVisible=s.gridVisible;souvenirs=s.souvenirs||[];badges=s.badges||{};
+  // The space's two colours become the rug and accent fabrics of loaded models.
+  spaceColors=s.colors||null;if(spaceColors){palette.carpet=spaceColors.primary;palette.carpetDarker=spaceColors.secondary;}return mount();}
 function dispose(){generation++;observer?.disconnect();aborter?.abort();if(scene)scene.traverse(o=>{o.shadow?.dispose();if(o.geometry&&!o.userData.sharedGeometry)o.geometry.dispose();});for(const m of materials.values())m.dispose();for(const promise of models.values())promise.then(model=>model.traverse(o=>{o.geometry?.dispose();const list=Array.isArray(o.material)?o.material:[o.material];list.forEach(m=>m?.dispose());}));renderer?.dispose();renderer?.forceContextLoss();element.replaceChildren();}
 return {update,dispose};
 }

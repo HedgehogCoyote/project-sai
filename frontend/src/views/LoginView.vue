@@ -21,9 +21,9 @@ async function submit() {
   errorMessage.value = ''
   try {
     await auth.login(loginId.value.trim(), password.value)
-    await router.replace(
-      typeof route.query.redirect === 'string' ? route.query.redirect : '/spaces',
-    )
+    const r = route.query.redirect
+    // Same-app paths only, so a crafted link cannot send people to another site.
+    await router.replace(typeof r === 'string' && r.startsWith('/') && !r.startsWith('//') ? r : '/spaces')
   } catch (error) {
     errorMessage.value =
       error instanceof ApiError ? error.message : '로그인 중 문제가 발생했습니다.'
@@ -78,7 +78,7 @@ async function submit() {
       </button>
     </form>
     <p class="form-switch">
-      아직 SAI 계정이 없나요? <RouterLink to="/signup">회원가입</RouterLink>
+      아직 SAI 계정이 없나요? <RouterLink :to="{ path: '/signup', query: typeof route.query.redirect === 'string' ? { redirect: route.query.redirect } : {} }">회원가입</RouterLink>
     </p>
     <p class="auth-footer">© 2026 SAI</p>
   </AuthLayout>
