@@ -189,7 +189,7 @@ async function openInbox() {
           :disabled="blocked || auth.pending"
           @click="openInbox"
         >
-          받은 초대
+          <span class="long">받은 초대</span><span class="short">초대</span>
           <span v-if="inbox.pendingCount !== null" class="inbox-badge">{{
             inbox.pendingCount
           }}</span>
@@ -198,7 +198,7 @@ async function openInbox() {
           알림
           <span v-if="unreadTotal" class="inbox-badge">{{ unreadTotal }}</span>
         </button>
-        <button class="account-entry" type="button" :disabled="blocked" @click="openPanel('account')">{{ auth.user?.name }} 님</button
+        <button class="account-entry" type="button" :disabled="blocked" @click="openPanel('account')"><span class="long">{{ auth.user?.name }} 님</span><span class="short">계정</span></button
         ><button type="button" :disabled="auth.pending || blocked" @click="logout">
           {{ auth.pending ? '로그아웃 중...' : '로그아웃' }}
         </button>
@@ -548,6 +548,9 @@ async function openInbox() {
   border-radius: 9px;
   padding: 10px 12px;
 }
+.account .short {
+  display: none;
+}
 .inbox-badge {
   display: inline-block;
   margin-left: 5px;
@@ -890,6 +893,15 @@ button:disabled {
 .dialog-actions .primary-button {
   width: auto;
 }
+/* The create dialog scrolls on small screens; its buttons stay in reach at the bottom. */
+.create-dialog .dialog-actions {
+  position: sticky;
+  bottom: -28px;
+  margin: 8px -28px -28px;
+  padding: 14px 28px 20px;
+  background: inherit;
+  border-top: 1px solid #e5cfbf;
+}
 @media (max-width: 1000px) {
   .home-main {
     padding: 32px;
@@ -921,11 +933,26 @@ button:disabled {
   .account {
     gap: 8px;
   }
-  .account > span {
+  .account > span,
+  .account .long {
     display: none;
   }
+  .account .short {
+    display: inline;
+  }
+  .site-header {
+    padding: 0 12px;
+  }
+  .account {
+    gap: 4px;
+  }
   .account button {
-    padding-left: 12px;
+    padding-left: 8px;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+  .account .inbox-entry {
+    padding: 6px 7px;
   }
   .workspace {
     display: block;
