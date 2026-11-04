@@ -1,0 +1,368 @@
+<title>SAI 기념품 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: 위에 짧은 설명, 아래 [실제 3D 방 | 고른 기념품 패널] 2열(좁으면 1열), 마지막에 구조 설명 */
+:root {
+  --bg: #f6f0f2;
+  --surface: #fffafb;
+  --sunk: #f1e8ec;
+  --ink: #3e3139;
+  --muted: #7a6a73;
+  --line: #e4d6dc;
+  --plum: #71576c;
+  --mauve: #aa849c;
+  --display: "Gowun Batang", "Nanum Myeongjo", serif;
+  --body: "IBM Plex Sans KR", SUIT, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #211a1f; --surface: #2c2329; --sunk: #251d22; --ink: #f1e6ea; --muted: #b9a6b0; --line: #43363e; --plum: #d9bccd; --mauve: #c49bb4; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #211a1f; --surface: #2c2329; --sunk: #251d22; --ink: #f1e6ea; --muted: #b9a6b0; --line: #43363e; --plum: #d9bccd; --mauve: #c49bb4; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 32px; }
+h1, h2 { font-family: var(--display); font-weight: 700; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.25; }
+h2 { font-size: 22px; }
+p { margin: 0; max-width: 64ch; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.intro { display: grid; gap: 12px; }
+.lede { color: var(--muted); }
+
+.main { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.viewport { position: relative; border-radius: 16px; overflow: hidden; background: #e9d6c8; aspect-ratio: 4 / 3; max-width: 100%; }
+.viewport canvas { display: block; width: 100%; height: 100%; touch-action: manipulation; }
+.viewport .hint { position: absolute; left: 12px; bottom: 12px; background: #fffaf6e6; color: #3e3139; font-size: 12px; padding: 4px 10px; border-radius: 999px; }
+.viewport .zoom { position: absolute; right: 12px; top: 12px; font: inherit; font-size: 13px; font-weight: 600; background: #fffaf6; color: #71576c; border: 1px solid #e4d6dc; border-radius: 999px; padding: 5px 14px; cursor: pointer; }
+.viewport .zoom:focus-visible { outline: 2px solid #aa849c; outline-offset: 2px; }
+.viewport .loading { position: absolute; inset: 0; display: grid; place-items: center; color: #7a6a73; font-size: 14px; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 18px; min-width: 0; }
+.group { display: grid; gap: 8px; }
+.group > .lbl { font-size: 12px; font-weight: 600; color: var(--muted); }
+.items { display: grid; gap: 6px; }
+.item { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px 6px 6px; cursor: pointer; }
+.item[aria-pressed="true"] { border-color: var(--plum); box-shadow: inset 0 0 0 1px var(--plum); }
+.item img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: var(--sunk); }
+.item b { font-weight: 600; font-size: 14px; display: block; }
+.item span span { font-size: 12px; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--bg); color: var(--muted); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { border-color: var(--plum); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--plum); }
+.item:focus-visible, .chip:focus-visible { outline: 2px solid var(--mauve); outline-offset: 2px; }
+.fp { border-top: 1px dashed var(--line); padding-top: 14px; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 12px; align-items: center; }
+.fp img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; }
+.fp b { display: block; font-size: 15px; }
+.fp span { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.note { font-size: 12px; color: var(--muted); }
+
+.formula { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 700px) { .formula { grid-template-columns: minmax(0, 1fr); } }
+.formula article { border-top: 2px solid var(--plum); padding-top: 12px; display: grid; gap: 6px; }
+.formula h3 { margin: 0; font-size: 15px; }
+.formula p { font-size: 14px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <span class="eyebrow">SAI · 기념품 시안 · 실제 Three.js 렌더 · 앱 코드 변경 없음</span>
+    <h1>받침대는 3D로 몇 개만, 그 위의 그림은 Foot Print마다</h1>
+    <p class="lede">아크릴 스탠드, 폴라로이드, 액자 세 가지만 3D로 만들었습니다. 안에 들어가는 그림은 2D 이미지라서 여행마다 바뀝니다. 방에서 기념품을 누르거나 오른쪽에서 골라 그림을 바꿔 보세요. 사진과 일러스트는 모두 코드로 그린 예시입니다.</p>
+  </header>
+
+  <div class="main">
+    <div class="viewport" id="viewport">
+      <div class="loading" id="loading">3D 방을 불러오는 중</div>
+      <span class="hint">기념품을 누르면 가까이 봅니다</span>
+      <button type="button" class="zoom" id="zoom" aria-pressed="true">방 전체 보기</button>
+    </div>
+    <aside class="panel" aria-label="고른 기념품">
+      <div class="group"><span class="lbl">방에 있는 기념품</span><div class="items" id="items"></div></div>
+      <div class="group"><span class="lbl">담을 Foot Print</span><div class="chips" id="trips"></div></div>
+      <div class="group"><span class="lbl">그림</span><div class="chips" id="modes"></div></div>
+      <div class="fp" id="fp"></div>
+      <p class="note">방에서 기념품을 누르면 연결된 Foot Print가 열립니다. 기념품을 치워도 기록은 남습니다.</p>
+    </aside>
+  </div>
+
+  <section class="formula" aria-label="구조">
+    <article><h3>3D 받침대 · 고정 몇 개</h3><p>아크릴 스탠드, 폴라로이드, 액자. 방과 같은 무광 재질이라 톤이 맞고, 한 번 만들면 계속 씁니다.</p></article>
+    <article><h3>2D 그림 · 매번 다름</h3><p>Foot Print 사진 또는 생성한 일러스트. 아크릴 스탠드는 투명 배경 그림을 윤곽대로 잘라 그림자도 그 모양으로 떨어집니다.</p></article>
+    <article><h3>고정 시점이라 가능</h3><p>SAI 방은 카메라가 돌지 않아서 납작한 판의 옆면이 보이지 않습니다. 판을 카메라 쪽으로 살짝 돌려 두면 충분합니다.</p></article>
+  </section>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+  "three/addons/geometries/RoundedBoxGeometry.js": "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/geometries/RoundedBoxGeometry.js"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+// ---------- 예시 데이터 ----------
+const trips = {
+  busan:    { title: '부산 여행', date: '8월 14–16일', people: 6, photos: 24 },
+  camping:  { title: '가평 캠핑', date: '10월 3–4일', people: 5, photos: 17 },
+  birthday: { title: '지민 생일 파티', date: '11월 7일', people: 6, photos: 31 },
+};
+const holders = {
+  acrylic:  { name: '아크릴 스탠드', where: '탁자 위' },
+  polaroid: { name: '폴라로이드 2장', where: '뒷벽' },
+  frame:    { name: '액자', where: '옆벽' },
+};
+const state = {
+  selected: 'acrylic',
+  acrylic:  { trip: 'busan', mode: 'illust' },
+  polaroid: { trip: 'camping', mode: 'photo' },
+  frame:    { trip: 'birthday', mode: 'illust' },
+};
+
+// ---------- 2D 그림 (생성 이미지·사진 자리를 대신하는 예시) ----------
+const S = 512;
+function rng(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+function drawScene(ctx, trip) {
+  const g = (y0, y1, a, b) => { const gr = ctx.createLinearGradient(0, y0 * S, 0, y1 * S); gr.addColorStop(0, a); gr.addColorStop(1, b); return gr; };
+  if (trip === 'busan') {
+    ctx.fillStyle = g(0, .62, '#bfe0ef', '#f9e6d2'); ctx.fillRect(0, 0, S, S);
+    ctx.fillStyle = '#f4b06a'; ctx.beginPath(); ctx.arc(.74 * S, .34 * S, .085 * S, 0, 7); ctx.fill();
+    ctx.fillStyle = g(.62, 1, '#6f9cc2', '#3f6f99'); ctx.fillRect(0, .62 * S, S, .38 * S);
+    ctx.strokeStyle = '#ffffffaa'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    [[.12, .74], [.55, .8], [.3, .88], [.75, .92]].forEach(([x, y]) => { ctx.beginPath(); ctx.moveTo(x * S, y * S); ctx.quadraticCurveTo((x + .05) * S, (y - .02) * S, (x + .1) * S, y * S); ctx.stroke(); });
+    ctx.strokeStyle = '#3f5a7a'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(0, .47 * S); ctx.quadraticCurveTo(.18 * S, .5 * S, .31 * S, .3 * S); ctx.quadraticCurveTo(.5 * S, .58 * S, .69 * S, .3 * S); ctx.quadraticCurveTo(.82 * S, .5 * S, S, .47 * S); ctx.stroke();
+    ctx.lineWidth = 2; for (let i = 1; i < 20; i++) { const x = i / 20; let y; if (x < .31) y = .47 + (.3 - .47) * Math.pow(x / .31, 1.6); else if (x < .69) { const t = (x - .31) / .38; y = .3 + .25 * 4 * t * (1 - t); } else y = .47 + (.3 - .47) * Math.pow((1 - x) / .31, 1.6); ctx.beginPath(); ctx.moveTo(x * S, y * S); ctx.lineTo(x * S, .6 * S); ctx.stroke(); }
+    ctx.fillStyle = '#eef2f5'; ctx.fillRect(0, .585 * S, S, .03 * S); ctx.fillStyle = '#3f5a7a'; ctx.fillRect(0, .612 * S, S, .008 * S);
+    ctx.fillStyle = '#e9eef2'; [.295, .675].forEach(x => { ctx.fillRect(x * S, .28 * S, .03 * S, .34 * S); ctx.strokeStyle = '#3f5a7a'; ctx.lineWidth = 3; ctx.strokeRect(x * S, .28 * S, .03 * S, .34 * S); });
+    ctx.strokeStyle = '#3e3139'; ctx.lineWidth = 5; [[.16, .17, 1], [.27, .23, .75], [.44, .14, .6]].forEach(([x, y, k]) => { ctx.beginPath(); ctx.moveTo((x - .05 * k) * S, y * S); ctx.quadraticCurveTo((x - .025 * k) * S, (y - .035 * k) * S, x * S, y * S); ctx.quadraticCurveTo((x + .025 * k) * S, (y - .035 * k) * S, (x + .05 * k) * S, y * S); ctx.stroke(); });
+  } else if (trip === 'camping') {
+    ctx.fillStyle = g(0, .75, '#26335a', '#7a6688'); ctx.fillRect(0, 0, S, S);
+    const r = rng(7); ctx.fillStyle = '#fff6dd'; for (let i = 0; i < 60; i++) { ctx.beginPath(); ctx.arc(r() * S, r() * .55 * S, r() * 2.2 + .6, 0, 7); ctx.fill(); }
+    ctx.fillStyle = '#f7ecc8'; ctx.beginPath(); ctx.arc(.78 * S, .2 * S, .06 * S, 0, 7); ctx.fill(); ctx.fillStyle = '#3a4569'; ctx.beginPath(); ctx.arc(.81 * S, .18 * S, .055 * S, 0, 7); ctx.fill();
+    ctx.fillStyle = '#4a5275'; ctx.beginPath(); ctx.moveTo(0, .7 * S); ctx.lineTo(.25 * S, .45 * S); ctx.lineTo(.45 * S, .62 * S); ctx.lineTo(.68 * S, .4 * S); ctx.lineTo(S, .66 * S); ctx.lineTo(S, S); ctx.lineTo(0, S); ctx.fill();
+    ctx.fillStyle = '#3d5a47'; ctx.fillRect(0, .74 * S, S, .26 * S);
+    ctx.fillStyle = '#2c4636'; [[.08, .74, .1], [.16, .74, .14], [.88, .74, .13], [.95, .74, .09]].forEach(([x, y, h]) => { ctx.beginPath(); ctx.moveTo((x - .05) * S, y * S); ctx.lineTo(x * S, (y - h * 1.6) * S); ctx.lineTo((x + .05) * S, y * S); ctx.fill(); });
+    const glow = ctx.createRadialGradient(.3 * S, .8 * S, 2, .3 * S, .8 * S, .2 * S); glow.addColorStop(0, '#ffcf7acc'); glow.addColorStop(1, '#ffcf7a00'); ctx.fillStyle = glow; ctx.fillRect(0, .55 * S, .6 * S, .45 * S);
+    ctx.fillStyle = '#e3976b'; ctx.beginPath(); ctx.moveTo(.42 * S, .84 * S); ctx.lineTo(.6 * S, .52 * S); ctx.lineTo(.8 * S, .84 * S); ctx.fill();
+    ctx.fillStyle = '#ffd590'; ctx.beginPath(); ctx.moveTo(.56 * S, .84 * S); ctx.lineTo(.6 * S, .66 * S); ctx.lineTo(.65 * S, .84 * S); ctx.fill();
+    ctx.fillStyle = '#f39a3d'; ctx.beginPath(); ctx.moveTo(.3 * S, .72 * S); ctx.quadraticCurveTo(.36 * S, .8 * S, .3 * S, .83 * S); ctx.quadraticCurveTo(.24 * S, .8 * S, .3 * S, .72 * S); ctx.fill();
+    ctx.fillStyle = '#ffe08a'; ctx.beginPath(); ctx.arc(.3 * S, .8 * S, .018 * S, 0, 7); ctx.fill();
+  } else {
+    ctx.fillStyle = g(0, 1, '#fbe9ec', '#f4d7dd'); ctx.fillRect(0, 0, S, S);
+    const r = rng(11); ['#e3976b', '#6c8db5', '#f3d36b', '#9bb08a'].forEach(c => { ctx.fillStyle = c; for (let i = 0; i < 9; i++) { ctx.save(); ctx.translate(r() * S, r() * .5 * S); ctx.rotate(r() * 3); ctx.fillRect(-6, -3, 12, 6); ctx.restore(); } });
+    ctx.strokeStyle = '#7a6a73'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, .1 * S); ctx.quadraticCurveTo(.5 * S, .24 * S, S, .1 * S); ctx.stroke();
+    for (let i = 0; i < 9; i++) { const x = (i + .5) / 9, y = .1 + .56 * x * (1 - x) * .5; ctx.fillStyle = ['#e3976b', '#6c8db5', '#f3d36b'][i % 3]; ctx.beginPath(); ctx.moveTo((x - .04) * S, y * S); ctx.lineTo((x + .04) * S, y * S); ctx.lineTo(x * S, (y + .08) * S); ctx.fill(); }
+    ctx.fillStyle = '#dcb79c'; ctx.fillRect(0, .8 * S, S, .2 * S);
+    ctx.fillStyle = '#f5efe6'; ctx.beginPath(); ctx.ellipse(.5 * S, .8 * S, .3 * S, .05 * S, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fff4e8'; ctx.fillRect(.28 * S, .58 * S, .44 * S, .2 * S);
+    ctx.fillStyle = '#e3976b'; ctx.fillRect(.28 * S, .56 * S, .44 * S, .05 * S); [.32, .42, .55, .66].forEach(x => { ctx.beginPath(); ctx.arc(x * S, .61 * S, .018 * S, 0, Math.PI); ctx.fill(); });
+    ctx.fillStyle = '#fbe0e8'; ctx.fillRect(.36 * S, .45 * S, .28 * S, .11 * S);
+    ctx.fillStyle = '#6c8db5'; [.42, .5, .58].forEach(x => ctx.fillRect((x - .008) * S, .36 * S, .016 * S, .09 * S));
+    ctx.fillStyle = '#f6b36b'; [.42, .5, .58].forEach(x => { ctx.beginPath(); ctx.ellipse(x * S, .34 * S, .012 * S, .022 * S, 0, 0, 7); ctx.fill(); });
+  }
+}
+function contentCanvas(trip, mode, cutout) {
+  const raw = document.createElement('canvas'); raw.width = raw.height = S; drawScene(raw.getContext('2d'), trip);
+  const out = document.createElement('canvas'); out.width = out.height = S; const ctx = out.getContext('2d');
+  let src = raw;
+  if (mode === 'photo') {
+    const ph = document.createElement('canvas'); ph.width = ph.height = S; const p = ph.getContext('2d');
+    p.filter = 'blur(3px) saturate(.8) contrast(1.06) brightness(1.03)'; p.drawImage(raw, -12, -12, S + 24, S + 24); p.filter = 'none';
+    p.fillStyle = '#ffd9a81f'; p.fillRect(0, 0, S, S);
+    const v = p.createRadialGradient(S / 2, S / 2, S * .3, S / 2, S / 2, S * .75); v.addColorStop(0, '#00000000'); v.addColorStop(1, '#00000055'); p.fillStyle = v; p.fillRect(0, 0, S, S);
+    const img = p.getImageData(0, 0, S, S), r = rng(3); for (let i = 0; i < img.data.length; i += 4) { const n = (r() - .5) * 22; img.data[i] += n; img.data[i + 1] += n; img.data[i + 2] += n; } p.putImageData(img, 0, 0);
+    src = ph;
+  }
+  if (!cutout) { ctx.drawImage(src, 0, 0); return out; }
+  // 아크릴 스탠드: 윤곽 + 흰 테두리, 바깥은 투명
+  const shape = (inset) => { ctx.beginPath(); ctx.roundRect(inset, inset, S - inset * 2, S - inset * 2, mode === 'photo' ? 40 : 170); };
+  ctx.fillStyle = '#ffffff'; shape(8); ctx.fill();
+  ctx.save(); shape(26); ctx.clip(); ctx.drawImage(src, 0, 0); ctx.restore();
+  return out;
+}
+const texCache = new Map();
+function texture(trip, mode, cutout) {
+  const key = `${trip}|${mode}|${cutout}`; if (texCache.has(key)) return texCache.get(key);
+  const c = contentCanvas(trip, mode, cutout); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  const v = { tex: t, url: c.toDataURL('image/png') }; texCache.set(key, v); return v;
+}
+
+// ---------- 3D 방 ----------
+const vp = document.getElementById('viewport');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .95;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+vp.prepend(renderer.domElement);
+document.getElementById('loading').remove();
+
+const scene3 = new THREE.Scene(); scene3.background = new THREE.Color('#e9d6c8');
+const camera = new THREE.OrthographicCamera();
+const BASE_T = new THREE.Vector3(4, 1.3, 4), OFF = new THREE.Vector3(11, 10.7, 11);
+const cam = { t: BASE_T.clone(), z: 1 };
+function applyCam() { camera.position.copy(cam.t).add(OFF); camera.lookAt(cam.t); camera.zoom = cam.z; camera.updateProjectionMatrix(); }
+applyCam();
+scene3.add(new THREE.HemisphereLight('#fff1dc', '#b6a0b5', 1.9));
+const sun = new THREE.DirectionalLight('#fff0d2', 2.6); sun.position.set(11, 14, 8); sun.target.position.set(4, 0, 4); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 }); sun.shadow.bias = -.0006; sun.shadow.normalBias = .02;
+scene3.add(sun, sun.target);
+const fill = new THREE.DirectionalLight('#cbbfdf', .8); fill.position.set(-4, 6, 12); scene3.add(fill);
+
+const mats = new Map();
+const mat = c => { if (!mats.has(c)) mats.set(c, new THREE.MeshStandardMaterial({ color: c, roughness: .92, metalness: 0 })); return mats.get(c); };
+function rounded(parent, w, h, d, color, x, y, z, r = .06, material) {
+  const m = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2.2, h / 2.2, d / 2.2)), material || mat(color));
+  m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; parent.add(m); return m;
+}
+const P = { c1: '#e3976b', c2: '#6c8db5', wall: '#efd9cb', band: '#d9bfb6', floor: '#c99a73', wood: '#c99c74' };
+
+// 바닥·벽
+rounded(scene3, 8.2, .24, 8.2, '#bb9176', 4, -.13, 4, .06);
+for (let i = 0; i < 16; i++) rounded(scene3, 8, .03, .48, i % 2 ? '#b98b68' : '#b3866a', 4, .005, .25 + i * .5, .01);
+rounded(scene3, 8.2, 4.4, .2, P.wall, 4, 2.2, -.1, .03);
+rounded(scene3, .2, 4.4, 8.2, '#e8d0c2', -.1, 2.2, 4, .03);
+rounded(scene3, 8, 1.1, .05, P.band, 4, .55, .02, .01);
+rounded(scene3, .05, 1.1, 8, '#d2b6ae', .02, .55, 4, .01);
+// 창문
+rounded(scene3, 2.1, 1.9, .08, '#e6cfb4', 5.8, 2.6, .04, .03);
+const glass = new THREE.Mesh(new THREE.PlaneGeometry(1.85, 1.65), new THREE.MeshStandardMaterial({ color: '#cfe3ea', emissive: '#b8d4dd', emissiveIntensity: .35, roughness: 1 })); glass.position.set(5.8, 2.6, .09); scene3.add(glass);
+rounded(scene3, .06, 1.7, .03, '#e6cfb4', 5.8, 2.6, .11, .01);
+// 러그·소파·탁자·화분·선반
+rounded(scene3, 3.8, .04, 2.8, '#a9bdd6', 3.4, .04, 3.9, .02);
+rounded(scene3, 3, 1.4, .45, '#d98d63', 2.7, .75, .35, .12);
+rounded(scene3, 3, .55, 1.05, P.c1, 2.7, .35, .95, .14);
+rounded(scene3, .7, .5, .32, '#f0c3a6', 1.75, .85, .75, .12); rounded(scene3, .7, .5, .32, '#b9c9de', 3.65, .85, .75, .12);
+rounded(scene3, 1.6, .1, 1.05, P.wood, 3.5, .46, 3.85, .04);
+[[2.85, 3.45], [4.15, 3.45], [2.85, 4.25], [4.15, 4.25]].forEach(([x, z]) => rounded(scene3, .09, .42, .09, '#a67b58', x, .21, z, .03));
+rounded(scene3, .7, .7, .7, P.c2, 7.3, .35, .7, .1);
+[[7.3, 1.05, .7, .48], [7.1, 1.4, .85, .36], [7.5, 1.35, .55, .32]].forEach(([x, y, z, r]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 14), mat('#8aa877')); m.position.set(x, y, z); m.castShadow = true; scene3.add(m); });
+rounded(scene3, .5, .1, 2, P.wood, .27, 2.3, 5.9, .03);
+[['#6c8db5', 5.2], ['#e3976b', 5.38], ['#9bb08a', 5.54]].forEach(([c, z]) => rounded(scene3, .36, .48, .14, c, .25, 2.59, z, .02));
+
+// ---------- 기념품 ----------
+const souvenirs = {};
+const pickables = [];
+function makeImageMaterial(cutout) {
+  return new THREE.MeshStandardMaterial({ roughness: .75, metalness: 0, transparent: cutout, alphaTest: cutout ? .5 : 0, side: THREE.DoubleSide });
+}
+function register(id, group, imageMeshes, holderMats) {
+  group.traverse(o => { if (o.isMesh) { o.userData.souvenir = id; pickables.push(o); } });
+  souvenirs[id] = { group, imageMeshes, holderMats };
+  scene3.add(group);
+}
+// 1) 아크릴 스탠드 (탁자 위, 카메라 쪽으로 돌림)
+{
+  const g = new THREE.Group(); g.position.set(3.55, .51, 3.9); g.rotation.y = Math.PI / 4;
+  const acryl = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: .08, metalness: 0, transparent: true, opacity: .28, clearcoat: 1 });
+  const base = rounded(g, .86, .07, .38, null, 0, .03, 0, .02, acryl); base.castShadow = false;
+  const plate = rounded(g, 1.1, 1.2, .03, null, 0, .67, 0, .02, acryl); plate.castShadow = false;
+  const img = new THREE.Mesh(new THREE.PlaneGeometry(1.04, 1.04), makeImageMaterial(true)); img.position.set(0, .69, .017); img.castShadow = true; g.add(img);
+  register('acrylic', g, [img], [acryl]);
+}
+// 2) 폴라로이드 2장 (뒷벽)
+{
+  const g = new THREE.Group(); g.position.set(2.1, 3.0, .02);
+  const paper = new THREE.MeshStandardMaterial({ color: '#fbf8f2', roughness: .9 });
+  const imgs = [];
+  [[-.48, .05, .08], [.46, -.07, -.06]].forEach(([x, y, rz], i) => {
+    const p = new THREE.Group(); p.position.set(x, y, 0); p.rotation.z = rz;
+    rounded(p, .82, .95, .02, null, 0, 0, .01, .01, paper);
+    const img = new THREE.Mesh(new THREE.PlaneGeometry(.7, .7), makeImageMaterial(false)); img.position.set(0, .08, .022); img.userData.crop = i; p.add(img); imgs.push(img);
+    rounded(p, .28, .08, .006, '#f3d36b', 0, .48, .024, .003);
+    g.add(p);
+  });
+  register('polaroid', g, imgs, [paper]);
+}
+// 3) 액자 (옆벽, +x 방향)
+{
+  const g = new THREE.Group(); g.position.set(.03, 2.7, 2.5); g.rotation.y = Math.PI / 2;
+  const woodM = new THREE.MeshStandardMaterial({ color: '#bf936b', roughness: .92 });
+  rounded(g, 1.45, 1.65, .08, null, 0, 0, .04, .03, woodM);
+  rounded(g, 1.27, 1.47, .02, '#f6eedf', 0, 0, .085, .008);
+  const img = new THREE.Mesh(new THREE.PlaneGeometry(1.02, 1.02), makeImageMaterial(false)); img.position.set(0, .07, .097); g.add(img);
+  register('frame', g, [img], [woodM]);
+}
+// 아크릴 그림자를 그림 모양으로
+const depthFor = new Map();
+function applyContent(id) {
+  const s = state[id], sv = souvenirs[id], cut = id === 'acrylic';
+  const { tex } = texture(s.trip, s.mode, cut);
+  sv.imageMeshes.forEach(m => {
+    let t = tex;
+    if (m.userData.crop !== undefined) { t = tex.clone(); t.needsUpdate = true; const k = m.userData.crop; t.repeat.set(.72, .72); t.offset.set(k ? .26 : .04, k ? .04 : .24); }
+    m.material.map = t; m.material.needsUpdate = true;
+    if (cut) { m.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: t, alphaTest: .5 }); }
+  });
+}
+Object.keys(souvenirs).forEach(applyContent);
+
+function highlight() {
+  Object.entries(souvenirs).forEach(([id, sv]) => {
+    const on = id === state.selected;
+    sv.holderMats.forEach(m => { if (m.emissive) { m.emissive.set(on ? '#ffd9a8' : '#000000'); m.emissiveIntensity = on ? .22 : 0; } });
+    sv.imageMeshes.forEach(m => { m.material.emissive.set(on ? '#ffffff' : '#000000'); m.material.emissiveIntensity = on ? .06 : 0; m.material.emissiveMap = on ? m.material.map : null; m.material.needsUpdate = true; });
+  });
+}
+
+// ---------- 화면 크기·렌더 ----------
+function resize() {
+  const w = vp.clientWidth, h = vp.clientHeight; if (!w || !h) return;
+  renderer.setSize(w, h, false);
+  const a = w / h, ext = 5.3;
+  Object.assign(camera, { left: -ext * a, right: ext * a, top: ext, bottom: -ext, near: .1, far: 60 }); camera.updateProjectionMatrix();
+  render();
+}
+let queued = false;
+function render() { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; renderer.render(scene3, camera); }); }
+new ResizeObserver(resize).observe(vp);
+
+// ---------- 고르기 ----------
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function hit(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const h = ray.intersectObjects(pickables, false)[0];
+  return h ? h.object.userData.souvenir : null;
+}
+renderer.domElement.addEventListener('click', e => { const id = hit(e); if (id) select(id); });
+renderer.domElement.addEventListener('pointermove', e => { renderer.domElement.style.cursor = hit(e) ? 'pointer' : 'default'; });
+
+// ---------- 패널 ----------
+const itemsEl = document.getElementById('items'), tripsEl = document.getElementById('trips'), modesEl = document.getElementById('modes'), fpEl = document.getElementById('fp');
+function panel() {
+  itemsEl.innerHTML = Object.entries(holders).map(([id, h]) => {
+    const s = state[id], t = trips[s.trip];
+    return `<button type="button" class="item" data-id="${id}" aria-pressed="${id === state.selected}"><img alt="" src="${texture(s.trip, s.mode, id === 'acrylic').url}"><span><b>${h.name}</b><span>${t.title} · ${h.where}</span></span></button>`;
+  }).join('');
+  const s = state[state.selected];
+  tripsEl.innerHTML = Object.entries(trips).map(([k, t]) => `<button type="button" class="chip" data-trip="${k}" aria-pressed="${s.trip === k}">${t.title}</button>`).join('');
+  modesEl.innerHTML = [['photo', '사진'], ['illust', '생성 일러스트']].map(([k, l]) => `<button type="button" class="chip" data-mode="${k}" aria-pressed="${s.mode === k}">${l}</button>`).join('');
+  const t = trips[s.trip];
+  fpEl.innerHTML = `<img alt="" src="${texture(s.trip, 'photo', false).url}"><div><b>${t.title}</b><span>${t.date} · ${t.people}명 · 사진 ${t.photos}장</span></div>`;
+}
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const zoomBtn = document.getElementById('zoom');
+state.zoom = true;
+function focus(animate = true) {
+  let t = BASE_T, z = 1;
+  if (state.zoom) { t = new THREE.Vector3(); souvenirs[state.selected].group.getWorldPosition(t); if (state.selected === 'acrylic') t.y += .65; z = 2.5; }
+  zoomBtn.textContent = state.zoom ? '방 전체 보기' : '가까이 보기'; zoomBtn.setAttribute('aria-pressed', String(state.zoom));
+  const from = { t: cam.t.clone(), z: cam.z }, start = performance.now(), dur = animate && !reduce ? 450 : 0;
+  const step = now => { const k = dur ? Math.min(1, (now - start) / dur) : 1, e = 1 - Math.pow(1 - k, 3); cam.t.lerpVectors(from.t, t, e); cam.z = from.z + (z - from.z) * e; applyCam(); renderer.render(scene3, camera); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+zoomBtn.addEventListener('click', () => { state.zoom = !state.zoom; focus(); });
+function select(id) { state.selected = id; state.zoom = true; highlight(); panel(); focus(); }
+itemsEl.addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (b) select(b.dataset.id); });
+tripsEl.addEventListener('click', e => { const b = e.target.closest('[data-trip]'); if (!b) return; state[state.selected].trip = b.dataset.trip; applyContent(state.selected); highlight(); panel(); render(); });
+modesEl.addEventListener('click', e => { const b = e.target.closest('[data-mode]'); if (!b) return; state[state.selected].mode = b.dataset.mode; applyContent(state.selected); highlight(); panel(); render(); });
+
+highlight(); panel(); resize(); focus(false);
+</script>
