@@ -5,7 +5,7 @@ import {buildSouvenir,mix} from './souvenirMeshes.js';
 export function createRoomRenderer(element,getState,callbacks){
 let editing=false,draft=[],selected=null,cottageTime='evening',gridVisible=true,souvenirs=[],spaceColors=null,badges={};
 const kinds={sofa:'소파',desk:'책상',shelf:'선반',plant:'화분',rug:'러그',frame:'액자',cat:'고양이',calendar:'달력'};
-const names={records:'기록',tasks:'할 일',calendar:'공유 일정',itinerary:'여행 일정',places:'장소',packing:'준비물',expenses:'정산',polls:'투표',activities:'이벤트'};
+const names={anniversaries:'기념일',wishlist:'위시리스트',dues:'회비',attendance:'출석',records:'기록',tasks:'할 일',calendar:'공유 일정',itinerary:'여행 일정',places:'장소',packing:'준비물',expenses:'정산',polls:'투표',activities:'이벤트'};
 const footprintsByKind={sofa:[3,2],desk:[2,2],shelf:[2,1],plant:[1,1],cat:[1,1],frame:[1,1],rug:[3,2],calendar:[1,1]};
 const space=()=>({room:draft}),toast=message=>callbacks.error(message);
 const fits=(room,o,x,y)=>x>=0&&y>=0&&x+o.w<=8&&y+o.h<=8&&!room.some(t=>t.id!==o.id&&o.kind!=='rug'&&t.kind!=='rug'&&x<t.x+t.w&&x+o.w>t.x&&y<t.y+t.h&&y+o.h>t.y);

@@ -27,6 +27,7 @@ import {
 import { useContent } from './useContent'
 import { ServerContentRepository } from './serverRepository'
 import FootPrintPanel from './FootPrintPanel.vue'
+import RelationTools from './RelationTools.vue'
 import SpaceMembers from '@/components/workspace/SpaceMembers.vue'
 import SpaceSettings from '@/components/workspace/SpaceSettings.vue'
 import SpaceNotices from '@/components/workspace/SpaceNotices.vue'
@@ -45,6 +46,7 @@ const props = defineProps<{
   blocked: boolean
   unreadModules?: Record<string, number>
   colors?: { primary: string; secondary: string } | null
+  relation?: string
 }>()
 const route = useRoute(),
   router = useRouter()
@@ -138,7 +140,9 @@ const tabs = computed(() => [
     label: m.label,
   })),
   { id: 'people', label: activity.value ? '참여자' : '사람' },
-  ...(!activity.value ? [{ id: 'invite', label: '사용자 초대' }] : []),
+  ...(!activity.value
+    ? [{ id: 'invite', label: props.relation === 'COUPLE' ? '상대 초대' : props.relation === 'CLUB' ? '부원 초대' : '사용자 초대' }]
+    : []),
   { id: 'modules', label: '기능 추가' },
   ...(shared && !activity.value ? [{ id: 'settings', label: '설정' }] : []),
 ])
@@ -1045,6 +1049,12 @@ function putPlaceInSchedule(id: string) {
             />
           </section>
         </template>
+      </section>
+      <section
+        v-else-if="tab === 'anniversaries' || tab === 'wishlist' || tab === 'dues' || tab === 'attendance'"
+        :aria-label="tab"
+      >
+        <RelationTools :tool="tab" :data="data" :members="data.members" :busy="busy" :read-only="readOnly" :commit="commit" />
       </section>
       <section v-else-if="tab === 'news'" aria-label="최근 소식">
         <SpaceNews :space-id="space.spaceId" @seen="emit('seen')" @open="(m) => go(m && tabs.some((t) => t.id === m) ? m : 'home')" @session-expired="emit('sessionExpired', $event)" />

@@ -11,7 +11,19 @@ import { useAuthStore } from '@/stores/auth'
 import { useSpacesStore, type SpaceRole } from '@/stores/spaces'
 import NotificationsPanel from '@/components/workspace/NotificationsPanel.vue'
 import AccountSettings from '@/components/workspace/AccountSettings.vue'
-import { api, type Overview } from '@/services/workspace'
+import { api, PALETTES, RELATIONS, type Overview, type Relation } from '@/services/workspace'
+import { emptyContent } from '@/features/content/contentSync'
+import type { ModuleId } from '@/features/content/types'
+
+/** Tools each relationship starts with; members can add or hide tools later. */
+const PRESET_MODULES: Record<Relation, ModuleId[]> = {
+  COUPLE: ['calendar', 'anniversaries', 'wishlist', 'records'],
+  FRIENDS: ['calendar', 'polls', 'expenses', 'records'],
+  CLUB: ['calendar', 'attendance', 'dues', 'tasks'],
+  CUSTOM: ['records', 'tasks', 'calendar'],
+}
+const newRelation = ref<Relation>('FRIENDS')
+const newPalette = ref(0)
 
 const auth = useAuthStore()
 const spacesStore = useSpacesStore()
@@ -98,6 +110,8 @@ async function loadSpaces() {
 }
 function openCreateDialog() {
   newSpaceTitle.value = ''
+  newRelation.value = 'FRIENDS'
+  newPalette.value = 0
   createError.value = ''
   createOpen.value = true
 }
@@ -113,6 +127,13 @@ async function submitCreate() {
   }
   try {
     const id = await spacesStore.createSpace(title)
+    const palette = PALETTES[newPalette.value]!
+    // The space exists already; settings and starter tools are best-effort and editable later.
+    await Promise.allSettled([
+      api.updateSpace(id, { relation: newRelation.value, colorPrimary: palette.primary, colorSecondary: palette.secondary }),
+      api.saveContent(id, { version: 0, content: { ...emptyContent(), modules: PRESET_MODULES[newRelation.value] } }),
+    ])
+    await loadOverview()
     createOpen.value = false
     await navigate(id)
   } catch (error) {
@@ -336,6 +357,7 @@ async function openInbox() {
           :account="{ loginId: auth.user?.loginId ?? '', name: auth.user?.name ?? '나', userId: auth.user?.userId }"
           :blocked="blocked"
           :unread-modules="overviewOf(selectedSpace.spaceId)?.modules"
+          :relation="overviewOf(selectedSpace.spaceId)?.relation"
           :colors="overviewOf(selectedSpace.spaceId) ? { primary: overviewOf(selectedSpace.spaceId)!.colorPrimary, secondary: overviewOf(selectedSpace.spaceId)!.colorSecondary } : null"
           @session-expired="handleApiError($event, '로그인이 만료되었습니다.')"
           @space-changed="(spacesStore.fetchMySpaces(true).catch(() => undefined), loadOverview())"
@@ -388,6 +410,22 @@ async function openInbox() {
             :disabled="spacesStore.creating"
           />
         </div>
+        <div class="ws-label create-choice">누구와 함께하나요?
+          <div class="ws-choice" role="radiogroup" aria-label="관계">
+            <button v-for="r in RELATIONS" :key="r.id" type="button" role="radio" :aria-checked="newRelation === r.id" :disabled="spacesStore.creating" @click="newRelation = r.id">
+              <strong>{{ r.label }}</strong><span>{{ r.hint }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="ws-label create-choice">공간 색
+          <div class="ws-swatches" role="radiogroup" aria-label="공간 색">
+            <button v-for="(p, i) in PALETTES" :key="p.label" class="ws-swatch" type="button" role="radio" :aria-checked="newPalette === i" :disabled="spacesStore.creating" @click="newPalette = i">
+              <svg class="ws-mark" viewBox="0 0 72 54" aria-hidden="true"><circle cx="24" cy="27" r="20" :fill="p.primary" /><circle cx="48" cy="27" r="20" :fill="p.secondary" style="mix-blend-mode: multiply" /></svg>
+              {{ p.label }}
+            </button>
+          </div>
+        </div>
+        <p class="description">관계에 맞는 기능이 먼저 켜집니다. 나중에 기능 추가와 설정에서 바꿀 수 있습니다.</p>
         <p v-if="createError" class="form-error" role="alert">{{ createError }}</p>
         <div class="dialog-actions">
           <button
@@ -801,8 +839,13 @@ button:disabled {
 .home-main > .status-message {
   margin-bottom: 24px;
 }
+.create-choice {
+  margin-top: 14px;
+}
 .create-dialog {
-  width: min(460px, calc(100% - 32px));
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100svh - 32px);
+  overflow-y: auto;
   padding: 28px;
   border: 1px solid var(--line);
   border-radius: 6px;

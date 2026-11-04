@@ -1,5 +1,16 @@
 export type ModuleId =
-  'records' | 'tasks' | 'calendar' | 'itinerary' | 'places' | 'packing' | 'expenses' | 'polls'
+  | 'records'
+  | 'tasks'
+  | 'calendar'
+  | 'itinerary'
+  | 'places'
+  | 'packing'
+  | 'expenses'
+  | 'polls'
+  | 'anniversaries'
+  | 'wishlist'
+  | 'dues'
+  | 'attendance'
 export type ScopeId = string | null
 export type Member = { id: string; name: string; example: boolean }
 export type Activity = {
@@ -71,6 +82,12 @@ export type Poll = {
   deadline: string
   closed: boolean
 }
+/** Couples: a date to count toward (yearly) or count from (D+). */
+export type Anniversary = { id: string; title: string; date: string; yearly: boolean }
+export type WishItem = { id: string; title: string; note: string; done: boolean; addedBy: string }
+/** Clubs: one collection period with who has paid. */
+export type DuesPeriod = { id: string; title: string; amount: number; due: string; paid: string[] }
+export type AttendanceSession = { id: string; title: string; date: string; present: string[] }
 export type FootPrintNote = { id: string; memberId: string; body: string; createdAt: string }
 /** A finished activity's shared record: photos, short notes and the souvenir placed in the room. */
 export type FootPrint = {
@@ -99,6 +116,10 @@ export type ContentState = {
   expenses: Expense[]
   polls: Poll[]
   footprints?: FootPrint[]
+  anniversaries?: Anniversary[]
+  wishlist?: WishItem[]
+  dues?: DuesPeriod[]
+  attendance?: AttendanceSession[]
 }
 export const MODULES: {
   id: ModuleId
@@ -124,4 +145,8 @@ export const MODULES: {
   },
   { id: 'expenses', label: '비용 정산', description: '지출과 원화 균등 분담을 계산합니다.' },
   { id: 'polls', label: '투표', description: '선택지를 만들고 의견을 모읍니다.' },
+  { id: 'anniversaries', label: '기념일', description: '처음 만난 날, 생일 같은 날까지 D-day를 셉니다.' },
+  { id: 'wishlist', label: '위시리스트', description: '함께 하고 싶은 일과 가고 싶은 곳을 모읍니다.' },
+  { id: 'dues', label: '회비', description: '회비 기간별로 누가 냈는지 확인합니다.' },
+  { id: 'attendance', label: '출석', description: '모임마다 출석을 체크하고 출석률을 봅니다.' },
 ]

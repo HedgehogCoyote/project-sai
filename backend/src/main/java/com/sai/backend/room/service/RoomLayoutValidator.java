@@ -19,7 +19,8 @@ public class RoomLayoutValidator {
             "rug", new int[]{3, 2}, "frame", new int[]{1, 1},
             "cat", new int[]{1, 1}, "calendar", new int[]{1, 1});
     private static final Set<String> MODULES = Set.of("", "activities", "records", "tasks",
-            "calendar", "itinerary", "places", "packing", "expenses", "polls");
+            "calendar", "itinerary", "places", "packing", "expenses", "polls",
+            "anniversaries", "wishlist", "dues", "attendance");
 
     public void validate(RoomLayout layout) {
         if (layout == null || !Integer.valueOf(1).equals(layout.schemaVersion()))

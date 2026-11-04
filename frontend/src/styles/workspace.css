@@ -58,3 +58,19 @@
 .ws-comment-form { display: flex; gap: 8px; }
 .ws-comment-form input { flex: 1; min-width: 0; min-height: 38px; border: 1px solid #d5d7dc; border-radius: 4px; padding: 6px 10px; font: inherit; }
 @media (max-width: 560px) { .ws-photos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* Cottage theme: workspace panels sit on the same cream cards as the other tools. */
+html .home-shell.home-shell .space-content > section > .ws-section,
+html .home-shell.home-shell .home-main > .ws-section {
+  padding: 22px;
+  border: 1px solid #dacabd;
+  border-radius: 12px;
+  background: #fff6eaef;
+  color: #51434c;
+}
+html .home-shell.home-shell .home-main > .ws-section h1 { color: #51434c; }
+html .home-shell.home-shell .ws-section .ws-hint,
+html .home-shell.home-shell .ws-section .ws-meta,
+html .home-shell.home-shell .ws-section small { color: #7b6873; }
+html .home-shell.home-shell .ws-empty { color: #7b6873; border-color: #e5d6cc; }
+html .home-shell.home-shell .ws-list,
+html .home-shell.home-shell .ws-row { border-color: #e5d6cc; }

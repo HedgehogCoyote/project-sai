@@ -19,6 +19,10 @@ export function emptyContent(): ContentState {
     expenses: [],
     polls: [],
     footprints: [],
+    anniversaries: [],
+    wishlist: [],
+    dues: [],
+    attendance: [],
   }
 }
 
@@ -43,6 +47,9 @@ export function mapMemberIds(state: ContentState, f: (id: string) => string): Co
     p.votes = Object.fromEntries(Object.entries(p.votes).map(([k, v]) => [f(k), v]))
   })
   s.footprints?.forEach((fp) => fp.notes.forEach((n) => (n.memberId = f(n.memberId))))
+  s.wishlist?.forEach((w) => (w.addedBy = f(w.addedBy)))
+  s.dues?.forEach((d) => (d.paid = d.paid.map(f)))
+  s.attendance?.forEach((a) => (a.present = a.present.map(f)))
   return s
 }
 
@@ -70,6 +77,10 @@ const COLLECTIONS: [keyof ContentState, string, string][] = [
   ['expenses', '지출', 'expenses'],
   ['packing', '준비물', 'packing'],
   ['places', '장소', 'places'],
+  ['anniversaries', '기념일', 'anniversaries'],
+  ['wishlist', '위시리스트', 'wishlist'],
+  ['dues', '회비', 'dues'],
+  ['attendance', '출석', 'attendance'],
 ]
 
 function particle(word: string) {
