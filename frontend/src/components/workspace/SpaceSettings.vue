@@ -13,7 +13,8 @@ const detail = ref<SpaceDetail | null>(null),
   error = ref(''),
   ok = ref(''),
   confirmText = ref(''),
-  danger = ref<'leave' | 'delete' | null>(null)
+  danger = ref<'leave' | 'delete' | null>(null),
+  muted = ref(false)
 
 function fail(e: unknown, fallback: string) {
   if (e instanceof ApiError && e.status === 401) emit('sessionExpired', e)
@@ -21,6 +22,7 @@ function fail(e: unknown, fallback: string) {
 }
 function fill(d: SpaceDetail) {
   detail.value = d
+  muted.value = d.muted
   title.value = d.title
   relation.value = d.relation
   const i = PALETTES.findIndex((p) => p.primary === d.colorPrimary && p.secondary === d.colorSecondary)
@@ -50,6 +52,21 @@ async function save() {
     emit('changed', d)
   } catch (e) {
     fail(e, '공간 설정을 저장하지 못했습니다.')
+  } finally {
+    busy.value = false
+  }
+}
+async function toggleMute() {
+  busy.value = true
+  error.value = ''
+  ok.value = ''
+  try {
+    await api.mute(props.spaceId, !muted.value)
+    muted.value = !muted.value
+    ok.value = muted.value ? '이 공간의 알림을 껐습니다. 공간 안의 새 소식 표시는 그대로입니다.' : '이 공간의 알림을 켰습니다.'
+    if (detail.value) emit('changed', { ...detail.value, muted: muted.value })
+  } catch (e) {
+    fail(e, '알림 설정을 바꾸지 못했습니다.')
   } finally {
     busy.value = false
   }
@@ -96,6 +113,11 @@ async function confirmDanger() {
         <p v-else class="ws-hint">설정은 소유자와 관리자가 바꿀 수 있습니다.</p>
       </fieldset>
     </form>
+    <div v-if="detail" class="ws-card">
+      <strong>내 알림</strong>
+      <p class="ws-hint">끄면 이 공간의 소식이 헤더 알림과 알림함에서 빠집니다. 나에게만 적용됩니다.</p>
+      <label class="ws-check"><input type="checkbox" :checked="!muted" :disabled="busy" @change="toggleMute" /> 이 공간 알림 받기</label>
+    </div>
     <div v-if="detail" class="ws-danger">
       <strong>공간 나가기와 삭제</strong>
       <p class="ws-hint">

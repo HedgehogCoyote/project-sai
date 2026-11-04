@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class SpaceManageService {
     public static final Set<String> RELATIONS = Set.of("COUPLE", "FRIENDS", "CLUB", "CUSTOM");
     public record SpaceDetail(Long spaceId, String title, String relation, String colorPrimary,
-                              String colorSecondary, String myRole, long memberCount) {}
+                              String colorSecondary, String myRole, long memberCount, boolean muted) {}
     public record MemberItem(Long userId, String loginId, String name, String nickname, String role,
                              OffsetDateTime joinedAt) {}
     public record UpdateSpace(String title, String relation, String colorPrimary, String colorSecondary) {}
@@ -30,9 +30,10 @@ public class SpaceManageService {
         String role = access.role(userId, spaceId);
         return jdbc.queryForObject("""
                 SELECT s.id, s.title, s.relation, s.color_primary, s.color_secondary,
-                       (SELECT COUNT(*) FROM space_member m WHERE m.space_id = s.id)
+                       (SELECT COUNT(*) FROM space_member m WHERE m.space_id = s.id),
+                       (SELECT muted FROM space_member m WHERE m.space_id = s.id AND m.user_id = ?)
                 FROM space s WHERE s.id = ?""", (rs, i) -> new SpaceDetail(rs.getLong(1), rs.getString(2),
-                rs.getString(3), rs.getString(4), rs.getString(5), role, rs.getLong(6)), spaceId);
+                rs.getString(3), rs.getString(4), rs.getString(5), role, rs.getLong(6), rs.getBoolean(7)), userId, spaceId);
     }
 
     @Transactional
@@ -78,6 +79,12 @@ public class SpaceManageService {
         access.role(userId, spaceId);
         String v = nickname == null || nickname.isBlank() ? null : Access.text(nickname, 30, "공간 닉네임");
         jdbc.update("UPDATE space_member SET nickname = ? WHERE user_id = ? AND space_id = ?", v, userId, spaceId);
+    }
+
+    @Transactional
+    public void mute(Long userId, Long spaceId, boolean muted) {
+        access.role(userId, spaceId);
+        jdbc.update("UPDATE space_member SET muted = ? WHERE user_id = ? AND space_id = ?", muted, userId, spaceId);
     }
 
     /** OWNER changes roles. Giving OWNER to someone transfers ownership; the old owner becomes MANAGER. */

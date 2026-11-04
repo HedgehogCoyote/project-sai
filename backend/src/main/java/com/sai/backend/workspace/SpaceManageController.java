@@ -18,6 +18,7 @@ public class SpaceManageController {
 
     public record RoleRequest(String role) {}
     public record NicknameRequest(String nickname) {}
+    public record MuteRequest(Boolean muted) {}
 
     @GetMapping
     public SpaceManageService.SpaceDetail detail(@PathVariable Long spaceId, HttpSession session) {
@@ -45,6 +46,12 @@ public class SpaceManageController {
     public ResponseEntity<Void> nickname(@PathVariable Long spaceId, @RequestBody NicknameRequest body,
                                          HttpSession session) {
         spaces.nickname(Access.userId(session), spaceId, body == null ? null : body.nickname());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/members/me/notifications")
+    public ResponseEntity<Void> mute(@PathVariable Long spaceId, @RequestBody MuteRequest body, HttpSession session) {
+        spaces.mute(Access.userId(session), spaceId, body != null && Boolean.TRUE.equals(body.muted()));
         return ResponseEntity.noContent().build();
     }
 

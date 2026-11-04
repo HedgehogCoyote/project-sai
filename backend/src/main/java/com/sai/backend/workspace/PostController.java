@@ -20,7 +20,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PostController {
     public record PostItem(Long id, String kind, String target, String body, boolean pinned, Long authorId,
-                           String authorName, OffsetDateTime createdAt, boolean mine) {}
+                           String authorName, OffsetDateTime createdAt, boolean mine,
+                           Map<String, Long> reactions, List<String> myReactions) {}
+    public record ReactionRequest(String emoji) {}
+    public static final List<String> EMOJIS = List.of("👍", "❤️", "😂", "😮", "🎉");
     public record NoticeRequest(String body, Boolean pinned) {}
     public record CommentRequest(String target, String body) {}
 
@@ -33,14 +36,43 @@ public class PostController {
         Object[] all = new Object[args.length + 1];
         all[0] = userId;
         System.arraycopy(args, 0, all, 1, args.length);
-        return jdbc.query("""
+        List<PostItem> posts = jdbc.query("""
                 SELECT p.id, p.kind, p.target, p.body, p.pinned, p.author_id, COALESCE(m.nickname, u.name),
                        p.created_at, p.author_id = ?
                 FROM space_post p JOIN users u ON u.id = p.author_id
                 LEFT JOIN space_member m ON m.space_id = p.space_id AND m.user_id = p.author_id
                 """ + where, (rs, i) -> new PostItem(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4),
                 rs.getBoolean(5), rs.getLong(6), rs.getString(7), rs.getObject(8, OffsetDateTime.class),
-                rs.getBoolean(9)), all);
+                rs.getBoolean(9), new LinkedHashMap<>(), new java.util.ArrayList<>()), all);
+        if (posts.isEmpty()) return posts;
+        // Reactions for the listed posts in one query, kept in the fixed emoji order.
+        Map<Long, PostItem> byId = new LinkedHashMap<>();
+        posts.forEach(p -> byId.put(p.id(), p));
+        String ids = String.join(",", byId.keySet().stream().map(String::valueOf).toList());
+        jdbc.query("SELECT post_id, emoji, COUNT(*), BOOL_OR(user_id = ?) FROM space_reaction WHERE post_id IN (" + ids
+                + ") GROUP BY post_id, emoji", rs -> {
+            PostItem p = byId.get(rs.getLong(1));
+            p.reactions().put(rs.getString(2), rs.getLong(3));
+            if (rs.getBoolean(4)) p.myReactions().add(rs.getString(2));
+        }, userId);
+        return posts;
+    }
+
+    @PostMapping("/posts/{postId}/reactions")
+    @Transactional
+    public PostItem react(@PathVariable Long spaceId, @PathVariable Long postId, @RequestBody ReactionRequest req,
+                          HttpSession session) {
+        Long userId = Access.userId(session);
+        access.role(userId, spaceId);
+        if (req == null || !EMOJIS.contains(req.emoji())) throw ApiException.bad("고를 수 있는 반응이 아닙니다.");
+        List<PostItem> found = query(userId, "WHERE p.id = ? AND p.space_id = ?", postId, spaceId);
+        if (found.isEmpty()) throw ApiException.notFound("글을 찾을 수 없습니다.");
+        int removed = jdbc.update("DELETE FROM space_reaction WHERE post_id = ? AND user_id = ? AND emoji = ?",
+                postId, userId, req.emoji());
+        if (removed == 0)
+            jdbc.update("INSERT INTO space_reaction (post_id, user_id, emoji, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP) "
+                    + "ON CONFLICT DO NOTHING", postId, userId, req.emoji());
+        return query(userId, "WHERE p.id = ?", postId).get(0);
     }
 
     @GetMapping("/notices")

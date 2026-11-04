@@ -185,6 +185,14 @@ class WorkspaceIntegrationTest {
                 .andExpect(jsonPath("$[0].unread").value(true));
         // The author never gets their own change as unread; opening the space clears it for others.
         mvc.perform(get("/api/feed/unread").session(as(member))).andExpect(jsonPath("$[0].total").value(0));
+        // A muted space keeps its counts but drops out of the notification list.
+        mvc.perform(patch("/api/spaces/" + space + "/members/me/notifications").session(as(owner))
+                .contentType(MediaType.APPLICATION_JSON).content("{\"muted\":true}")).andExpect(status().isNoContent());
+        mvc.perform(get("/api/feed").session(as(owner))).andExpect(jsonPath("$.length()").value(0));
+        mvc.perform(get("/api/spaces/overview").session(as(owner))).andExpect(jsonPath("$[0].muted").value(true))
+                .andExpect(jsonPath("$[0].unread").value(1));
+        mvc.perform(patch("/api/spaces/" + space + "/members/me/notifications").session(as(owner))
+                .contentType(MediaType.APPLICATION_JSON).content("{\"muted\":false}")).andExpect(status().isNoContent());
         mvc.perform(post("/api/spaces/" + space + "/seen").session(as(owner))).andExpect(status().isNoContent());
         mvc.perform(get("/api/feed/unread").session(as(owner))).andExpect(jsonPath("$[0].total").value(0));
         mvc.perform(get("/api/spaces/" + space + "/feed").session(as(owner))).andExpect(jsonPath("$[0].unread").value(false));
@@ -207,6 +215,16 @@ class WorkspaceIntegrationTest {
         mvc.perform(get(base + "/comments").param("target", "activities:trip").session(as(owner)))
                 .andExpect(jsonPath("$[0].body").value("저 참석해요")).andExpect(jsonPath("$[0].mine").value(false));
         mvc.perform(get(base + "/comment-counts").session(as(owner))).andExpect(jsonPath("$['activities:trip']").value(1));
+        long commentId = c.get("id").longValue();
+        mvc.perform(post(base + "/posts/" + commentId + "/reactions").session(as(owner)).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"emoji\":\"👍\"}")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.reactions['👍']").value(1)).andExpect(jsonPath("$.myReactions[0]").value("👍"));
+        mvc.perform(get(base + "/comments").param("target", "activities:trip").session(as(member)))
+                .andExpect(jsonPath("$[0].reactions['👍']").value(1)).andExpect(jsonPath("$[0].myReactions.length()").value(0));
+        mvc.perform(post(base + "/posts/" + commentId + "/reactions").session(as(owner)).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"emoji\":\"👍\"}")).andExpect(jsonPath("$.reactions['👍']").doesNotExist());
+        mvc.perform(post(base + "/posts/" + commentId + "/reactions").session(as(owner)).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"emoji\":\"💩\"}")).andExpect(status().isBadRequest());
         Long other = user("other");
         join(other, space, "MEMBER");
         mvc.perform(delete(base + "/posts/" + c.get("id").longValue()).session(as(other))).andExpect(status().isForbidden());

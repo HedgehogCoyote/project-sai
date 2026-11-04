@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { ApiError } from '@/services/api'
 import { api, timeAgo, type Post } from '@/services/workspace'
+import ReactionBar from './ReactionBar.vue'
 
 const props = defineProps<{ spaceId: number; canManage: boolean }>()
 const emit = defineEmits<{ sessionExpired: [error: ApiError] }>()
@@ -73,6 +74,7 @@ onMounted(load)
         <button v-if="p.mine || canManage" class="ws-link" type="button" :disabled="busy" @click="remove(p)">지우기</button>
       </div>
       <p class="ws-pre">{{ p.body }}</p>
+      <ReactionBar :space-id="spaceId" :post="p" @updated="(n) => (items = items.map((x) => (x.id === n.id ? n : x)))" />
     </article>
   </section>
 </template>

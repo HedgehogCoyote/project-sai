@@ -29,6 +29,7 @@ import { ServerContentRepository } from './serverRepository'
 import FootPrintPanel from './FootPrintPanel.vue'
 import RelationTools from './RelationTools.vue'
 import MemoriesPanel from './MemoriesPanel.vue'
+import SpaceSearch from './SpaceSearch.vue'
 import SpaceMembers from '@/components/workspace/SpaceMembers.vue'
 import SpaceSettings from '@/components/workspace/SpaceSettings.vue'
 import SpaceNotices from '@/components/workspace/SpaceNotices.vue'
@@ -146,6 +147,7 @@ const tabs = computed(() => [
     ? [{ id: 'invite', label: props.relation === 'COUPLE' ? '상대 초대' : props.relation === 'CLUB' ? '부원 초대' : '사용자 초대' }]
     : []),
   { id: 'modules', label: '기능 추가' },
+  ...(!activity.value ? [{ id: 'search', label: '찾기' }] : []),
   ...(shared && !activity.value ? [{ id: 'settings', label: '설정' }] : []),
 ])
 const tabBadge = (id: string) => {
@@ -1057,6 +1059,9 @@ function putPlaceInSchedule(id: string) {
         :aria-label="tab"
       >
         <RelationTools :tool="tab" :data="data" :members="data.members" :busy="busy" :read-only="readOnly" :commit="commit" />
+      </section>
+      <section v-else-if="tab === 'search'" aria-label="찾기">
+        <SpaceSearch :data="data" @open="(view, event, record) => go(view, event, record)" />
       </section>
       <section v-else-if="tab === 'memories'" aria-label="추억">
         <MemoriesPanel :space-id="space.spaceId" :data="data" :busy="busy" :commit="commit" @open="(event) => go('home', event)" />

@@ -10,6 +10,7 @@ export type SpaceDetail = {
   colorSecondary: string
   myRole: Role
   memberCount: number
+  muted: boolean
 }
 export type SpaceMember = {
   userId: number
@@ -45,7 +46,7 @@ export type FeedItem = {
   unread: boolean
 }
 export type Unread = { spaceId: number; total: number; modules: Record<string, number> }
-export type Overview = { spaceId: number; relation: Relation; colorPrimary: string; colorSecondary: string; unread: number; modules: Record<string, number> }
+export type Overview = { spaceId: number; relation: Relation; colorPrimary: string; colorSecondary: string; unread: number; modules: Record<string, number>; muted: boolean }
 export type Post = {
   id: number
   kind: 'NOTICE' | 'COMMENT'
@@ -56,7 +57,10 @@ export type Post = {
   authorName: string
   createdAt: string
   mine: boolean
+  reactions: Record<string, number>
+  myReactions: string[]
 }
+export const EMOJIS = ['👍', '❤️', '😂', '😮', '🎉']
 export type Photo = {
   id: number
   eventId: string | null
@@ -138,6 +142,10 @@ export const api = {
   commentCounts: (id: number) => apiRequest<Record<string, number>>(sp(id) + '/comment-counts'),
   postComment: (id: number, target: string, body: string) =>
     apiRequest<Post>(sp(id) + '/comments', { method: 'POST', body: json({ target, body }) }),
+  react: (id: number, postId: number, emoji: string) =>
+    apiRequest<Post>(sp(id) + '/posts/' + postId + '/reactions', { method: 'POST', body: json({ emoji }) }),
+  mute: (id: number, muted: boolean) =>
+    apiRequest<void>(sp(id) + '/members/me/notifications', { method: 'PATCH', body: json({ muted }) }),
   deletePost: (id: number, postId: number) => apiRequest<void>(sp(id) + '/posts/' + postId, { method: 'DELETE' }),
   photos: (id: number, eventId?: string | null) =>
     apiRequest<Photo[]>(sp(id) + '/photos' + (eventId ? '?eventId=' + encodeURIComponent(eventId) : '')),

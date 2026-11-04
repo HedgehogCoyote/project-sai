@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { ApiError } from '@/services/api'
 import { api, timeAgo, type Post } from '@/services/workspace'
+import ReactionBar from './ReactionBar.vue'
 
 const props = defineProps<{ spaceId: number; target: string; canModerate: boolean; title?: string }>()
 const emit = defineEmits<{ sessionExpired: [error: ApiError]; changed: [count: number] }>()
@@ -65,6 +66,7 @@ watch(() => props.target, load)
         </button>
       </header>
       <p class="ws-pre">{{ c.body }}</p>
+      <ReactionBar :space-id="spaceId" :post="c" @updated="(p) => (items = items.map((x) => (x.id === p.id ? p : x)))" />
     </article>
     <p v-if="!items.length && !error" class="ws-meta">아직 댓글이 없습니다. 첫 댓글을 남겨 보세요.</p>
     <form class="ws-comment-form" @submit.prevent="send">

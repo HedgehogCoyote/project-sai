@@ -40,7 +40,7 @@ const inboxOpen = computed(() => route.query.panel === 'invitations')
 const panel = computed(() => (typeof route.query.panel === 'string' ? route.query.panel : ''))
 const overview = ref<Overview[]>([])
 const overviewOf = (spaceId: number) => overview.value.find((o) => o.spaceId === spaceId)
-const unreadTotal = computed(() => overview.value.reduce((a, o) => a + o.unread, 0))
+const unreadTotal = computed(() => overview.value.reduce((a, o) => a + (o.muted ? 0 : o.unread), 0))
 async function loadOverview() {
   try {
     overview.value = await api.overview()
