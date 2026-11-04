@@ -1,0 +1,344 @@
+<title>SAI 방 색 시안</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: 세로로 읽는 시안 문서. ① 같은 방·다른 색 4칸 비교 → ② 공간 목록 → ③ 색 고르기 체험 → 결정할 것 */
+:root {
+  --bg: #f6f0f2;
+  --surface: #fffafb;
+  --ink: #3e3139;
+  --muted: #7a6a73;
+  --line: #e4d6dc;
+  --plum: #71576c;
+  --mauve: #aa849c;
+  --chip-tool: #e6eef3;
+  --chip-tool-ink: #3f5a7a;
+  --chip-souv: #f6e6da;
+  --chip-souv-ink: #8a4f2c;
+  --display: "Gowun Batang", "Nanum Myeongjo", serif;
+  --body: "IBM Plex Sans KR", SUIT, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #211a1f; --surface: #2c2329; --ink: #f1e6ea; --muted: #b9a6b0; --line: #43363e;
+    --plum: #d9bccd; --mauve: #c49bb4;
+    --chip-tool: #2a3644; --chip-tool-ink: #b9d0e6; --chip-souv: #3e2e24; --chip-souv-ink: #f0c4a4;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #211a1f; --surface: #2c2329; --ink: #f1e6ea; --muted: #b9a6b0; --line: #43363e;
+  --plum: #d9bccd; --mauve: #c49bb4;
+  --chip-tool: #2a3644; --chip-tool-ink: #b9d0e6; --chip-souv: #3e2e24; --chip-souv-ink: #f0c4a4;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+h1, h2 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.25; }
+h2 { font-size: 24px; }
+p { margin: 0; max-width: 64ch; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.intro { display: grid; gap: 14px; }
+.intro .lede { color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); }
+section { display: grid; gap: 20px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; }
+.sec-head > div { display: grid; gap: 6px; min-width: 0; }
+
+/* toggle */
+.seg { display: inline-flex; flex: none; white-space: nowrap; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button { font: inherit; font-size: 14px; border: 0; background: transparent; color: var(--muted); padding: 7px 16px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--plum); color: var(--bg); font-weight: 600; }
+.seg button:focus-visible, .pair:focus-visible, .row:focus-visible, input:focus-visible { outline: 2px solid var(--mauve); outline-offset: 2px; }
+
+/* room grid */
+.rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
+.room-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.room-card header { display: flex; align-items: center; gap: 10px; }
+.room-card h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.room-card .meta { font-size: 12px; color: var(--muted); }
+.stage { border-radius: 10px; aspect-ratio: 304 / 236; max-width: 100%; display: block; }
+.stage svg { width: 100%; height: 100%; display: block; }
+.added { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13px; min-height: 22px; }
+.added li { display: flex; gap: 8px; align-items: baseline; }
+.added .empty { color: var(--muted); }
+.chip { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.chip.tool { background: var(--chip-tool); color: var(--chip-tool-ink); }
+.chip.souv { background: var(--chip-souv); color: var(--chip-souv-ink); }
+.added small { color: var(--muted); }
+.pop { animation: pop .5s cubic-bezier(.2,.8,.3,1.2) both; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes pop { from { opacity: 0; transform: translateY(-6px) scale(.85); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
+
+/* mark */
+.mark { width: 34px; height: 26px; flex: none; }
+
+/* list */
+.list { display: grid; gap: 10px; }
+.row { display: grid; grid-template-columns: 132px minmax(0,1fr) auto; align-items: center; gap: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 18px 10px 10px; cursor: pointer; color: inherit; text-decoration: none; }
+.row:hover { border-color: var(--mauve); }
+.thumb { width: 132px; aspect-ratio: 304/236; border-radius: 9px; overflow: hidden; display: block; }
+.thumb svg { width: 100%; height: 100%; display: block; }
+.row .name { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 16px; }
+.row .info { display: grid; gap: 4px; min-width: 0; }
+.row .sub { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row .go { font-size: 14px; color: var(--plum); font-weight: 600; white-space: nowrap; }
+.role { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 0 7px; color: var(--muted); font-weight: 500; }
+@media (max-width: 560px) {
+  .row { grid-template-columns: 96px minmax(0,1fr); padding-right: 12px; }
+  .thumb { width: 96px; }
+  .row .go { grid-column: 2; }
+}
+
+/* picker */
+.picker { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+@media (max-width: 760px) { .picker { grid-template-columns: 1fr; padding: 16px; } }
+.picker .form { display: grid; gap: 18px; align-content: start; min-width: 0; }
+.field { display: grid; gap: 8px; }
+.field label, .field .lbl { font-size: 13px; font-weight: 600; }
+.field input { font: inherit; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+.pairs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.pair { border: 1px solid var(--line); border-radius: 12px; background: var(--bg); padding: 10px 4px 8px; display: grid; justify-items: center; gap: 4px; cursor: pointer; font: inherit; font-size: 12px; color: var(--muted); }
+.pair[aria-checked="true"] { border-color: var(--plum); box-shadow: 0 0 0 1px var(--plum); color: var(--ink); font-weight: 600; }
+.pair .mark { width: 40px; height: 30px; }
+.preview-title { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 8px; }
+
+/* decisions */
+.decide { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.decide article { border-top: 2px solid var(--plum); padding-top: 12px; display: grid; gap: 6px; }
+.decide h3 { margin: 0; font-size: 15px; }
+.decide p { font-size: 14px; color: var(--muted); }
+.decide strong { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <span class="eyebrow">SAI · 시안 · 앱 코드 변경 없음</span>
+    <h1>같은 방으로 시작해도, 같은 방으로 남지 않게</h1>
+    <p class="lede">공간마다 두 원의 색을 하나씩 정하고 그 색이 벽 아래 띠, 소파, 러그, 화분에 스며듭니다. 시간이 지나면 설치한 도구와 활동 기념품이 방을 서로 다르게 채웁니다. 아래 공간과 기록은 모두 예시입니다.</p>
+  </header>
+
+  <section aria-labelledby="s1">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">① 비교</span>
+        <h2 id="s1">같은 가구, 다른 색 · 시간이 지난 뒤</h2>
+        <p class="note">처음에는 네 방 모두 같은 기본 가구입니다. 3개월 뒤로 바꾸면 각 공간에서 쓴 도구와 끝낸 활동이 방에 놓입니다.</p>
+      </div>
+      <div class="seg" role="group" aria-label="시점">
+        <button type="button" id="t-start" aria-pressed="true">처음 만든 날</button>
+        <button type="button" id="t-later" aria-pressed="false">3개월 뒤</button>
+      </div>
+    </div>
+    <div class="rooms" id="rooms"></div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">② 내 공간 목록</span>
+        <h2 id="s2">목록에서 한눈에 구분되는 방</h2>
+        <p class="note">썸네일은 서버에 저장된 배치로 그리는 작은 2D 그림입니다. 목록에서 3D 화면을 여러 개 띄우지 않습니다.</p>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <div class="sec-head">
+      <div>
+        <span class="eyebrow">③ 공간 만들기</span>
+        <h2 id="s3">두 원의 색 고르기</h2>
+        <p class="note">관계 유형과 상관없이 직접 고릅니다. 나중에 소유자와 관리자가 바꿀 수 있습니다.</p>
+      </div>
+    </div>
+    <div class="picker">
+      <div class="form">
+        <div class="field">
+          <label for="space-name">공간 이름</label>
+          <input id="space-name" type="text" maxlength="50" value="토요일 등산 모임">
+        </div>
+        <div class="field">
+          <span class="lbl" id="pair-lbl">공간 색</span>
+          <div class="pairs" role="radiogroup" aria-labelledby="pair-lbl" id="pairs"></div>
+        </div>
+        <p class="note">고른 색은 방, 목록 썸네일, 공간 상단 표시에 같이 쓰입니다.</p>
+      </div>
+      <div>
+        <div class="preview-title" id="pv-title"></div>
+        <div class="stage" id="pv-stage"></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s4">
+    <div class="sec-head"><div><span class="eyebrow">구현 전에 정할 것</span><h2 id="s4">결정이 필요한 부분</h2></div></div>
+    <div class="decide">
+      <article><h3>색 선택 범위</h3><p><strong>추천: 프리셋 8쌍.</strong> 자유 색상은 가구 재질과 어울리지 않는 조합이 나오기 쉽습니다.</p></article>
+      <article><h3>바꿀 수 있는 사람</h3><p><strong>추천: 소유자·관리자.</strong> 기존 방 배치 권한과 같게 맞춥니다.</p></article>
+      <article><h3>기념품 시점</h3><p><strong>Foot Print 이후.</strong> 색은 지금 바로 할 수 있고, 기념품은 활동 완료 기록이 서버에 저장된 다음에 붙입니다.</p></article>
+      <article><h3>구현 영향</h3><p>공간에 색 값 하나를 저장하고, 3D 방은 재질 색만 바꿉니다. 가구 모델은 그대로 씁니다.</p></article>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  // ---------- color helpers ----------
+  const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i+2), 16));
+  const toHex = a => '#' + a.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+  const mix = (a, b, t) => { const A = hex(a), B = hex(b); return toHex(A.map((v, i) => v + (B[i] - v) * t)); };
+  const shade = (c, t) => mix(c, '#2a1d24', t);
+  const tint = (c, t) => mix(c, '#ffffff', t);
+
+  // ---------- isometric projection ----------
+  const H = 4.4; // wall height
+  const P = (x, y, z = 0) => [((x - y) * 18).toFixed(1), ((x + y) * 9 - z * 18).toFixed(1)];
+  const pts = arr => arr.map(p => P(...p).join(',')).join(' ');
+  const poly = (arr, fill, extra = '') => `<polygon points="${pts(arr)}" fill="${fill}" stroke="${shade(fill, .18)}" stroke-width=".5" stroke-linejoin="round" ${extra}/>`;
+  const box = ({ x, y, z = 0, w, d, h, c }) =>
+    poly([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]], c) +
+    poly([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], shade(c, .14)) +
+    poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], tint(c, .14));
+  // wall planes: back wall y=0 (x runs along it), side wall x=0 (y runs along it)
+  const backRect = (x1, x2, z1, z2, c) => poly([[x1, .02, z1], [x2, .02, z1], [x2, .02, z2], [x1, .02, z2]], c);
+  const sideRect = (y1, y2, z1, z2, c) => poly([[.02, y1, z1], [.02, y2, z1], [.02, y2, z2], [.02, y1, z2]], c);
+  const dot = (x, y, z, r, c) => { const [cx, cy] = P(x, y, z); return `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${(r * .92).toFixed(1)}" fill="${c}" stroke="${shade(c, .2)}" stroke-width=".5"/>`; };
+
+  const frameBack = (x1, x2, z1, z2, wood, pic) => backRect(x1, x2, z1, z2, wood) + backRect(x1 + .14, x2 - .14, z1 + .14, z2 - .14, pic) + (() => { const [cx, cy] = P((x1 + x2) / 2 + .2, .03, z2 - .45); return `<circle cx="${cx}" cy="${cy}" r="3" fill="${tint(pic, .6)}"/>`; })();
+
+  // ---------- room scene ----------
+  function scene(p, later) {
+    const wood = mix('#c79a72', p.floor, .3);
+    const band = mix(p.wall, p.c2, .38);
+    let s = '';
+    // floor + planks
+    s += poly([[0, 0], [8, 0], [8, 8], [0, 8]].map(a => [...a, 0]), p.floor);
+    for (let i = 1; i < 8; i++) { const [a, b] = P(i, 0), [c, d] = P(i, 8); s += `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${shade(p.floor, .1)}" stroke-width=".6"/>`; }
+    // walls
+    s += poly([[0, 0, 0], [8, 0, 0], [8, 0, H], [0, 0, H]], p.wall);
+    s += poly([[0, 0, 0], [0, 8, 0], [0, 8, H], [0, 0, H]], shade(p.wall, .07));
+    s += poly([[0, 0, 0], [8, 0, 0], [8, 0, 1.1], [0, 0, 1.1]], band);
+    s += poly([[0, 0, 0], [0, 8, 0], [0, 8, 1.1], [0, 0, 1.1]], shade(band, .07));
+    // window on back wall
+    s += backRect(4.7, 6.9, 1.7, 3.6, tint(wood, .35)) + backRect(4.85, 6.75, 1.85, 3.45, p.light);
+    { const [a, b] = P(5.8, .03, 1.85), [c, d] = P(5.8, .03, 3.45); s += `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${tint(wood, .35)}" stroke-width="1.6"/>`; }
+    // wall shelf on side wall
+    s += box({ x: 0, y: 5.6, z: 2.3, w: .55, d: 1.9, h: .14, c: wood });
+
+    const base = [];
+    const add = (order, svg, cls = '') => base.push({ order, svg: cls ? `<g class="${cls}">${svg}</g>` : svg });
+    // rug
+    add(0, box({ x: 1.6, y: 2.4, w: 3.6, d: 2.8, h: .04, c: tint(p.c2, .45) }));
+    // sofa against back wall
+    add(2, box({ x: 1.2, y: .25, w: 3, d: .4, h: 1.5, c: shade(p.c1, .06) }) + box({ x: 1.2, y: .65, w: 3, d: 1, h: .65, c: p.c1 }) + box({ x: 1.45, y: .7, w: .7, d: .35, h: .5, z: .65, c: tint(p.c1, .35) }) + box({ x: 3.25, y: .7, w: .7, d: .35, h: .5, z: .65, c: tint(p.c2, .3) }));
+    // table
+    add(5, box({ x: 2.7, y: 3.2, w: 1.5, d: 1, h: .5, c: wood }));
+    // plant in corner
+    add(7, box({ x: 7, y: .35, w: .7, d: .7, h: .7, c: p.c2 }) + dot(7.35, .7, 1.25, 9, '#7f9f6e') + dot(7.15, .9, 1.75, 7, '#94b37f') + dot(7.55, .55, 1.65, 6, '#6e8f60'));
+
+    const items = later ? p.later : [];
+    items.forEach(it => add(it.order ?? 6, it.draw(p, wood), 'pop'));
+    base.sort((a, b) => a.order - b.order);
+    return s + base.map(b => b.svg).join('');
+  }
+
+  const svgRoom = (p, later) => `<svg viewBox="-152 -96 304 236" role="img" aria-label="${p.name} 방"><rect x="-152" y="-96" width="304" height="236" fill="${p.bg}"/>${scene(p, later)}</svg>`;
+  const mark = (c1, c2) => `<svg class="mark" viewBox="0 0 72 54" aria-hidden="true"><circle cx="24" cy="27" r="20" fill="${c1}"/><circle cx="48" cy="27" r="20" fill="${c2}" style="mix-blend-mode:multiply"/></svg>`;
+
+  // ---------- item kits ----------
+  const cat = (x, y, c) => { const [cx, cy] = P(x, y, .05).map(Number); return `<g><path d="M${cx + 10} ${cy - 3} q 9 -2 8 -12" fill="none" stroke="${shade(c, .1)}" stroke-width="3" stroke-linecap="round"/><ellipse cx="${cx}" cy="${cy - 6}" rx="12" ry="7.5" fill="${c}" stroke="${shade(c, .22)}" stroke-width=".5"/><circle cx="${cx - 10}" cy="${cy - 15}" r="6.5" fill="${c}" stroke="${shade(c, .22)}" stroke-width=".5"/><path d="M${cx - 15} ${cy - 18} l 1 -7 l 4 5 z M${cx - 8} ${cy - 20} l 3 -6 l 2 6 z" fill="${c}"/><circle cx="${cx - 12}" cy="${cy - 15}" r=".9" fill="#2a1d24"/><circle cx="${cx - 8}" cy="${cy - 15.5}" r=".9" fill="#2a1d24"/></g>`; };
+  const board = (c, lines) => { let s = sideRect(1.1, 3.3, 1.6, 3.3, shade('#c9a27a', .05)); lines.forEach((col, i) => { s += sideRect(1.35 + i * .62, 1.85 + i * .62, 2.5 - (i % 2) * .5, 3.0 - (i % 2) * .5, col); }); return s; };
+  const calendar = (c) => sideRect(1.2, 2.7, 1.7, 3.4, '#fbf6ee') + sideRect(1.2, 2.7, 3.05, 3.4, c) + [0, 1, 2].map(r => [0, 1, 2].map(k => sideRect(1.35 + k * .45, 1.65 + k * .45, 2.6 - r * .35, 2.85 - r * .35, r === 1 && k === 2 ? c : '#e6dccf')).join('')).join('');
+
+  const palettes = [
+    { name: '대학 동기 모임', c1: '#e3976b', c2: '#6c8db5', wall: '#f4e6da', floor: '#c99a73', light: '#cfe3ea', bg: '#ead9cc', members: 6, events: 9, role: 'OWNER',
+      later: [
+        { kind: 'tool', label: '투표 게시판', order: 1, draw: p => board(p, [p.c1, '#f3d36b', p.c2]) },
+        { kind: 'tool', label: '정산 가계부', order: 5.5, draw: p => box({ x: 3, y: 3.45, z: .5, w: .65, d: .45, h: .12, c: p.c2 }) },
+        { kind: 'souv', label: '생일 파티 액자', note: '3월 활동', order: 1, draw: (p, w) => frameBack(1.6, 2.9, 2.3, 3.4, w, tint(p.c1, .2)) },
+        { kind: 'souv', label: '부산 조개', note: '8월 여행', order: 1, draw: p => dot(.3, 6.2, 2.62, 4.5, '#f2c6c0') + dot(.3, 6.9, 2.58, 3.5, '#f7e3d2') },
+        { kind: 'souv', label: '캠핑 랜턴', note: '10월 캠핑', order: 8, draw: p => box({ x: 6, y: 6, w: .45, d: .45, h: .75, c: shade(p.c1, .1) }) + dot(6.22, 6.22, 1.0, 4, '#ffe2a3') },
+      ] },
+    { name: '우리 집', c1: '#9bb08a', c2: '#c98b6b', wall: '#eee8d8', floor: '#b88f66', light: '#d8e8dc', bg: '#e0dccb', members: 4, events: 5, role: 'MANAGER',
+      later: [
+        { kind: 'tool', label: '공유 달력', order: 1, draw: p => calendar(p.c2) },
+        { kind: 'tool', label: '반복 할 일 고양이', order: 6, draw: p => cat(4.9, 4.6, '#e8b07e') },
+        { kind: 'souv', label: '가족사진 액자', note: '설날', order: 1, draw: (p, w) => frameBack(1.5, 3.1, 2.2, 3.5, w, tint(p.c1, .1)) },
+        { kind: 'souv', label: '제주 귤 상자', note: '7월 여행', order: 8, draw: (p, w) => box({ x: 5.9, y: 5.8, w: .95, d: .7, h: .45, c: w }) + dot(6.15, 6.05, .62, 3.6, '#f29a3a') + dot(6.55, 6.15, .62, 3.6, '#f4a648') + dot(6.35, 6.4, .62, 3.6, '#ee9033') },
+      ] },
+    { name: '알고리즘 스터디', c1: '#7c9cc1', c2: '#3f5a7a', wall: '#e3e7eb', floor: '#a9a39a', light: '#dfe9f1', bg: '#d6dbe0', members: 5, events: 12, role: 'MEMBER',
+      later: [
+        { kind: 'tool', label: '할 일 체크보드', order: 1, draw: p => sideRect(1.1, 3.3, 1.6, 3.4, '#fbfbf8') + [0, 1, 2, 3].map(i => sideRect(1.35, 1.55, 3.0 - i * .38, 3.2 - i * .38, i < 2 ? p.c1 : '#d6d6d0') + sideRect(1.7, 3.0, 3.05 - i * .38, 3.15 - i * .38, '#d6d6d0')).join('') },
+        { kind: 'tool', label: '기록 책장', order: 3, draw: (p, w) => box({ x: .05, y: 3.7, w: .7, d: 1.6, h: 2.2, c: w }) + [0, 1, 2].map(r => box({ x: .1, y: 3.8 + r * .5, z: .3 + r * .65, w: .55, d: .35, h: .5, c: [p.c1, p.c2, '#d9a35b'][r] })).join('') },
+        { kind: 'souv', label: '1기 수료 액자', note: '6월', order: 1, draw: (p, w) => frameBack(1.7, 2.9, 2.3, 3.4, w, tint(p.c2, .25)) },
+        { kind: 'souv', label: '대회 트로피', note: '9월 대회', order: 1, draw: p => box({ x: .12, y: 6.4, z: 2.44, w: .3, d: .3, h: .35, c: '#d9b04c' }) + dot(.27, 6.55, 2.95, 4.5, '#e6c160') },
+      ] },
+    { name: '둘이서', c1: '#aa849c', c2: '#71576c', wall: '#f1e3e6', floor: '#c4a08a', light: '#f1dfe0', bg: '#e6d4d9', members: 2, events: 7, role: 'OWNER',
+      later: [
+        { kind: 'tool', label: '공유 달력', order: 1, draw: p => calendar(p.c1) },
+        { kind: 'tool', label: '사진 앨범', order: 5.5, draw: p => box({ x: 3.1, y: 3.4, z: .5, w: .75, d: .55, h: .16, c: p.c2 }) },
+        { kind: 'souv', label: '1주년 액자', note: '5월', order: 1, draw: (p, w) => frameBack(1.4, 3.2, 2.1, 3.6, w, tint(p.c1, .3)) },
+        { kind: 'souv', label: '교토 기차표', note: '4월 여행', order: 1, draw: p => box({ x: .1, y: 6.0, z: 2.44, w: .3, d: .7, h: .05, c: '#f4e7c6' }) },
+        { kind: 'souv', label: '같이 키운 화분', note: '계속 자라는 중', order: 8, draw: p => box({ x: 6.1, y: 6.1, w: .6, d: .6, h: .55, c: tint(p.c2, .2) }) + dot(6.4, 6.4, 1.05, 8, '#86a873') + dot(6.25, 6.55, 1.5, 6, '#9cbc86') },
+      ] },
+  ];
+
+  // ---------- ① comparison ----------
+  const roomsEl = document.getElementById('rooms');
+  const roleKo = { OWNER: '소유자', MANAGER: '관리자', MEMBER: '멤버' };
+  function renderRooms(later) {
+    roomsEl.innerHTML = palettes.map(p => `
+      <article class="room-card">
+        <header>${mark(p.c1, p.c2)}<div><h3>${p.name}</h3><div class="meta">예시 공간 · 멤버 ${p.members}명</div></div></header>
+        <div class="stage">${svgRoom(p, later)}</div>
+        <ul class="added">${later
+          ? p.later.map(it => `<li><span class="chip ${it.kind}">${it.kind === 'tool' ? '도구' : '기념품'}</span><span>${it.label}${it.note ? ` <small>· ${it.note}</small>` : ''}</span></li>`).join('')
+          : '<li class="empty">기본 가구만 있음. 색만 다릅니다.</li>'}</ul>
+      </article>`).join('');
+  }
+  const tStart = document.getElementById('t-start'), tLater = document.getElementById('t-later');
+  const setTime = later => { tStart.setAttribute('aria-pressed', String(!later)); tLater.setAttribute('aria-pressed', String(later)); renderRooms(later); };
+  tStart.addEventListener('click', () => setTime(false));
+  tLater.addEventListener('click', () => setTime(true));
+  renderRooms(false);
+
+  // ---------- ② list ----------
+  document.getElementById('list').innerHTML = palettes.map(p => `
+    <a class="row" href="#s2" onclick="return false">
+      <span class="thumb">${svgRoom(p, true).replace(/class="pop"/g, '')}</span>
+      <span class="info">
+        <span class="name">${mark(p.c1, p.c2)}${p.name} <span class="role">${roleKo[p.role]}</span></span>
+        <span class="sub">멤버 ${p.members}명 · 활동 ${p.events}개 · 기념품 ${p.later.filter(i => i.kind === 'souv').length}개</span>
+      </span>
+      <span class="go">들어가기 →</span>
+    </a>`).join('');
+
+  // ---------- ③ picker ----------
+  const presets = [
+    { label: '살구·하늘', c1: '#e3976b', c2: '#6c8db5', wall: '#f4e6da', floor: '#c99a73', light: '#cfe3ea', bg: '#ead9cc' },
+    { label: '세이지·흙', c1: '#9bb08a', c2: '#c98b6b', wall: '#eee8d8', floor: '#b88f66', light: '#d8e8dc', bg: '#e0dccb' },
+    { label: '물빛·남색', c1: '#7c9cc1', c2: '#3f5a7a', wall: '#e3e7eb', floor: '#a9a39a', light: '#dfe9f1', bg: '#d6dbe0' },
+    { label: '모브·자두', c1: '#aa849c', c2: '#71576c', wall: '#f1e3e6', floor: '#c4a08a', light: '#f1dfe0', bg: '#e6d4d9' },
+    { label: '이끼·숲', c1: '#b5b872', c2: '#4f6b55', wall: '#ece9d6', floor: '#a88a63', light: '#dfe8d2', bg: '#dcdcc6' },
+    { label: '노을·벽돌', c1: '#efb15e', c2: '#a8574a', wall: '#f5e4d0', floor: '#b98a62', light: '#f3dcc3', bg: '#ead2bd' },
+    { label: '라일락·민트', c1: '#b9a3d6', c2: '#6fae9f', wall: '#eee8f2', floor: '#c2a58f', light: '#dcefe9', bg: '#e1d9e6' },
+    { label: '모래·먹', c1: '#d6c09a', c2: '#4b4a52', wall: '#eeeae2', floor: '#a59684', light: '#e4e3df', bg: '#dcd7cd' },
+  ];
+  let sel = 4;
+  const pairsEl = document.getElementById('pairs'), nameEl = document.getElementById('space-name');
+  function renderPicker() {
+    pairsEl.innerHTML = presets.map((p, i) => `<button type="button" class="pair" role="radio" aria-checked="${i === sel}" data-i="${i}">${mark(p.c1, p.c2)}<span>${p.label}</span></button>`).join('');
+    const p = { ...presets[sel], name: nameEl.value || '새 공간', later: [] };
+    document.getElementById('pv-title').innerHTML = `${mark(p.c1, p.c2)}<span>${p.name.replace(/[<>&]/g, '')}</span>`;
+    document.getElementById('pv-stage').innerHTML = svgRoom(p, false);
+  }
+  pairsEl.addEventListener('click', e => { const b = e.target.closest('.pair'); if (!b) return; sel = +b.dataset.i; renderPicker(); pairsEl.querySelector(`[data-i="${sel}"]`).focus(); });
+  pairsEl.addEventListener('keydown', e => { const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return; e.preventDefault(); sel = (sel + d + presets.length) % presets.length; renderPicker(); pairsEl.querySelector(`[data-i="${sel}"]`).focus(); });
+  nameEl.addEventListener('input', renderPicker);
+  renderPicker();
+})();
+</script>
