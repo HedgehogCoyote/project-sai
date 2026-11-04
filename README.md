@@ -102,7 +102,8 @@ SAI는 **공간(Space)** 이라는 단위로 사람을 모으는 서비스입니
 - [현재 3D 방 인터랙티브 목업과 실행 방법](docs/mockups/room-interactive/README.md)
 - [현재 3D 방 목업 검증](docs/mockups/room-interactive/verification.md)
 - [3D 방 구조·저장 방식·에셋 라이선스](frontend/src/features/room/README.md)
-- [서비스 기획서](docs/planning/sai-product-plan.md) — 초기 논의 기록이며 최신 구현 범위는 이 README를 기준으로 합니다.
+- [서비스 기획서 v2](docs/planning/sai-product-plan-v2.md) — 2026-11-04 개정안. 관계 × 테마, 기념품, 로드맵을 정리했습니다. 최신 구현 범위는 이 README를 기준으로 합니다.
+- [서비스 기획서 v1](docs/planning/sai-product-plan.md) — 초기 논의 기록입니다.
 
 아래 자료는 이전 디자인과 검증 기록입니다.
 
