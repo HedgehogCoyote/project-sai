@@ -133,7 +133,10 @@ public class SpaceManageService {
     /** Tables without ON DELETE CASCADE are cleared first; photo files are removed after commit-safe deletes. */
     @Transactional
     public void deleteSpace(Long spaceId) {
-        List<String> keys = jdbc.queryForList("SELECT storage_key FROM space_photo WHERE space_id = ?", String.class, spaceId);
+        List<String> keys = jdbc.queryForList("""
+                SELECT storage_key FROM space_photo WHERE space_id = ?
+                UNION ALL SELECT thumb_key FROM space_photo WHERE space_id = ? AND thumb_key IS NOT NULL""",
+                String.class, spaceId, spaceId);
         jdbc.update("DELETE FROM space_invitation WHERE space_id = ?", spaceId);
         jdbc.update("DELETE FROM space_room WHERE space_id = ?", spaceId);
         jdbc.update("DELETE FROM space_member WHERE space_id = ?", spaceId);

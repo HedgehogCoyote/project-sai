@@ -28,6 +28,7 @@ import { useContent } from './useContent'
 import { ServerContentRepository } from './serverRepository'
 import FootPrintPanel from './FootPrintPanel.vue'
 import RelationTools from './RelationTools.vue'
+import MemoriesPanel from './MemoriesPanel.vue'
 import SpaceMembers from '@/components/workspace/SpaceMembers.vue'
 import SpaceSettings from '@/components/workspace/SpaceSettings.vue'
 import SpaceNotices from '@/components/workspace/SpaceNotices.vue'
@@ -108,14 +109,14 @@ onMounted(async () => {
 })
 const roomSouvenirs = computed(() =>
   (data.value?.footprints ?? [])
-    .filter((f) => f.status === 'published' && f.souvenir)
+    .filter((f) => f.status === 'published' && f.souvenir && f.displayed !== false)
     .sort((a, b) => a.publishedAt.localeCompare(b.publishedAt))
     .map((f) => ({
       id: f.id,
       eventId: f.eventId,
       kind: f.souvenir!.kind,
       title: f.title,
-      photoUrl: f.souvenir!.photoId ? fileUrl(`/api/spaces/${props.space.spaceId}/photos/${f.souvenir!.photoId}/file`) : null,
+      photoUrl: f.souvenir!.photoId ? fileUrl(`/api/spaces/${props.space.spaceId}/photos/${f.souvenir!.photoId}/file?size=thumb`) : null,
     })),
 )
 const footprint = computed(() => data.value?.footprints?.find((f) => f.eventId === activity.value?.id))
@@ -131,6 +132,7 @@ const tabs = computed(() => [
     ? [
         { id: 'news', label: '소식' },
         { id: 'notices', label: '공지' },
+        { id: 'memories', label: '추억' },
       ]
     : []),
   ...(shared ? [{ id: 'photos', label: activity.value ? '사진' : '사진첩' }] : []),
@@ -1055,6 +1057,9 @@ function putPlaceInSchedule(id: string) {
         :aria-label="tab"
       >
         <RelationTools :tool="tab" :data="data" :members="data.members" :busy="busy" :read-only="readOnly" :commit="commit" />
+      </section>
+      <section v-else-if="tab === 'memories'" aria-label="추억">
+        <MemoriesPanel :space-id="space.spaceId" :data="data" :busy="busy" :commit="commit" @open="(event) => go('home', event)" />
       </section>
       <section v-else-if="tab === 'news'" aria-label="최근 소식">
         <SpaceNews :space-id="space.spaceId" @seen="emit('seen')" @open="(m) => go(m && tabs.some((t) => t.id === m) ? m : 'home')" @session-expired="emit('sessionExpired', $event)" />

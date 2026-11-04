@@ -77,10 +77,13 @@ public class PhotoController {
         if (event != null && !event.matches(EVENT)) throw ApiException.bad("활동을 확인해 주세요.");
         String cap = caption == null || caption.isBlank() ? null : Access.text(caption, 200, "사진 설명");
         String key = storage.save(spaceId, bytes, type[1]);
+        byte[] thumb = PhotoThumbnails.make(bytes);
+        String thumbKey = thumb == null ? null : storage.save(spaceId, thumb, "thumb.jpg");
         Long id = jdbc.queryForObject("""
-                INSERT INTO space_photo (space_id, uploader_id, event_id, caption, storage_key, content_type, size_bytes, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP) RETURNING id""",
-                Long.class, spaceId, userId, event, cap, key, type[0], (long) bytes.length);
+                INSERT INTO space_photo (space_id, uploader_id, event_id, caption, storage_key, content_type, size_bytes,
+                                         thumb_key, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP) RETURNING id""",
+                Long.class, spaceId, userId, event, cap, key, type[0], (long) bytes.length, thumbKey);
         feed.record(spaceId, userId, "PHOTO", "photos", access.displayName(userId, spaceId) + "님이 사진을 올렸습니다.");
         return ResponseEntity.status(HttpStatus.CREATED).body(query(userId, spaceId, "WHERE p.id = ?", id).get(0));
     }
@@ -99,23 +102,25 @@ public class PhotoController {
         return null;
     }
 
-    private record Stored(Long uploaderId, String key, String contentType) {}
+    private record Stored(Long uploaderId, String key, String contentType, String thumbKey) {}
 
     private Stored stored(Long spaceId, Long photoId) {
-        List<Stored> rows = jdbc.query("SELECT uploader_id, storage_key, content_type FROM space_photo WHERE id = ? AND space_id = ?",
-                (rs, i) -> new Stored(rs.getLong(1), rs.getString(2), rs.getString(3)), photoId, spaceId);
+        List<Stored> rows = jdbc.query("SELECT uploader_id, storage_key, content_type, thumb_key FROM space_photo WHERE id = ? AND space_id = ?",
+                (rs, i) -> new Stored(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getString(4)), photoId, spaceId);
         if (rows.isEmpty()) throw ApiException.notFound("사진을 찾을 수 없습니다.");
         return rows.get(0);
     }
 
     @GetMapping("/{photoId}/file")
-    public ResponseEntity<Resource> file(@PathVariable Long spaceId, @PathVariable Long photoId, HttpSession session) {
+    public ResponseEntity<Resource> file(@PathVariable Long spaceId, @PathVariable Long photoId,
+                                         @RequestParam(required = false) String size, HttpSession session) {
         access.role(Access.userId(session), spaceId);
         Stored s = stored(spaceId, photoId);
-        FileSystemResource resource = new FileSystemResource(storage.resolve(s.key()));
+        boolean thumb = "thumb".equals(size) && s.thumbKey() != null;
+        FileSystemResource resource = new FileSystemResource(storage.resolve(thumb ? s.thumbKey() : s.key()));
         if (!resource.exists()) throw ApiException.notFound("사진 파일이 없습니다.");
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(s.contentType()))
+                .contentType(thumb ? MediaType.IMAGE_JPEG : MediaType.parseMediaType(s.contentType()))
                 .cacheControl(CacheControl.maxAge(java.time.Duration.ofDays(1)).cachePrivate())
                 .header("X-Content-Type-Options", "nosniff")
                 .body(resource);
@@ -147,6 +152,7 @@ public class PhotoController {
             throw ApiException.forbidden("올린 사람이나 관리자만 지울 수 있습니다.");
         jdbc.update("DELETE FROM space_photo WHERE id = ?", photoId);
         storage.delete(s.key());
+        if (s.thumbKey() != null) storage.delete(s.thumbKey());
         return ResponseEntity.noContent().build();
     }
 }

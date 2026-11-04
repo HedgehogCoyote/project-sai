@@ -32,18 +32,19 @@ watch(
   },
   { immediate: true },
 )
-const photoSrc = (id: number) => fileUrl(`/api/spaces/${props.spaceId}/photos/${id}/file`)
+const photoSrc = (id: number, full = false) => fileUrl(`/api/spaces/${props.spaceId}/photos/${id}/file${full ? '' : '?size=thumb'}`)
 const name = (id: string) => props.members.find((m) => m.id === id)?.name ?? '멤버'
 const options = computed(() => souvenirsFor(props.activity.type))
 const dirtyPhotos = computed(() => JSON.stringify(picked.value) !== JSON.stringify(props.footprint?.photoIds ?? []))
 
-function edit(mutate: (fp: FootPrint) => void) {
+function edit(mutate: (fp: FootPrint) => void, after?: (next: ContentState) => void) {
   error.value = ''
   return props.commit((next) => {
     next.footprints ??= []
     const fp = next.footprints.find((f) => f.eventId === props.activity.id)
     if (!fp) throw new Error('Foot Print를 찾을 수 없습니다. 새로고침해 주세요.')
     mutate(fp)
+    after?.(next)
   })
 }
 function start() {
@@ -92,6 +93,11 @@ async function publish() {
     fp.souvenir = { kind: souvenir.value, photoId: souvenirIsPhoto(souvenir.value) ? souvenirPhoto.value : null }
     fp.status = 'published'
     fp.publishedAt = new Date().toISOString()
+  }, (next) => {
+    // A new souvenir goes on the shelf while it has room; otherwise it waits in the archive.
+    const shown = (next.footprints ?? []).filter((f) => f.status === 'published' && f.displayed !== false && f.eventId !== props.activity.id)
+    const fp = next.footprints?.find((f) => f.eventId === props.activity.id)
+    if (fp) fp.displayed = shown.length < 8
   })
 }
 const reopen = () => edit((fp) => (fp.status = 'draft'))
@@ -162,7 +168,7 @@ const reopen = () => edit((fp) => (fp.status = 'draft'))
       <div class="ws-card notice">
         <strong>{{ footprint.title }} · {{ footprint.start || '날짜 미정' }}{{ footprint.end && footprint.end !== footprint.start ? ` ~ ${footprint.end}` : '' }}</strong>
         <div v-if="footprint.photoIds.length" class="ws-photos">
-          <a v-for="id in footprint.photoIds" :key="id" class="ws-photo" :href="photoSrc(id)" target="_blank" rel="noopener"><img :src="photoSrc(id)" alt="" loading="lazy" /></a>
+          <a v-for="id in footprint.photoIds" :key="id" class="ws-photo" :href="photoSrc(id, true)" target="_blank" rel="noopener"><img :src="photoSrc(id)" alt="" loading="lazy" /></a>
         </div>
         <div v-for="n in footprint.notes" :key="n.id" class="ws-comment"><header><strong>{{ name(n.memberId) }}</strong></header><p class="ws-pre">{{ n.body }}</p></div>
         <p class="ws-hint">{{ footprint.souvenir ? withSubject(souvenirLabel(footprint.souvenir.kind)) : '기념품이' }} 공간 방 선반에 놓였습니다. 방에서 누르면 이 기록이 열립니다.</p>

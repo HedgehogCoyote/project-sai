@@ -143,6 +143,17 @@ async function tab(page, label) {
     await A.getByText(`${b.name}님의 역할을 바꿨습니다.`).waitFor();
     await A.screenshot({ path: `${out}/members.png`, fullPage: true });
   });
+  await step('A finds the memory in the archive and takes the souvenir off the shelf', async () => {
+    await tab(A, '추억');
+    const card = A.locator('.memory', { hasText: '부산 여행' });
+    await card.waitFor();
+    await card.getByRole('button', { name: /선반에서 내리기/ }).click();
+    await card.getByRole('button', { name: /선반에 놓기/ }).waitFor();
+    await A.screenshot({ path: `${out}/memories.png`, fullPage: true });
+    await tab(A, '공간 홈');
+    await A.locator('.three-room[data-ready="true"]').waitFor({ timeout: 30000 });
+    if (await A.locator('.three-object-label.souvenir').count()) throw new Error('souvenir still on the shelf');
+  });
   await step('A space list shows colours', async () => {
     await A.goto(BASE + '/spaces');
     await A.locator('.space-row .ws-mark').first().waitFor();

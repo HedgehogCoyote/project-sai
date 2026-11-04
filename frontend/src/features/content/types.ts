@@ -102,6 +102,8 @@ export type FootPrint = {
   notes: FootPrintNote[]
   souvenir: { kind: string; photoId: number | null } | null
   publishedAt: string
+  /** Shown on the room shelf (up to 8); hidden souvenirs stay in the memories archive. */
+  displayed?: boolean
 }
 export type ContentState = {
   version: 1

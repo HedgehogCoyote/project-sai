@@ -136,7 +136,7 @@ defineExpose({ reload: load })
         :aria-pressed="picked ? picked.includes(p.id) : undefined"
         @click="show(p)"
       >
-        <img :src="fileUrl(p.url)" alt="" loading="lazy" />
+        <img :src="fileUrl(p.url) + '?size=thumb'" alt="" loading="lazy" />
         <span v-if="picked?.includes(p.id)" class="ws-pick">✓</span>
       </button>
     </div>
