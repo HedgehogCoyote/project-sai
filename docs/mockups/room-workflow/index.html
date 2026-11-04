@@ -1,0 +1,300 @@
+<title>SAI 부산 여행 흐름</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: 세로 스토리보드. 단계마다 [번호·설명] [그 시점의 방] [그 시점의 화면] 3열, 좁으면 1열. 마지막에 흐름이 끊기는 지점 정리. */
+:root {
+  --bg: #f6f0f2;
+  --surface: #fffafb;
+  --sunk: #f1e8ec;
+  --ink: #3e3139;
+  --muted: #7a6a73;
+  --line: #e4d6dc;
+  --plum: #71576c;
+  --mauve: #aa849c;
+  --apricot: #e3976b;
+  --sky: #6c8db5;
+  --ok-bg: #e3efe4; --ok-ink: #335b3b;
+  --local-bg: #f7ecd2; --local-ink: #7a5714;
+  --none-bg: #f6dfdf; --none-ink: #8e3434;
+  --draft-bg: #ebe3f1; --draft-ink: #5c4775;
+  --display: "Gowun Batang", "Nanum Myeongjo", serif;
+  --body: "IBM Plex Sans KR", SUIT, "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #211a1f; --surface: #2c2329; --sunk: #251d22; --ink: #f1e6ea; --muted: #b9a6b0; --line: #43363e;
+    --plum: #d9bccd; --mauve: #c49bb4; --apricot: #eaa883; --sky: #8eaad0;
+    --ok-bg: #23372a; --ok-ink: #b5dcbd; --local-bg: #3d3220; --local-ink: #f0d38f;
+    --none-bg: #432526; --none-ink: #f2b4b4; --draft-bg: #352b40; --draft-ink: #d6c5ea;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #211a1f; --surface: #2c2329; --sunk: #251d22; --ink: #f1e6ea; --muted: #b9a6b0; --line: #43363e;
+  --plum: #d9bccd; --mauve: #c49bb4; --apricot: #eaa883; --sky: #8eaad0;
+  --ok-bg: #23372a; --ok-ink: #b5dcbd; --local-bg: #3d3220; --local-ink: #f0d38f;
+  --none-bg: #432526; --none-ink: #f2b4b4; --draft-bg: #352b40; --draft-ink: #d6c5ea;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.6; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 40px; }
+h1, h2 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.25; }
+h2 { font-size: 24px; }
+h3 { margin: 0; font-size: 18px; font-weight: 600; text-wrap: balance; }
+p { margin: 0; max-width: 64ch; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.intro { display: grid; gap: 14px; }
+.lede { color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--muted); align-items: center; }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+
+.st { font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.st.ok { background: var(--ok-bg); color: var(--ok-ink); }
+.st.local { background: var(--local-bg); color: var(--local-ink); }
+.st.none { background: var(--none-bg); color: var(--none-ink); }
+.st.draft { background: var(--draft-bg); color: var(--draft-ink); }
+
+.steps { display: grid; gap: 0; counter-reset: step; }
+.step { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1fr) minmax(0, 1fr); gap: 24px; padding-block: 28px; border-top: 1px solid var(--line); align-items: start; }
+.step:last-child { border-bottom: 1px solid var(--line); }
+@media (max-width: 900px) { .step { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .step .text { grid-column: 1 / -1; } }
+@media (max-width: 600px) { .step { grid-template-columns: minmax(0, 1fr); } }
+.text { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.num { font-family: var(--display); font-size: 15px; color: var(--plum); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.num::before { counter-increment: step; content: counter(step); display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--plum); font-size: 14px; }
+.text p { color: var(--muted); font-size: 14px; }
+.status { display: grid; gap: 6px; font-size: 13px; }
+.status div { display: flex; gap: 8px; align-items: baseline; }
+.warn { font-size: 13px; color: var(--none-ink); background: var(--none-bg); border-radius: 8px; padding: 8px 10px; }
+
+.room { display: grid; gap: 8px; min-width: 0; }
+.stage { border-radius: 12px; overflow: hidden; aspect-ratio: 304 / 236; max-width: 100%; }
+.stage svg { width: 100%; height: 100%; display: block; }
+.changes { font-size: 12px; color: var(--muted); }
+.changes b { color: var(--ink); font-weight: 600; }
+
+/* mock UI panels */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 12px; align-content: start; font-size: 13px; min-width: 0; }
+.panel .ttl { font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.panel .ttl small { font-weight: 400; color: var(--muted); font-size: 12px; }
+.fld { display: grid; gap: 4px; }
+.fld > span { font-size: 11px; color: var(--muted); font-weight: 600; }
+.box { background: var(--sunk); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; overflow-wrap: anywhere; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.btn { background: var(--plum); color: var(--bg); border-radius: 8px; padding: 7px 12px; font-weight: 600; font-size: 13px; text-align: center; }
+.btn.ghost { background: transparent; color: var(--plum); border: 1px solid var(--line); }
+.pill { border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 12px; color: var(--muted); }
+.pill.on { border-color: var(--plum); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--plum); }
+.mark { width: 30px; height: 22px; flex: none; }
+.marks { display: flex; gap: 8px; }
+.marks .m { padding: 4px; border-radius: 8px; border: 1px solid var(--line); display: grid; }
+.marks .m.on { border-color: var(--plum); box-shadow: inset 0 0 0 1px var(--plum); }
+.list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.list li { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.list .who { color: var(--muted); font-size: 12px; }
+.num-r { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.check { display: inline-grid; place-items: center; width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--mauve); font-size: 10px; line-height: 1; margin-right: 6px; color: var(--bg); }
+.check.on { background: var(--plum); border-color: var(--plum); }
+.bar { height: 6px; border-radius: 3px; background: var(--sunk); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--apricot); border-radius: 3px; }
+.bar.b i { background: var(--sky); }
+.vote { display: grid; gap: 4px; }
+.photos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.photos div { aspect-ratio: 1; border-radius: 6px; }
+.quote { border-left: 2px solid var(--mauve); padding-left: 10px; color: var(--ink); }
+.quote small { display: block; color: var(--muted); }
+.divider { border-top: 1px dashed var(--line); }
+.tl { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.tl li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.tl .m { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+/* summary */
+.gap { display: grid; gap: 16px; }
+.gap ol { margin: 0; padding-left: 22px; display: grid; gap: 10px; max-width: 72ch; }
+.gap li strong { font-weight: 600; }
+.gap li span { color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <span class="eyebrow">SAI · 사용 흐름 시안 · 예시 공간과 인물</span>
+    <h1>대학 동기 여섯 명의 부산 여행, 공간을 만든 날부터 방에 조개가 놓일 때까지</h1>
+    <p class="lede">한 모임이 SAI를 처음부터 끝까지 쓰는 과정을 8단계로 그렸습니다. 왼쪽은 하는 일, 가운데는 그때의 방, 오른쪽은 그때 보는 화면입니다. 단계마다 지금 코드에 있는지 표시했습니다.</p>
+    <div class="legend">
+      <span><b class="st ok">서버 구현됨</b> 멤버 모두 같은 데이터</span>
+      <span><b class="st local">브라우저에만 저장</b> 만든 사람만 보임</span>
+      <span><b class="st draft">시안 단계</b></span>
+      <span><b class="st none">새로 만들어야 함</b></span>
+    </div>
+  </header>
+
+  <div class="steps" id="steps"></div>
+
+  <section class="gap" aria-labelledby="gap-h">
+    <span class="eyebrow">정리</span>
+    <h2 id="gap-h">지금 코드로는 3단계에서 흐름이 끊깁니다</h2>
+    <p>공간과 초대는 서버에 있어서 1~2단계는 여섯 명이 함께 할 수 있습니다. 하지만 활동, 투표, 준비물, 정산은 만든 사람의 브라우저에만 저장됩니다. 지민이 투표를 열어도 나머지 다섯 명에게는 보이지 않습니다. 이 흐름을 실제로 쓰려면 아래 순서로 필요합니다.</p>
+    <ol>
+      <li><strong>활동·투표·준비물·정산 서버 저장</strong> <span>— 3~5단계를 여섯 명이 같이 보게 하는 기반입니다. 화면은 이미 있어서 저장 위치를 서버로 옮기는 작업이 중심입니다.</span></li>
+      <li><strong>링크 초대</strong> <span>— 단톡방에 링크 하나를 올려 여섯 명을 모으는 단계입니다. 아이디 검색만으로는 모이기 어렵습니다.</span></li>
+      <li><strong>Foot Print와 사진 업로드</strong> <span>— 6단계. 파일 저장 위치, 용량 한도, 삭제 정책을 먼저 정해야 합니다.</span></li>
+      <li><strong>기념품 배치와 공간 색</strong> <span>— 7~8단계. 방 배치는 이미 서버에 저장되므로 기념품 가구 종류와 Foot Print 연결만 더하면 됩니다.</span></li>
+    </ol>
+  </section>
+</div>
+
+<script>
+(() => {
+  // ---------- color + iso helpers (같은 렌더러: room-palettes 시안) ----------
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const toHex = a => '#' + a.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+  const mix = (a, b, t) => { const A = hex(a), B = hex(b); return toHex(A.map((v, i) => v + (B[i] - v) * t)); };
+  const shade = (c, t) => mix(c, '#2a1d24', t);
+  const tint = (c, t) => mix(c, '#ffffff', t);
+  const H = 4.4;
+  const P = (x, y, z = 0) => [((x - y) * 18).toFixed(1), ((x + y) * 9 - z * 18).toFixed(1)];
+  const pts = arr => arr.map(p => P(...p).join(',')).join(' ');
+  const poly = (arr, fill) => `<polygon points="${pts(arr)}" fill="${fill}" stroke="${shade(fill, .18)}" stroke-width=".5" stroke-linejoin="round"/>`;
+  const box = ({ x, y, z = 0, w, d, h, c }) =>
+    poly([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]], c) +
+    poly([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], shade(c, .14)) +
+    poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], tint(c, .14));
+  const backRect = (x1, x2, z1, z2, c) => poly([[x1, .02, z1], [x2, .02, z1], [x2, .02, z2], [x1, .02, z2]], c);
+  const sideRect = (y1, y2, z1, z2, c) => poly([[.02, y1, z1], [.02, y2, z1], [.02, y2, z2], [.02, y1, z2]], c);
+  const dot = (x, y, z, r, c) => { const [cx, cy] = P(x, y, z); return `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${(r * .92).toFixed(1)}" fill="${c}" stroke="${shade(c, .2)}" stroke-width=".5"/>`; };
+  const frameBack = (x1, x2, z1, z2, wood, pic) => backRect(x1, x2, z1, z2, wood) + backRect(x1 + .14, x2 - .14, z1 + .14, z2 - .14, pic);
+  const callout = (x, y, z, l1, l2) => { const [cx, cy] = P(x, y, z).map(Number); const bx = cx + 10, by = cy - 40; return `<g><line x1="${cx}" y1="${cy - 4}" x2="${bx + 8}" y2="${by + 30}" stroke="#71576c" stroke-width="1"/><rect x="${bx}" y="${by}" width="104" height="30" rx="6" fill="#fffaf6" stroke="#71576c" stroke-width=".8"/><text x="${bx + 8}" y="${by + 12.5}" font-size="8.5" font-weight="600" fill="#3e3139" font-family="IBM Plex Sans KR, sans-serif">${l1}</text><text x="${bx + 8}" y="${by + 24}" font-size="7.5" fill="#7a6a73" font-family="IBM Plex Sans KR, sans-serif">${l2}</text></g>`; };
+
+  const p = { c1: '#e3976b', c2: '#6c8db5', wall: '#f4e6da', floor: '#c99a73', light: '#cfe3ea', bg: '#ead9cc' };
+  const wood = mix('#c79a72', p.floor, .3);
+
+  // 방에 놓일 수 있는 물건
+  const kit = {
+    board:    { order: 1, label: '투표 게시판', draw: () => sideRect(1.1, 3.3, 1.6, 3.3, shade('#c9a27a', .05)) + [p.c1, '#f3d36b', p.c2].map((c, i) => sideRect(1.35 + i * .62, 1.85 + i * .62, 2.5 - (i % 2) * .5, 3.0 - (i % 2) * .5, c)).join('') },
+    ledger:   { order: 5.5, label: '정산 가계부', draw: () => box({ x: 3, y: 3.45, z: .5, w: .65, d: .45, h: .12, c: p.c2 }) },
+    suitcase: { order: 8, label: '여행 가방 · 진행 중 활동', draw: () => box({ x: 5.7, y: 5.5, w: 1, d: .45, h: 1.15, c: p.c2 }) + box({ x: 6.05, y: 5.62, z: 1.15, w: .3, d: .2, h: .12, c: shade(p.c2, .3) }) + poly([[5.95, 5.95, .5], [6.35, 5.95, .5], [6.35, 5.95, .8], [5.95, 5.95, .8]], '#f3d36b') },
+    done:     { order: 9, label: '완료 표시', draw: () => { const [cx, cy] = P(6.2, 5.72, 1.6).map(Number); return `<circle cx="${cx}" cy="${cy - 8}" r="8" fill="#4f8a5b" stroke="#fffaf6" stroke-width="1.5"/><path d="M${cx - 3.5} ${cy - 8} l2.5 2.6 l4.5 -5" fill="none" stroke="#fffaf6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`; } },
+    shell:    { order: 1, label: '부산 조개', draw: () => dot(.3, 6.2, 2.62, 4.5, '#f2c6c0') + dot(.3, 6.9, 2.58, 3.5, '#f7e3d2') },
+    photo:    { order: 1, label: '부산 사진 액자', draw: () => frameBack(1.6, 2.9, 2.3, 3.4, wood, '#9cc3d6') + backRect(1.74, 2.76, 2.44, 2.75, '#e9d3a8') },
+    lantern:  { order: 8, label: '캠핑 랜턴', draw: () => box({ x: 6, y: 6, w: .45, d: .45, h: .75, c: shade(p.c1, .1) }) + dot(6.22, 6.22, 1.0, 4, '#ffe2a3') },
+    cake:     { order: 1, label: '생일 케이크 모형', draw: () => box({ x: .1, y: 7.0, z: 2.44, w: .35, d: .35, h: .25, c: '#f6e2e6' }) + dot(.27, 7.17, 2.78, 2, '#e3976b') },
+  };
+
+  function room(items, extra = '') {
+    const band = mix(p.wall, p.c2, .38);
+    let s = poly([[0, 0, 0], [8, 0, 0], [8, 8, 0], [0, 8, 0]], p.floor);
+    for (let i = 1; i < 8; i++) { const [a, b] = P(i, 0), [c, d] = P(i, 8); s += `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${shade(p.floor, .1)}" stroke-width=".6"/>`; }
+    s += poly([[0, 0, 0], [8, 0, 0], [8, 0, H], [0, 0, H]], p.wall) + poly([[0, 0, 0], [0, 8, 0], [0, 8, H], [0, 0, H]], shade(p.wall, .07));
+    s += poly([[0, 0, 0], [8, 0, 0], [8, 0, 1.1], [0, 0, 1.1]], band) + poly([[0, 0, 0], [0, 8, 0], [0, 8, 1.1], [0, 0, 1.1]], shade(band, .07));
+    s += backRect(4.7, 6.9, 1.7, 3.6, tint(wood, .35)) + backRect(4.85, 6.75, 1.85, 3.45, p.light);
+    s += box({ x: 0, y: 5.6, z: 2.3, w: .55, d: 1.9, h: .14, c: wood });
+    const parts = [
+      { order: 0, svg: box({ x: 1.6, y: 2.4, w: 3.6, d: 2.8, h: .04, c: tint(p.c2, .45) }) },
+      { order: 2, svg: box({ x: 1.2, y: .25, w: 3, d: .4, h: 1.5, c: shade(p.c1, .06) }) + box({ x: 1.2, y: .65, w: 3, d: 1, h: .65, c: p.c1 }) + box({ x: 1.45, y: .7, z: .65, w: .7, d: .35, h: .5, c: tint(p.c1, .35) }) + box({ x: 3.25, y: .7, z: .65, w: .7, d: .35, h: .5, c: tint(p.c2, .3) }) },
+      { order: 5, svg: box({ x: 2.7, y: 3.2, w: 1.5, d: 1, h: .5, c: wood }) },
+      { order: 7, svg: box({ x: 7, y: .35, w: .7, d: .7, h: .7, c: p.c2 }) + dot(7.35, .7, 1.25, 9, '#7f9f6e') + dot(7.15, .9, 1.75, 7, '#94b37f') + dot(7.55, .55, 1.65, 6, '#6e8f60') },
+      ...items.map(k => ({ order: kit[k].order, svg: kit[k].draw() })),
+    ].sort((a, b) => a.order - b.order);
+    return `<svg viewBox="-152 -96 304 236" role="img" aria-label="대학 동기 모임의 방"><rect x="-152" y="-96" width="304" height="236" fill="${p.bg}"/>${s}${parts.map(x => x.svg).join('')}${extra}</svg>`;
+  }
+  const mark = (c1, c2) => `<svg class="mark" viewBox="0 0 72 54" aria-hidden="true"><circle cx="24" cy="27" r="20" fill="${c1}"/><circle cx="48" cy="27" r="20" fill="${c2}" style="mix-blend-mode:multiply"/></svg>`;
+  const st = (cls, label, note) => `<div><b class="st ${cls}">${label}</b><span>${note}</span></div>`;
+  const chk = (on, text, who) => `<li><span><span class="check ${on ? 'on' : ''}">${on ? '✓' : ''}</span>${text}</span><span class="who">${who}</span></li>`;
+  const won = n => n.toLocaleString('ko-KR') + '원';
+
+  // 정산 예시: 6명 균등 분담
+  const people = ['지민', '서연', '도윤', '하은', '민재', '태오'];
+  const spends = [['광안리 숙소 2박', '지민', 360000], ['민락동 회 저녁', '민재', 168000], ['택시', '서연', 42000]];
+  const total = spends.reduce((s, x) => s + x[2], 0), share = total / people.length;
+  const transfers = [['도윤', '지민', 95000], ['하은', '지민', 95000], ['태오', '지민', 75000], ['태오', '민재', 20000], ['서연', '민재', 53000]];
+
+  const steps = [
+    { title: '공간을 만들고 색을 고른다',
+      body: '지민이 "대학 동기 모임"을 만들고 살구·하늘 색을 고릅니다. 기본 가구만 있는 방이 생깁니다.',
+      status: [st('ok', '서버 구현됨', '공간 생성, 소유자 지정'), st('draft', '시안 단계', '공간 색 선택')],
+      items: [], change: '기본 가구만 있는 방',
+      panel: `<div class="ttl">새 공간</div>
+        <div class="fld"><span>공간 이름</span><div class="box">대학 동기 모임</div></div>
+        <div class="fld"><span>공간 색</span><div class="marks"><div class="m on">${mark('#e3976b', '#6c8db5')}</div><div class="m">${mark('#9bb08a', '#c98b6b')}</div><div class="m">${mark('#7c9cc1', '#3f5a7a')}</div><div class="m">${mark('#aa849c', '#71576c')}</div></div></div>
+        <div class="btn">공간 만들기</div>` },
+    { title: '단톡방에 링크를 올려 친구를 모은다',
+      body: '초대 링크를 카카오톡 단톡방에 붙여 넣습니다. 친구들이 가입하고 바로 공간에 들어옵니다.',
+      status: [st('ok', '서버 구현됨', '아이디 검색 초대, 받은 초대함 수락·거절'), st('none', '새로 만들어야 함', '링크 초대')],
+      items: [], change: '방은 그대로, 멤버가 6명이 됨',
+      panel: `<div class="ttl">멤버 초대 <small>6명 참여</small></div>
+        <div class="fld"><span>초대 링크 · 7일 동안 유효</span><div class="row"><div class="box" style="flex:1;min-width:0">sai.app/i/7fK2dq</div><div class="btn ghost">복사</div></div></div>
+        <div class="divider"></div>
+        <ul class="list">${people.map((n, i) => `<li><span>${n}</span><span class="who">${i === 0 ? '소유자' : '링크로 참여'}</span></li>`).join('')}</ul>` },
+    { title: '여행 활동을 만들고 도구를 고른다',
+      body: '"부산 여행"을 여행 유형으로 만들고 일정, 준비물, 정산, 투표를 켭니다. 방에 여행 가방이 놓이고, 누르면 이 활동이 열립니다.',
+      status: [st('local', '브라우저에만 저장', '활동 생성, 도구 선택, 가구에 활동 연결')],
+      warn: '지금은 지민의 브라우저에만 저장돼서 다른 다섯 명에게는 이 활동이 보이지 않습니다.',
+      items: ['suitcase', 'board', 'ledger'], change: '<b>새로 생김</b> 여행 가방, 투표 게시판, 정산 가계부',
+      panel: `<div class="ttl">새 활동</div>
+        <div class="fld"><span>유형</span><div class="row"><span class="pill on">여행</span><span class="pill">모임</span><span class="pill">스터디</span><span class="pill">직접 구성</span></div></div>
+        <div class="fld"><span>이름 · 기간</span><div class="box">부산 여행 · 8월 14일 – 16일</div></div>
+        <div class="fld"><span>쓸 도구</span><ul class="list">${chk(true, '일정', '')}${chk(true, '준비물', '')}${chk(true, '정산', '')}${chk(true, '투표', '')}${chk(false, '저장 장소', '')}</ul></div>` },
+    { title: '숙소를 투표로 정하고 준비물을 나눈다',
+      body: '투표 게시판을 눌러 숙소 투표를 엽니다. 준비물에는 담당자를 정하고 챙긴 사람이 체크합니다.',
+      status: [st('local', '브라우저에만 저장', '투표 생성·마감, 준비물 담당자')],
+      items: ['suitcase', 'board', 'ledger'], change: '방은 그대로',
+      panel: `<div class="ttl">숙소 어디로? <small>마감 · 6명 투표</small></div>
+        <div class="vote"><div class="row" style="justify-content:space-between"><span><b>광안리 게스트하우스</b></span><span class="num-r">4표</span></div><div class="bar"><i style="width:66.7%"></i></div></div>
+        <div class="vote"><div class="row" style="justify-content:space-between"><span>해운대 호텔</span><span class="num-r">2표</span></div><div class="bar b"><i style="width:33.3%"></i></div></div>
+        <div class="divider"></div>
+        <div class="ttl">준비물 <small>2 / 3</small></div>
+        <ul class="list">${chk(true, '보조배터리', '도윤')}${chk(false, '돗자리', '서연')}${chk(true, '상비약', '하은')}</ul>` },
+    { title: '여행 중 쓴 돈을 적고 정산한다',
+      body: '낸 사람이 지출을 적으면 여섯 명 균등 분담으로 누가 누구에게 얼마를 보낼지 계산합니다. 송금은 각자 합니다.',
+      status: [st('local', '브라우저에만 저장', '지출, 균등 분담, 정산 제안')],
+      items: ['suitcase', 'board', 'ledger'], change: '방은 그대로',
+      panel: `<div class="ttl">지출 <small>총 ${won(total)} · 1인 ${won(share)}</small></div>
+        <ul class="list">${spends.map(([t, w, a]) => `<li><span>${t} <span class="who">${w}</span></span><span class="num-r">${won(a)}</span></li>`).join('')}</ul>
+        <div class="divider"></div>
+        <div class="ttl">정산 제안 <small>5건</small></div>
+        <ul class="list">${transfers.map(([a, b, n]) => `<li><span>${a} → ${b}</span><span class="num-r">${won(n)}</span></li>`).join('')}</ul>` },
+    { title: '활동을 끝내면 Foot Print 초안이 생긴다',
+      body: '완료를 누르면 제목과 기간이 채워진 초안만 만들어집니다. 각자 사진과 한 줄 후기를 더하고, 확인한 뒤 게시합니다. 다른 사람 사진을 자동으로 공개하지 않습니다.',
+      status: [st('local', '브라우저에만 저장', '활동 완료·보관'), st('none', '새로 만들어야 함', 'Foot Print, 사진 업로드')],
+      items: ['suitcase', 'board', 'ledger', 'done'], change: '<b>바뀜</b> 여행 가방에 완료 표시',
+      panel: `<div class="ttl">Foot Print 초안 <small>게시 전</small></div>
+        <div class="box">부산 여행 · 8월 14일 – 16일 · 6명</div>
+        <div class="photos"><div style="background:#9cc3d6"></div><div style="background:#e9d3a8"></div><div style="background:#e3976b"></div><div style="background:#6c8db5"></div></div>
+        <div class="quote">새벽 광안대교 보면서 먹은 컵라면<small>서연 · 사진 2장</small></div>
+        <div class="quote">회는 민재가 다 골랐다<small>도윤 · 사진 2장</small></div>
+        <div class="row"><div class="btn">게시하기</div><span class="who">4명 참여 · 2명 아직</span></div>` },
+    { title: '기념품이 방에 놓인다',
+      body: '게시하면 기념품을 하나 골라 선반에 둡니다. 여행 가방은 치워집니다. 몇 달 뒤 조개를 누르면 그때의 사진과 후기가 열립니다.',
+      status: [st('none', '새로 만들어야 함', '기념품 종류, Foot Print 연결'), st('ok', '서버 구현됨', '방 배치 저장')],
+      items: ['board', 'ledger', 'shell', 'photo'], change: '<b>새로 생김</b> 부산 조개, 사진 액자 · <b>치워짐</b> 여행 가방',
+      extra: callout(.3, 6.4, 2.7, '부산 여행 Foot Print', '8월 14–16일 · 사진 4장 · 후기 2'),
+      panel: `<div class="ttl">기념품 고르기</div>
+        <div class="row"><span class="pill on">조개</span><span class="pill">갈매기 인형</span><span class="pill">기차표</span></div>
+        <div class="fld"><span>놓을 곳</span><div class="box">벽 선반</div></div>
+        <div class="btn">방에 놓기</div>
+        <p class="who" style="color:var(--muted)">기념품을 치워도 Foot Print 기록은 남습니다.</p>` },
+    { title: '3개월 뒤, 이 모임만의 방',
+      body: '캠핑과 생일 파티를 지나며 기념품이 늘었습니다. 같은 기본 방에서 시작한 다른 공간과 이제는 확실히 다릅니다.',
+      status: [st('draft', '시안 단계', '쌓인 기념품 모아 보기')],
+      items: ['board', 'ledger', 'shell', 'photo', 'lantern', 'cake'], change: '<b>새로 생김</b> 캠핑 랜턴, 생일 케이크 모형',
+      panel: `<div class="ttl">이 공간의 Foot Print <small>3개</small></div>
+        <ul class="tl"><li><span class="m">8월</span><span>부산 여행 <span class="who">· 조개, 사진 액자</span></span></li><li><span class="m">10월</span><span>가평 캠핑 <span class="who">· 캠핑 랜턴</span></span></li><li><span class="m">11월</span><span>지민 생일 파티 <span class="who">· 케이크 모형</span></span></li></ul>` },
+  ];
+
+  document.getElementById('steps').innerHTML = steps.map(s => `
+    <article class="step">
+      <div class="text">
+        <div class="num">${s.title}</div>
+        <p>${s.body}</p>
+        <div class="status">${s.status.join('')}</div>
+        ${s.warn ? `<div class="warn">${s.warn}</div>` : ''}
+      </div>
+      <div class="room"><div class="stage">${room(s.items, s.extra || '')}</div><div class="changes">${s.change}</div></div>
+      <div class="panel">${s.panel}</div>
+    </article>`).join('');
+})();
+</script>
