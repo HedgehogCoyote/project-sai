@@ -77,7 +77,8 @@ public class AuthService {
 				foundUser.getEmail(),
 				foundUser.getName(),
 				foundUser.getPhoneNumber(),
-				foundUser.getLoginId()
+				foundUser.getLoginId(),
+				foundUser.getId()
 				);
 		
 	}

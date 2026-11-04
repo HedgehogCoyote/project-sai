@@ -4,6 +4,7 @@ public record MeResponse(
 		String email,
 		String name,
 		String phoneNumber,
-		String loginId
+		String loginId,
+		Long userId
 		) 
 { }

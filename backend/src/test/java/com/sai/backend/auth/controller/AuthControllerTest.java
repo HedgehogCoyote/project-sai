@@ -162,7 +162,8 @@ class AuthControllerTest {
                 "test@example.com",
                 "홍길동",
                 "010-1234-5678",
-                "hong1234"
+                "hong1234",
+                mockUserId
         );
 
         given(authService.getMe(mockUserId))

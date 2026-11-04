@@ -26,6 +26,8 @@ public class UserService {
 				.findTop10ByLoginIdContainingIgnoreCaseOrderByLoginId(
 						searchUserListByLoginIdRequest.loginId().trim())
 				.stream()
+				// Deleted accounts keep an anonymised "deleted-" login id; never offer them as invitees.
+				.filter(user -> !user.getLoginId().startsWith("deleted-"))
 				.map(user -> new SearchUserListByLoginIdResponse(
 						user.getId(), user.getLoginId(), user.getName()))
 				.toList();
