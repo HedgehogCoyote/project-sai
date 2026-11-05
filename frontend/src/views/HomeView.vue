@@ -40,6 +40,13 @@ const inboxOpen = computed(() => route.query.panel === 'invitations')
 const panel = computed(() => (typeof route.query.panel === 'string' ? route.query.panel : ''))
 const overview = ref<Overview[]>([])
 const overviewOf = (spaceId: number) => overview.value.find((o) => o.spaceId === spaceId)
+/** The list thumbnail's wall takes a light tint of the space's main colour. */
+function coverWall(spaceId: number, index: number) {
+  const c = overviewOf(spaceId)?.colorPrimary
+  if (!c) return ['#c8adbb', '#bfd0be', '#c7bfce'][index % 3]
+  const ch = [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16))
+  return '#' + ch.map((v) => Math.round(v + (245 - v) * 0.45).toString(16).padStart(2, '0')).join('')
+}
 const unreadTotal = computed(() => overview.value.reduce((a, o) => a + (o.muted ? 0 : o.unread), 0))
 async function loadOverview() {
   try {
@@ -301,7 +308,7 @@ async function openInbox() {
                   <svg viewBox="0 0 240 140">
                     <path
                       d="M120 8L20 56V99L120 139L220 92V51Z"
-                      :fill="['#c8adbb', '#bfd0be', '#c7bfce'][index % 3]"
+                      :fill="coverWall(space.spaceId, index)"
                     />
                     <path d="M20 99L120 48L220 92L120 139Z" fill="#dfbd94" />
                     <path d="M43 57L79 40V73L43 89Z" fill="#eee5ce" />

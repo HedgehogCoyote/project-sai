@@ -5,3 +5,11 @@ test('seed room is valid and binds only installed tools or the selected event',(
 test('footprints reject overlaps and boundaries while rugs can sit under furniture',()=>{const sofa=createFurniture('sofa'),desk=createFurniture('desk');assert.equal(fits([sofa],desk,1,0),false);assert.equal(fits([sofa],desk,3,0),true);assert.equal(fits([],desk,7,0),false);assert.equal(fits([],desk,-1,0),false);assert.equal(fits([],desk,0.5,0),false);assert.equal(fits([sofa],createFurniture('rug'),0,0),true)})
 test('rotation changes footprint and validation rejects inconsistent or corrupt persisted rooms',()=>{const sofa=createFurniture('sofa');sofa.rotation=1;[sofa.w,sofa.h]=[sofa.h,sofa.w];assert.equal(validRoom([sofa]),true);assert.equal(validRoom([{...sofa,w:3,h:2}]),false);assert.equal(validRoom([sofa,{...sofa}]),false);assert.equal(validRoom([{...sofa,module:'footprints'}]),false);assert.equal(validRoom([{...sofa,x:9}]),false)})
 test('first free position respects existing furniture',()=>{const sofa=createFurniture('sofa');assert.deepEqual(firstFree([sofa],createFurniture('desk')),{x:3,y:0})})
+
+test('furniture can open the relationship tools', async () => {
+  const { validRoom, createFurniture } = await import('../src/features/room/model.ts')
+  for (const module of ['anniversaries', 'wishlist', 'dues', 'attendance']) {
+    const sofa = { ...createFurniture('sofa'), module }
+    assert.equal(validRoom([sofa]), true, module)
+  }
+})

@@ -108,6 +108,10 @@ export function validRoom(value: unknown): value is Furniture[] {
         'packing',
         'expenses',
         'polls',
+        'anniversaries',
+        'wishlist',
+        'dues',
+        'attendance',
       ].includes(item.module) ||
       typeof item.label !== 'string' ||
       item.label.length > 24 ||

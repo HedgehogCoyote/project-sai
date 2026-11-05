@@ -150,10 +150,29 @@ const tabs = computed(() => [
   ...(!activity.value ? [{ id: 'search', label: '찾기' }] : []),
   ...(shared && !activity.value ? [{ id: 'settings', label: '설정' }] : []),
 ])
+// Opening a space marks it read on the server right away; keep this visit's badges until
+// each tool is opened, so the room and the menu still show where the news is.
+const visitBadges = ref<Record<string, number>>({})
+watch(
+  () => props.unreadModules,
+  (modules) => {
+    for (const [k, n] of Object.entries(modules ?? {})) if (n > 0) visitBadges.value[k] = n
+  },
+  { immediate: true },
+)
+watch(
+  () => route.query.view,
+  (view) => {
+    if (typeof view !== 'string') return
+    if (view === 'news') visitBadges.value = {}
+    else delete visitBadges.value[view]
+  },
+  { immediate: true },
+)
 const tabBadge = (id: string) => {
-  if (activity.value || !props.unreadModules) return 0
-  if (id === 'news') return Object.values(props.unreadModules).reduce((a, b) => a + b, 0)
-  return props.unreadModules[id] ?? 0
+  if (activity.value) return 0
+  if (id === 'news') return Object.values(visitBadges.value).reduce((a, b) => a + b, 0)
+  return visitBadges.value[id] ?? 0
 }
 const tab = computed(() =>
   tabs.value.some((t) => t.id === route.query.view) ? String(route.query.view) : 'home',
@@ -881,7 +900,7 @@ function putPlaceInSchedule(id: string) {
           :blocked="busy"
           :souvenirs="roomSouvenirs"
           :colors="colors"
-          :badges="unreadModules"
+          :badges="visitBadges"
           @open="(view, scope) => go(view, scope)"
           @open-souvenir="(event) => go('home', event)"
           @invite="go('invite')"

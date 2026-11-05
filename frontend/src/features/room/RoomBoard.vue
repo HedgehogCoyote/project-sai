@@ -414,8 +414,7 @@ function open(id: string) {
 <template>
   <div class="room-board" :data-time="time">
     <p class="room-storage-note">
-      가구 배치는 공간 멤버에게 공유돼요. 도구의 내용과 활동 연결은 아직 이 브라우저에서만 사용할 수
-      있어요.
+      가구 배치와 도구의 내용은 공간 멤버와 함께 써요. 가구와 활동의 연결만 이 브라우저에 남아요.
     </p>
     <p v-if="loading" class="room-message" role="status">공간의 가구 배치를 불러오고 있어요.</p>
     <p v-else-if="!canEdit" class="room-message">가구 배치는 소유자와 관리자가 수정할 수 있어요.</p>

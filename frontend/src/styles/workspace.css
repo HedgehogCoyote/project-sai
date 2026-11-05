@@ -74,3 +74,8 @@ html .home-shell.home-shell .ws-section small { color: #7b6873; }
 html .home-shell.home-shell .ws-empty { color: #7b6873; border-color: #e5d6cc; }
 html .home-shell.home-shell .ws-list,
 html .home-shell.home-shell .ws-row { border-color: #e5d6cc; }
+html .home-shell.home-shell .space-content > .ws-card {
+  background: #fff6eaef;
+  border-color: #dacabd;
+  color: #51434c;
+}
