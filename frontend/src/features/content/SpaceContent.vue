@@ -1620,7 +1620,7 @@ function putPlaceInSchedule(id: string) {
                 ? '마감 ' + poll.deadline.replace('T', ' ') + ' (한국 시간)'
                 : '생성자가 마감할 때까지 진행'
             }}
-            · {{ Object.keys(poll.votes).length }}표 · 체험 결과
+            · {{ Object.keys(poll.votes).length }}표{{ shared ? '' : ' · 체험 결과' }}
           </p>
           <label v-for="option in poll.options" :key="option.id" class="vote-option"
             ><span
@@ -1655,7 +1655,7 @@ function putPlaceInSchedule(id: string) {
               투표 마감
             </button>
           </div>
-          <p class="hint">
+          <p v-if="!shared" class="hint">
             예시 참여자의 표가 포함되어 있습니다. 실제 다른 사용자의 투표와 공유되지 않습니다.
           </p>
         </article>
