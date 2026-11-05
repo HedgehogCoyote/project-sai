@@ -150,7 +150,7 @@ function select() {
 
 <style scoped>
 .invitation-heading { color: #fff3e7; }
-.invitation-form.user-invitation { max-width: 740px; display: grid; gap: 22px; margin-top: 20px; border: 1px solid #decfc6; }
+.invitation-form.user-invitation { max-width: 740px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; margin-top: 20px; border: 1px solid #decfc6; }
 .field { display: grid; gap: 8px; }
 .field-label, form > label { font-size: 13px; font-weight: 600; }
 .fixed-space { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px; border: 1px solid #decfc6; border-radius: 9px; }

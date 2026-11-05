@@ -9,7 +9,7 @@ html .home-shell.home-shell {
   --violet-600: #71576c;
   min-height: 100svh !important;
   background: radial-gradient(ellipse at 45% 40%, #a0889d, #8b7388 55%, #756075);
-  font-family: SUIT, 'Malgun Gothic', sans-serif;
+  font-family: inherit;
   color: #f9eee5;
 }
 html .home-shell.home-shell .site-header {

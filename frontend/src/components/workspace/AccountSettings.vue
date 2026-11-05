@@ -56,7 +56,7 @@ async function remove() {
 </script>
 
 <template>
-  <section class="ws-section account" aria-label="내 계정">
+  <section class="ws-section account-settings" aria-label="내 계정">
     <h1>내 계정</h1>
     <p class="ws-hint">@{{ auth.user?.loginId }} · {{ auth.user?.email }}</p>
     <p v-if="error" class="ws-error" role="alert">{{ error }}</p>
@@ -90,6 +90,6 @@ async function remove() {
 </template>
 
 <style scoped>
-.account { max-width: 560px; }
-.account h1 { margin: 0; font-size: 26px; }
+.account-settings { max-width: 560px; }
+.account-settings h1 { margin: 0; font-size: 26px; }
 </style>

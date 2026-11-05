@@ -2027,7 +2027,7 @@ function putPlaceInSchedule(id: string) {
 .space-content h1 {
   margin: 0;
   font-size: 29px;
-  letter-spacing: -1px;
+  letter-spacing: var(--tracking-tight);
   overflow-wrap: anywhere;
 }
 .space-content h2 {

@@ -74,6 +74,7 @@ onBeforeUnmount(() => {
   height: 100%;
 }
 .three-object-label {
+  letter-spacing: var(--tracking-tight);
   position: absolute;
   z-index: 2;
   transform: translate(-50%, -100%);

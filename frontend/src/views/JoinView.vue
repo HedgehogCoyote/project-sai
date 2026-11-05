@@ -86,7 +86,7 @@ const back = computed(() => ({ redirect: route.fullPath }))
 
 <style scoped>
 .join { display: grid; gap: 14px; }
-.join h1 { margin: 0; font-size: 26px; letter-spacing: -0.5px; overflow-wrap: anywhere; }
+.join h1 { margin: 0; font-size: 26px; letter-spacing: var(--tracking-tight); overflow-wrap: anywhere; }
 .mark { width: 64px; height: 48px; }
 .meta { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.7; }
 .error { margin: 0; padding: 11px 14px; border-radius: 4px; background: #fff2f2; color: var(--danger); font-size: 14px; }
