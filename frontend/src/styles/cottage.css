@@ -372,3 +372,29 @@ html .auth-layout .auth-brand {
 }
 html .home-shell.home-shell .content-tabs{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;gap:20px}
 html .home-shell.home-shell .content-tabs button{flex-shrink:0}
+/* Text sitting directly on the mauve background stays light; inside cream cards it stays dark. */
+html .home-shell.home-shell .space-content > section > h2,
+html .home-shell.home-shell .space-content > section > .list-line,
+html .home-shell.home-shell .space-content > section > .list-line * {
+  color: #f6e9e2;
+}
+html .home-shell.home-shell .space-content > section .hint,
+html .home-shell.home-shell .space-content > section .muted {
+  color: #ead9d1;
+}
+html .home-shell.home-shell .space-content .poll-card,
+html .home-shell.home-shell .space-content .place-row {
+  background: #fff6eaef;
+  border-color: #dacabd;
+  border-radius: 12px;
+  color: #51434c;
+}
+html .home-shell.home-shell .space-content :is(.summary-grid > section, .section, .data-row, .record-editor, .records-layout, .modules-grid, .summary-stats, .people-list, .calendar-grid, .module-card, .poll-card, .place-row) :is(.empty, .muted, .hint) {
+  color: #7b6873;
+}
+html .home-shell.home-shell label.ws-btn.primary {
+  color: #fff;
+}
+html .home-shell.home-shell .space-content > section > .section-heading {
+  color: #fff3e7;
+}
